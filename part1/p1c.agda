@@ -115,8 +115,21 @@ data Total : ℕ -> ℕ -> Set where
                                           -- and just instantiate it with x y, it (rightly)
                                           -- doesn't prove
 
+-- associativity with rewrite (practice from the prior ch)
++-assoc' : ∀ (m n p : ℕ)
+  -------------------------
+  -> (m + n) + p ≡ m + (n + p)
++-assoc' zero y z     = refl
++-assoc' (suc x) y z rewrite +-assoc' x y z = refl
+
+
+-- commutativity with rewrite (practice from the prior ch)
+-- todo
+
+
+
 +-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
-  -> m ⩽ n
+  -> m ⩽ n    -- hypothesis 1 (h1)
   ----------
   -> m + p ⩽ n + p
-+-left-mono-wrt-⩽ x y zero
++-left-mono-wrt-⩽ x y z h1 = {!   !}
