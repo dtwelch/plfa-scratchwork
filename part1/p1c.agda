@@ -124,8 +124,15 @@ data Total : ℕ -> ℕ -> Set where
 
 
 -- commutativity with rewrite (practice from the prior ch)
--- todo
-
++-id' : ∀ (n : ℕ)
+  ----------------
+  -> n + zero ≡ n
++-id' zero = refl
++-id' (suc x) rewrite +-id' x = refl
+-- rewrite +-id' rewrites the original (instantiated) term
+-- (suc x) + zero ≡ (suc x) without the successor, thus providing evidence that
+-- x + zero ≡ x (as per the part after the ->). The rewritten defining equation
+-- holds via reflexivity with the original goal (n + zero ≡ n).
 
 
 +-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
