@@ -114,3 +114,9 @@ data Total : ℕ -> ℕ -> Set where
                                           -- if you don't do (x + y) (x + z)
                                           -- and just instantiate it with x y, it (rightly)
                                           -- doesn't prove
+
++-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
+  -> m ⩽ n
+  ----------
+  -> m + p ⩽ n + p
++-left-mono-wrt-⩽ x y zero
