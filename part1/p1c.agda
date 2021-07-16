@@ -2,7 +2,7 @@ module p1c where
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong)
-open import Data.Nat using (ℕ; zero; suc; _+_)
+open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
 open import Data.Nat.Properties using (+-comm; +-identityʳ)
 
 data _⩽_ : ℕ -> ℕ -> Set where
@@ -195,6 +195,55 @@ data Total : ℕ -> ℕ -> Set where
   leq-trans (i + k) (j + k) (j + l) -- ((i + k) ⩽ (j + k)) -> ((j + k) ⩽ (j + l)) -> (i + k) ⩽ (j + l)
     (+-left-mono-wrt-⩽ i j k h1) -- i + k ⩽ j + k
     (+-right-mono-wrt-⩽ j k l h2)   -- j + k ⩽ j + 1
--- whoa.
-
 -- goal: i + k ⩽ j + l
+-- phew.
+
+-- Exercise: *-mono-⩽ (stretch)
+-- Show that multiplication is monotonic with regard to inequality.
+-- dtw: I think I need commutativity (and zero cancellable properties) for * to prove this..
+-- +-id' : ∀ (n : ℕ)
+--  ----------------
+--  -> n + zero ≡ n
+-- +-id' zero = refl
+-- +-id' (suc x) rewrite +-id' x = refl
+
+-- _*_ : ℕ -> ℕ -> ℕ
+--   zero * _ = zero
+--   suc a * b = b + (b * a)
+*-id' : ∀ (n : ℕ)
+        -----------
+        -> n * zero ≡ zero
+*-id' zero = refl
+*-id' (suc x) rewrite *-id' x = refl
+-- ONLY want to do 'rewrite' on results where ≡ is involved I think...
+-- (you can recursively rewrite too remember)
+
+*-suc' : ∀ (m n : ℕ) -> m * suc n ≡ suc (m  n)
+*-suc' n zero {- rewrite *-id' n | +-id' n -} = {!   !}
+
+-- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+*-comm' : ∀ (m n : ℕ) -> m * n ≡ n * m
+*-comm' zero j rewrite *-id' j = refl
+*-comm' (suc i) j = {!   !}
+
+
+*-mono-right-⩽ : ∀ (m n p : ℕ)
+  -> n ⩽ p
+  ----------
+  -> m * n ⩽ m * p
+*-mono-right-⩽ i j k h1 = {!   !}
+
+
+{- *-mono-left-⩽ : ∀ (m n p : ℕ)
+  -> m ⩽ n
+    -------------
+  -> m + p ⩽ n + p
+*-mono-left-⩽ i j k h1 = {!   !}
+-}
+
+*-mono-⩽ : ∀ (m n p q : ℕ)
+  -> m ⩽ n
+  -> p ⩽ q
+  ----------
+  -> m * n ⩽ n * q
+*-mono-⩽ i j k l h1 h2 = {!   !}
