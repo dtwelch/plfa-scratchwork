@@ -20,6 +20,36 @@ data _⩽_ : ℕ -> ℕ -> Set where
 
 infix 4 _⩽_
 
+-- commutativity with rewrite (practice from the prior ch)
++-id' : ∀ (n : ℕ)
+  ----------------
+  -> n + zero ≡ n
++-id' zero = refl
++-id' (suc x) rewrite +-id' x = refl
+
++-suc' : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
++-suc' zero n = refl
++-suc' (suc m) n rewrite +-suc' m n = refl
+
+_test : zero + suc 1 ≡ suc (zero + 1)
+_test = refl  -- the terms are definitionally equal, see base case for _+_
+
++-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
++-comm' m zero rewrite +-id' m = refl
++-comm' m (suc n) rewrite +-suc' m n | +-comm' m n = refl
+-- the bar | allows us to use *two* equations:
+--   +-suc' m n [m + (suc n) ≡ suc (m + n)] and
+--   +-comm' m n [m + n ≡ n + m]
+-- so rewrite.. here are the sequence of rewrites here (I think):
+-- initially we apply the first rewrite rule
+--      +-suc' m n [m + (suc n) ≡ (suc n) + m] to get:
+--          suc (m + n) ≡ (suc n) + m
+--        then we simplify r.h.s using the suc constructor from _+_
+--        suc (n + m) to get:
+--          suc (m + n) ≡ suc (n + m)
+--        now the +-comm' m n rewrite rule will come in handy to achieve:
+--          suc (n + m) ≡ suc (n + m)
+--        and we can solve using reflexivity (refl)
 
 -- data Square : ℕ -> Set where
 --
@@ -122,44 +152,6 @@ data Total : ℕ -> ℕ -> Set where
 +-assoc' zero y z     = refl
 +-assoc' (suc x) y z rewrite +-assoc' x y z = refl
 
-
--- commutativity with rewrite (practice from the prior ch)
-+-id' : ∀ (n : ℕ)
-  ----------------
-  -> n + zero ≡ n
-+-id' zero = refl
-+-id' (suc x) rewrite +-id' x = refl
-
-+-suc' : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
-+-suc' zero n = refl
-+-suc' (suc m) n rewrite +-suc' m n = refl
-
-_test : zero + suc 1 ≡ suc (zero + 1)
-_test = refl  -- the terms are definitionally equal, see base case for _+_
-
-+-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
-+-comm' m zero rewrite +-id' m = refl
-+-comm' m (suc n) rewrite +-suc' m n | +-comm' m n = refl
--- the bar | allows us to use *two* equations:
---   +-suc' m n [m + (suc n) ≡ suc (m + n)] and
---   +-comm' m n [m + n ≡ n + m]
--- so rewrite.. here are the sequence of rewrites here (I think):
--- initially we apply the first rewrite rule
---      +-suc' m n [m + (suc n) ≡ (suc n) + m] to get:
---          suc (m + n) ≡ (suc n) + m
---        then we simplify r.h.s using the suc constructor from _+_
---        suc (n + m) to get:
---          suc (m + n) ≡ suc (n + m)
---        now the +-comm' m n rewrite rule will come in handy to achieve:
---          suc (n + m) ≡ suc (n + m)
---        and we can solve using reflexivity (refl)
-
-
--- rewrite +-id' rewrites the original (instantiated) term
--- (suc x) + zero ≡ (suc x) without the successor, thus providing evidence that
--- x + zero ≡ x (as per the part after the ->). The rewritten defining equation
--- holds via reflexivity with the original goal (n + zero ≡ n).
-
 -- rewrite generally applies to formulas claiming some sort of
 -- definitional equality (e.g.: x + y ≡ y + x)
 -- todo: needs +-comm
@@ -174,5 +166,5 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
   -> m ⩽ n    -- hypothesis 1 (h1)
   ----------
   -> m + p ⩽ n + p
-+-left-mono-wrt-⩽ x y (suc z) h1 = {!   !}
++-left-mono-wrt-⩽ x y z h1 rewrite +-right-mono-wrt-⩽ x y z
 -}
