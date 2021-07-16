@@ -40,6 +40,7 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
 -- the bar | allows us to use *two* equations:
 --   +-suc' m n [m + (suc n) ≡ suc (m + n)] and
 --   +-comm' m n [m + n ≡ n + m]
+-- NOTE: order of rewrites specified between |s matter
 -- so rewrite.. here are the sequence of rewrites here (I think):
 -- initially we apply the first rewrite rule
 --      +-suc' m n [m + (suc n) ≡ (suc n) + m] to get:
@@ -50,6 +51,13 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
 --        now the +-comm' m n rewrite rule will come in handy to achieve:
 --          suc (n + m) ≡ suc (n + m)
 --        and we can solve using reflexivity (refl)
+
+-- associativity with rewrite (practice from the prior ch)
++-assoc' : ∀ (m n p : ℕ)
+  -------------------------
+  -> (m + n) + p ≡ m + (n + p)
++-assoc' zero y z     = refl
++-assoc' (suc x) y z rewrite +-assoc' x y z = refl
 
 -- data Square : ℕ -> Set where
 --
@@ -145,26 +153,48 @@ data Total : ℕ -> ℕ -> Set where
                                           -- and just instantiate it with x y, it (rightly)
                                           -- doesn't prove
 
--- associativity with rewrite (practice from the prior ch)
-+-assoc' : ∀ (m n p : ℕ)
-  -------------------------
-  -> (m + n) + p ≡ m + (n + p)
-+-assoc' zero y z     = refl
-+-assoc' (suc x) y z rewrite +-assoc' x y z = refl
 
--- rewrite generally applies to formulas claiming some sort of
--- definitional equality (e.g.: x + y ≡ y + x)
--- todo: needs +-comm
--- remember, commutative is for + and any other binary operater that happens to have
+-- commutative is for + and any other binary operater that happens to have
 -- that property. If we're talking
 -- about binary relations, we say a binary relation relation is
--- symmetric (as opposed to commutative, though technically the line is blurred. Has to
--- do with the codomain of the function or relation being looked at)
+-- symmetric (as opposed to commutative, though technically the line is blurred; Has to
+-- has do with the codomain of the function or relation being looked at. In the
+-- case of a relation this happens to always be the set B.
 
-{-
+
+-- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+
 +-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
   -> m ⩽ n    -- hypothesis 1 (h1)
   ----------
   -> m + p ⩽ n + p
-+-left-mono-wrt-⩽ x y z h1 rewrite +-right-mono-wrt-⩽ x y z
--}
++-left-mono-wrt-⩽ x y z h1 rewrite
+  (+-comm' x z) | (+-comm' y z) = +-right-mono-wrt-⩽ z x y h1
+
+-- x + z ⩽ y + z
+-- apply +-comm' x z
+-- z + x ⩽ y + z
+-- apply +-comm' y z
+-- z + x ⩽ z + y
+--  =
+-- +-right-mono-wrt-⩽ z y x h1 [gives: z + x ⩽ z + y]
+-- (this is how we construct a term with 'type' z + x ⩽ z + y)
+
+-- now we can combine the left and right results:
+
+-- +-left-mono-wrt-⩽  : ∀ (m n p : ℕ) -> m ⩽ n -> m + p ⩽ n + p
+-- +-right-mono-wrt-⩽ : ∀ (n p q : ℕ) -> p ⩽ q -> n + p ⩽ n + q
+-- leq-trans : ∀ (m n p : ℕ) -> m ⩽ n -> n ⩽ p -> m ⩽ p
+
++-mono-⩽ : ∀ (m n p q : ℕ)
+  -> m ⩽ n  -- h1
+  -> p ⩽ q  -- h2
+  ---------
+  -> m + p ⩽ n + q
++-mono-⩽ i j k l h1 h2 =
+  leq-trans (i + k) (j + k) (j + l) -- ((i + k) ⩽ (j + k)) -> ((j + k) ⩽ (j + l)) -> (i + k) ⩽ (j + l)
+    (+-left-mono-wrt-⩽ i j k h1) -- i + k ⩽ j + k
+    (+-right-mono-wrt-⩽ j k l h2)   -- j + k ⩽ j + 1
+-- whoa.
+
+-- goal: i + k ⩽ j + l
