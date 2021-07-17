@@ -27,16 +27,16 @@ infix 4 _⩽_
 +-id' zero = refl
 +-id' (suc x) rewrite +-id' x = refl
 
-+-suc' : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
+{-+-suc' : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
 +-suc' zero n = refl
 +-suc' (suc m) n rewrite +-suc' m n = refl
 
 _test : zero + suc 1 ≡ suc (zero + 1)
 _test = refl  -- the terms are definitionally equal, see base case for _+_
-
+-}
 +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
-+-comm' m zero rewrite +-id' m = refl
-+-comm' m (suc n) rewrite +-suc' m n | +-comm' m n = refl
++-comm' = {!   !} --m zero rewrite +-id' m = refl
+-- +-comm' m (suc n) rewrite +-suc' m n | +-comm' m n = refl
 -- the bar | allows us to use *two* equations:
 --   +-suc' m n [m + (suc n) ≡ suc (m + n)] and
 --   +-comm' m n [m + n ≡ n + m]
@@ -210,36 +210,74 @@ data Total : ℕ -> ℕ -> Set where
 -- _*_ : ℕ -> ℕ -> ℕ
 --   zero * _ = zero
 --   suc a * b = b + (b * a)
-*-id' : ∀ (n : ℕ)
+{-*-id' : ∀ (n : ℕ)
         -----------
         -> n * zero ≡ zero
 *-id' zero = refl
-*-id' (suc x) rewrite *-id' x = refl
+*-id' (suc x) rewrite *-id' x = refl -}
 -- ONLY want to do 'rewrite' on results where ≡ is involved I think...
 -- (you can recursively rewrite too remember)
 
-*-suc' : ∀ (m n : ℕ) -> m * suc n ≡ suc (m  n)
-*-suc' n zero {- rewrite *-id' n | +-id' n -} = {!   !}
+--| +-assoc' n =
+-- suc m * suc n ≡ suc m + suc m * n
+-- rewrite using *-suc' (suc m) n [(suc m) * suc n ≡ m + m * n
+{-
+_*'_ : ℕ -> ℕ -> ℕ
+zero    *' n  =  zero
+(suc m) *' n  =  n + (m *' n)
 
+-- +-suc' : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+-- +-assoc' : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
+*-suc' : ∀ (m n : ℕ )-> m *' suc n ≡ m + m *' n
+*-suc' zero n = refl
+*-suc' (suc m) n = {!   !}
+
+-}
+-- (suc m *' suc n) ≡ suc m + (suc m *' n)
+-- rewrite left hand side using ind. case of _*'_ (switch this back to the normal * when ready)
+-- (suc n) + (m *' suc n)
+-- suc (n + (m *' suc n)) ≡ suc (m + (n + (m *' n)))
+
+
+
+--  suc m * suc n ≡ suc m + suc m * n
+-- simplifying via constructors...?   +-suc m n
+
+
+-- cong suc (+-assoc' m n (m * n))
+-- +-suc' (suc m) n
+-- somehow, re-write is changing it in a way I don't understand...
+-- is it also simplifying with various constructors? Initially it is this:
+--    suc m * suc n ≡ suc m + suc m * n
+-- then no matter what rewrite I do, it wraps each side in suc (..)
+--    suc (n + (m + m * n)) ≡ suc (m + (n + m * n))
+
+--?0 : suc (n + (m + m * n)) ≡ suc (m + (n + m * n))
+-- cong suc (+-assoc' m n (m * n)) [
+-- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+{-
 *-comm' : ∀ (m n : ℕ) -> m * n ≡ n * m
 *-comm' zero j rewrite *-id' j = refl
-*-comm' (suc i) j = {!   !}
+*-comm' (suc i) j rewrite *-comm' i j  = {!   !}
 
+
+--  suc m * suc n ≡ suc m + suc m * n
+-- rewrite using base case of
 
 *-mono-right-⩽ : ∀ (m n p : ℕ)
   -> n ⩽ p
   ----------
   -> m * n ⩽ m * p
 *-mono-right-⩽ i j k h1 = {!   !}
-
+-}
 
 {- *-mono-left-⩽ : ∀ (m n p : ℕ)
   -> m ⩽ n
     -------------
   -> m + p ⩽ n + p
 *-mono-left-⩽ i j k h1 = {!   !}
--}
+
 
 *-mono-⩽ : ∀ (m n p q : ℕ)
   -> m ⩽ n
@@ -247,3 +285,8 @@ data Total : ℕ -> ℕ -> Set where
   ----------
   -> m * n ⩽ n * q
 *-mono-⩽ i j k l h1 h2 = {!   !}
+-}
+
+-- moving on from the mono examples. I don't feel like I know enough about the
+-- rewrite command... it's introducing rewrites and I'm not sure how it's
+-- getting there..
