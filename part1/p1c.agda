@@ -214,7 +214,7 @@ suc n * m = m + n * m
 -- +-suc' : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
 -- +-assoc' : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
-*-suc' : ∀ (m n : ℕ ) -> m * suc n ≡ m + m * n
+{-*-suc' : ∀ (m n : ℕ ) -> m * suc n ≡ m + m * n  -- needed for *-mono' (I think), regardless, got stuck..
 *-suc' zero n =
   begin
     zero * suc n
@@ -225,4 +225,67 @@ suc n * m = m + n * m
   begin
     suc m * suc n -- by ind. hypothesis for *, we have:  m * suc n ≡ m + m * n
   ≡⟨⟩
-    {!   !}
+    ?
+-}
+
+infix 4 _<_
+
+-- the relation less than has an infinite number of
+-- instances... 0 < 1, 0 < 2, 1 < 2, etc.
+-- we can write a finite datatype that encompasses all of
+-- these instances with just a few inference rules (or: constructors..)
+data _<_ : ℕ -> ℕ -> Set where
+  z<s : ∀ (n : ℕ)
+      ------------
+      -> zero < suc n
+
+  s<s : ∀ (m n : ℕ)
+      --------------
+      -> suc m < suc n
+
+-- EXERCISE <-trans' (recommended):
+-- show that strict inequality is transitive
+
+{-
+leq-trans : ∀ (m n p : ℕ)
+  -> m ⩽ n -- hypothesis 1 (h1)
+  -> n ⩽ p -- hypothesis 2 (h2)
+  -------
+  -> m ⩽ p
+  -- zero ⩽ n
+leq-trans zero y z h1 h2  = z⩽n _
+leq-trans (suc x) (suc y) (suc z) (s⩽s x y h1) (s⩽s y z h2) = s⩽s x z (leq-trans x y z h1 h2)
+
+
+  -}
+
+<-suc1' : ∀ (m n : ℕ)
+  -> suc m ⩽ n
+  -------------
+  -> m < n
+<-suc1' zero (suc y) h1 = z<s y
+<-suc1' (suc x) (suc y) h1 = s<s x y
+
+--z⩽n : ∀ (n : ℕ)
+--    ------------
+--    -> zero ⩽ n
+
+-- s⩽s : ∀ (m n : ℕ)
+--    -> m ⩽ n
+--    -------------
+--    -> suc m ⩽ suc n
+
+<-suc2' : ∀ (m n : ℕ)
+  -> m < n    -- h1
+  -------------
+  -> suc m ⩽ n
+<-suc2' zero (suc y) h1 = s⩽s zero y (z⩽n y)
+<-suc2' (suc x) (suc y) h1 = {!   !} 
+{-
+<-trans' : ∀ (m n p : ℕ)
+  -> m < n    -- h1
+  -> n < p    -- h2
+  ----------
+  -> m < p
+<-trans' zero y z h1 h2 = {!   !}
+-}
