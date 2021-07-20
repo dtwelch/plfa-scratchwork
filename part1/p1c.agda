@@ -68,11 +68,11 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
 -- rt₁ _ (sq m) = m
 
 -- claim:
-inv-shorten : ∀ (m n : ℕ)
+leq-inv-shorten : ∀ (m n : ℕ)
   -> suc m ⩽ suc n    -- h1
      --------------
   -> m ⩽ n
-inv-shorten x y (s⩽s x y h1)  = h1
+leq-inv-shorten x y (s⩽s x y h1)  = h1
 -- how does it know what hyp2 refers to the last -> m ⩽ n .. I thought
 -- I was trying to provide evidence that m ⩽ n
 
@@ -84,15 +84,6 @@ leq-refl : ∀ (n : ℕ)
   -> n ⩽ n
 leq-refl zero = z⩽n zero
 leq-refl (suc moo) = s⩽s _ _ (leq-refl moo)
-
--- note: the var names used in the constructor patterns on the left hand side
--- of the defining equations must be those used on the right (I think)... I mean,
--- not exactly: in the second defining equation I could've (incorrectly) stated:
--- s⩽s (leq-refl {zero}) instead of s⩽s (leq-refl {moo}), but the proof would've
--- failed. I could've also written it as: leq-refl {suc moo} = s⩽s leq-refl
--- so 'moo' is basically like a bound variable placeholder within a constructor
--- pattern. It's ok to rename it as long as it's done so consistently across
--- both sides of the defining equation.
 
 -- claim (hint: two defining equations):
 leq-trans : ∀ (m n p : ℕ)
@@ -166,7 +157,7 @@ data Total : ℕ -> ℕ -> Set where
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
 
 +-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
-  -> m ⩽ n    -- hypothesis 1 (h1)
+  -> m ⩽ n    -- h1
   ----------
   -> m + p ⩽ n + p
 +-left-mono-wrt-⩽ x y z h1 rewrite
@@ -240,47 +231,59 @@ data _<_ : ℕ -> ℕ -> Set where
       -> zero < suc n
 
   s<s : ∀ (m n : ℕ)
+      -> m < n
       --------------
       -> suc m < suc n
 
--- EXERCISE <-trans' (recommended):
--- show that strict inequality is transitive
-
 {-
-leq-trans : ∀ (m n p : ℕ)
-  -> m ⩽ n -- hypothesis 1 (h1)
-  -> n ⩽ p -- hypothesis 2 (h2)
-  -------
-  -> m ⩽ p
-  -- zero ⩽ n
-leq-trans zero y z h1 h2  = z⩽n _
-leq-trans (suc x) (suc y) (suc z) (s⩽s x y h1) (s⩽s y z h2) = s⩽s x z (leq-trans x y z h1 h2)
+z⩽n : ∀ (n : ℕ)
+    ------------
+    -> zero ⩽ n
 
+s⩽s : ∀ (m n : ℕ)
+    -> m ⩽ n
+    -------------
+    -> suc m ⩽ suc n
 
-  -}
+-}
+-- this is the evidence we need to provide in order to use the ind. hypo:
+-- suc (suc m) ⩽ suc n
+lt-inv-shorten : ∀ (m n : ℕ)
+  -> suc m < suc n    -- h1
+     --------------
+  -> m < n
+lt-inv-shorten x y (s<s x y h1) = h1
 
 <-suc1' : ∀ (m n : ℕ)
-  -> suc m ⩽ n
+  -> suc m ⩽ n   -- h1
   -------------
   -> m < n
 <-suc1' zero (suc y) h1 = z<s y
-<-suc1' (suc x) (suc y) h1 = s<s x y
-
---z⩽n : ∀ (n : ℕ)
---    ------------
---    -> zero ⩽ n
-
--- s⩽s : ∀ (m n : ℕ)
---    -> m ⩽ n
---    -------------
---    -> suc m ⩽ suc n
+<-suc1' (suc x) (suc y) (s⩽s (suc x) y h1) = s<s x y (<-suc1' x y h1)
+-- note (as mentioned below): on lhs of the = above, the (s⩽s (suc x) y h1)
+-- is constructing a term that is the same shape as the one for the
+-- ind. hypothesis h1
 
 <-suc2' : ∀ (m n : ℕ)
   -> m < n    -- h1
   -------------
   -> suc m ⩽ n
 <-suc2' zero (suc y) h1 = s⩽s zero y (z⩽n y)
-<-suc2' (suc x) (suc y) h1 = {!   !} 
+<-suc2' (suc x) (suc y) (s<s x y h1) = s⩽s (suc x) y (<-suc2' x y h1)
+-- So I think the (s<s x y h1) on the lhs of = is like the inductive hypothesis...
+-- i.e.: you're constructing a term that is the claim for the nth element
+-- of whatever sequence you're dealing with -- so you're just it seems constructing
+-- a term of the *right shape* and providing it as "pattern evidence" (in this case h1) that in
+-- some sense is assumed (this is like the inductive argument: we can
+-- assume it for the nth element, and we show that it holds as well for the
+-- n + 1 element.
+-- that the n + 1th element holds as well..
+
+
+
+--s⩽s (suc x) (suc y) (<-suc2' x y
+-- goal: suc (suc x) ⩽ suc y
+
 {-
 <-trans' : ∀ (m n p : ℕ)
   -> m < n    -- h1
