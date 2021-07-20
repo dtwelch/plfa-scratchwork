@@ -262,7 +262,10 @@ lt-inv-shorten x y (s<s x y h1) = h1
 <-suc1' (suc x) (suc y) (s⩽s (suc x) y h1) = s<s x y (<-suc1' x y h1)
 -- note (as mentioned below): on lhs of the = above, the (s⩽s (suc x) y h1)
 -- is constructing a term that is the same shape as the one for the
--- ind. hypothesis h1
+-- ind. hypothesis h1 in the type signature of the claim. If the shape doesn't
+-- need to be tweaked for whatever we are attempting to prove, we could've just
+-- written the lhs of the = above as (suc x) (suc y) h1 but this would've made
+-- h1 a term with the (incorrect) shape (suc (suc m)) ⩽ (suc n)
 
 <-suc2' : ∀ (m n : ℕ)
   -> m < n    -- h1
@@ -277,18 +280,36 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- some sense is assumed (this is like the inductive argument: we can
 -- assume it for the nth element, and we show that it holds as well for the
 -- n + 1 element.
--- that the n + 1th element holds as well..
-
-
-
---s⩽s (suc x) (suc y) (<-suc2' x y
--- goal: suc (suc x) ⩽ suc y
 
 {-
-<-trans' : ∀ (m n p : ℕ)
+leq-trans : ∀ (m n p : ℕ)
+  -> m ⩽ n -- hypothesis 1 (h1)
+  -> n ⩽ p -- hypothesis 2 (h2)
+  -------
+  -> m ⩽ p
+-}
+
+<-trans : ∀ (m n p : ℕ)
   -> m < n    -- h1
   -> n < p    -- h2
   ----------
   -> m < p
-<-trans' zero y z h1 h2 = {!   !}
--}
+<-trans zero (suc n) (suc p) h1 h2 = {!   !}
+<-trans (suc m) (suc n) (suc p) (s<s m n h1) (s<s n p h2) =
+  <-suc1' suc m) (suc p)
+    leq-trans (suc m) (suc n) (suc p) -- instantiated bound vars
+            (<-suc2' m (suc n) h1) -- arg1
+            (<-suc2' n (suc p) h2) -- arg2
+      -- app of leq-trans produces evidence that suc suc m ⩽ suc p , now we
+      -- need to convert the ⩽ to a < via. <-suc2'
+
+
+-- leq-trans' (<-suc2' m (suc n) h1)(<-suc2' n (suc p) h2)
+-- hypo 2 needs special treatment I think...
+-- leq-trans'
+-- arg1: (<-suc2' m (suc n) h1)         -- has type: suc m ⩽ suc n
+-- arg2: (<-suc2' (suc n) (suc p) h2)   -- has type: suc (suc n) ⩽ suc p
+-- arg2': (<-suc2' n (suc p) h2)        -- has type: suc n ⩽ suc p
+
+-- the middle makes more sense, but remember that we're just trying to piggyback
+-- off of the existing proving machinery for properties about ⩽
