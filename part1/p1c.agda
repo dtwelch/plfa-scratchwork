@@ -299,3 +299,39 @@ leq-trans : ∀ (m n p : ℕ)
 -- ind. case goal: suc m < suc p
 <-trans (suc m) (suc n) (suc p) (s<s m n h1) (s<s n p h2) =
   s<s m p (<-trans m n p h1 h2)
+
+
+data _>_ : ℕ -> ℕ -> Set where
+  m>n : ∀ (m n : ℕ)
+        -> n < m
+        -------------
+        -> m > n
+
+infix 4 _>_
+
+data Trichotomous : ℕ -> ℕ -> Set where
+  tri-m<n : ∀ (m n : ℕ)
+            -> m < n
+            ----------
+            -> Trichotomous m n
+
+  tri-m≡n : ∀ (m n : ℕ)
+            -> m ≡ n
+            ----------
+            -> Trichotomous m n
+
+  tri-m>n : ∀ (m n : ℕ)
+            -> m > n
+            ----------
+            -> Trichotomous m n
+
+<-trichotomous : ∀ (m n : ℕ) -> Trichotomous m n
+<-trichotomous zero zero    = tri-m≡n zero zero refl
+<-trichotomous zero (suc n) = tri-m<n zero (suc n) (z<s n)
+<-trichotomous (suc m) zero = tri-m>n (suc m) zero (m>n (suc m) zero (z<s m))
+<-trichotomous (suc m) (suc n) with <-trichotomous m n
+...                           | tri-m<n m n h1 = tri-m<n (suc m) (suc n) (s<s m n h1)
+...                           | tri-m>n m n (m>n m n h2) =
+                                    tri-m>n (suc m) (suc n)
+                                        (m>n (suc m) (suc n) (s<s n m h2))
+...                           | tri-m≡n m n h3 = tri-m≡n (suc m) (suc n) (cong suc h3)
