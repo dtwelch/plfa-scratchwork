@@ -294,22 +294,8 @@ leq-trans : ∀ (m n p : ℕ)
   -> n < p    -- h2
   ----------
   -> m < p
-<-trans zero (suc n) (suc p) h1 h2 = {!   !}
+-- base case goal: zero < suc p
+<-trans zero (suc n) (suc p) h1 h2 = z<s p
+-- ind. case goal: suc m < suc p
 <-trans (suc m) (suc n) (suc p) (s<s m n h1) (s<s n p h2) =
-  <-suc1' suc m) (suc p)
-    leq-trans (suc m) (suc n) (suc p) -- instantiated bound vars
-            (<-suc2' m (suc n) h1) -- arg1
-            (<-suc2' n (suc p) h2) -- arg2
-      -- app of leq-trans produces evidence that suc suc m ⩽ suc p , now we
-      -- need to convert the ⩽ to a < via. <-suc2'
-
-
--- leq-trans' (<-suc2' m (suc n) h1)(<-suc2' n (suc p) h2)
--- hypo 2 needs special treatment I think...
--- leq-trans'
--- arg1: (<-suc2' m (suc n) h1)         -- has type: suc m ⩽ suc n
--- arg2: (<-suc2' (suc n) (suc p) h2)   -- has type: suc (suc n) ⩽ suc p
--- arg2': (<-suc2' n (suc p) h2)        -- has type: suc n ⩽ suc p
-
--- the middle makes more sense, but remember that we're just trying to piggyback
--- off of the existing proving machinery for properties about ⩽
+  s<s m p (<-trans m n p h1 h2)
