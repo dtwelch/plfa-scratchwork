@@ -146,14 +146,6 @@ data Total : ℕ -> ℕ -> Set where
                                           -- doesn't prove
 
 
--- commutative is for + and any other binary operater that happens to have
--- that property. If we're talking
--- about binary relations, we say a binary relation relation is
--- symmetric (as opposed to commutative, though technically the line is blurred; Has to
--- has do with the codomain of the function or relation being looked at. In the
--- case of a relation this happens to always be the set B.
-
-
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
 
 +-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
