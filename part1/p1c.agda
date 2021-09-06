@@ -267,12 +267,14 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- written the lhs of the = above as (suc x) (suc y) h1 but this would've made
 -- h1 a term with the (incorrect) shape (suc (suc m)) ⩽ (suc n)
 
+{-
+Deprecated. see: <-iff-⩽ and vice versa
 <-suc2' : ∀ (m n : ℕ)
   -> m < n    -- h1
   -------------
   -> suc m ⩽ n
 <-suc2' zero (suc y) h1 = s⩽s zero y (z⩽n y)
-<-suc2' (suc x) (suc y) (s<s x y h1) = s⩽s (suc x) y (<-suc2' x y h1)
+<-suc2' (suc x) (suc y) (s<s x y h1) = s⩽s (suc x) y (<-suc2' x y h1) -}
 -- So I think the (s<s x y h1) on the lhs of = is like the inductive hypothesis...
 -- i.e.: you're constructing a term that is the claim for the nth element
 -- of whatever sequence you're dealing with -- so you're just it seems constructing
@@ -335,3 +337,64 @@ data Trichotomous : ℕ -> ℕ -> Set where
                                     tri-m>n (suc m) (suc n)
                                         (m>n (suc m) (suc n) (s<s n m h2))
 ...                           | tri-m≡n m n h3 = tri-m≡n (suc m) (suc n) (cong suc h3)
+
+⩽-iff-< : ∀ (m n : ℕ)
+        -> (suc m) ⩽ n
+        -----------------
+        -> m < n
+⩽-iff-< m n h1 = (<-suc1' m n h1)
+
+{-
+z⩽n : ∀ (n : ℕ)
+    ------------
+    -> zero ⩽ n
+
+s⩽s : ∀ (m n : ℕ)
+    -> m ⩽ n
+    -------------
+    -> suc m ⩽ suc n
+
+z⩽n : ∀ (n : ℕ)
+    ------------
+    -> zero ⩽ n
+
+s⩽s : ∀ (m n : ℕ)
+    -> m ⩽ n
+    -------------
+    -> suc m ⩽ suc n
+
+<-suc2' : ∀ (m n : ℕ)
+    -> m < n    -- h1
+    -------------
+    -> suc m ⩽ n
+-}
+<-iff-⩽ : ∀ (m n : ℕ)
+          -> m < n
+          -----------
+          -> (suc m) ⩽ n
+<-iff-⩽ zero (suc n) h1 = s⩽s zero n (z⩽n n)
+<-iff-⩽ (suc m) (suc n) (s<s m n h2) = s⩽s (suc m) n (<-iff-⩽ m n h2)
+
+data even : ℕ -> Set
+data odd : ℕ -> Set
+
+data even where
+  zero :
+      -------
+      even zero
+  suc : ∀ (n : ℕ)
+       -> odd n
+       ----------
+       -> even (suc n)
+
+data odd where
+  suc : ∀ (n : ℕ)
+        -> even n
+        ---------
+        -> odd (suc n)
+
+e+e≡e : ∀ (m n : ℕ)
+        -> even m
+        -> even n
+        ------------
+        -> even (m + n)
