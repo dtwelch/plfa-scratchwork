@@ -126,5 +126,5 @@ data Bin : Set where
   _O : Bin → Bin 
   _I : Bin → Bin 
 
-inc : Bin -> Bin 
-inc (⟨⟩ O O O O) = ⟨⟩ O O O I
+-- inc : Bin -> Bin 
+-- inc (⟨⟩ O O O O) = ⟨⟩ O O O I
