@@ -27,7 +27,7 @@ _ =
   ≡⟨⟩    -- base case
     suc (suc (suc (suc (suc zero))))
   ≡⟨⟩    -- is longhand for
-      5
+  5
   ∎
 
 _*'_ : ℕ -> ℕ -> ℕ
