@@ -295,12 +295,13 @@ lt-inv-shorten x y (s<s x y h1) = h1
 +-assoc2 (suc m) n p = (cong suc {(m + n) + p} {m + (n + p)}) (+-assoc2 m n p) 
                                 -- note: ^ filling in the implicits with what we're trying to prove 
                                 -- equivalents of... then applying suc to that
--- cong:
--- {A.a : Agda.Primitive.Level} {A : Set A.a}
--- {B.a : Agda.Primitive.Level} {B : Set B.a} (f : A → B) {x y : A} →
---    x ≡ y → f x ≡ f y
--- curr: 
--- ?0 : suc m + n + p ≡ suc m + (n + p)
 
--- cong suc 
--- {x y : ℕ} → x ≡ y → suc x ≡ suc y
+-- associative and commutative
+
+-- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+
++-swap : ∀ (m n p : ℕ) -> m + (n + p) ≡ n + (m + p)
++-swap m n p 
+  rewrite +-comm' n (m + p)   -- goal after: m + (n + p) ≡ (m + p) + n
+  rewrite +-assoc2 m p n      -- goal after: m + (n + p) ≡ m + (p + n)
+  rewrite +-comm' p n = refl  -- goal after: m + (p + n) ≡ m + (p + n)
