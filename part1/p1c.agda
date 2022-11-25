@@ -282,16 +282,16 @@ lt-inv-shorten x y (s<s x y h1) = h1
 --(suc m) +' n = suc (m +' n)
 --infixl 30 _+'_
 -}
--- C-c C-q  (Quit, kill the Agda process)
+-- C-c C-q  (Quit, kill the Agda process, clear pending goals ...)
 -- C-c C-c      (in a hole split -- or show goal)
 -- C-c C-t      (show type for current hole)
--- C-c C-d      (show type of a definition -- like 'cong')
+-- C-c C-d      (show type of a definition -- like 'cong' -- for congruence)
 -- https://agda.readthedocs.io/en/v2.6.2.2/getting-started/a-taste-of-agda.html
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
 +-assoc2 : ∀ (m n p : ℕ) → (m + n) + p ≡ m + (n + p)
 +-assoc2 zero n p = refl
-+-assoc2 (suc m) n p = {!   !}
++-assoc2 (suc m) n p = cong (ℕ ℕ suc) ? 
 
 -- curr: 
 -- ?0 : suc m + n + p ≡ suc m + (n + p)
