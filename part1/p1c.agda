@@ -289,10 +289,16 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- https://agda.readthedocs.io/en/v2.6.2.2/getting-started/a-taste-of-agda.html
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
-+-assoc2 : ∀ (m n p : ℕ) → (m + n) + p ≡ m + (n + p)
-+-assoc2 zero n p = refl
-+-assoc2 (suc m) n p = cong (ℕ ℕ suc) ? 
 
++-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p) 
++-assoc2 zero n p = refl
++-assoc2 (suc m) n p = (cong suc {(m + n) + p} {m + (n + p)}) (+-assoc2 m n p) 
+                                -- note: ^ filling in the implicits with what we're trying to prove 
+                                -- equivalents of... then applying suc to that
+-- cong:
+-- {A.a : Agda.Primitive.Level} {A : Set A.a}
+-- {B.a : Agda.Primitive.Level} {B : Set B.a} (f : A → B) {x y : A} →
+--    x ≡ y → f x ≡ f y
 -- curr: 
 -- ?0 : suc m + n + p ≡ suc m + (n + p)
 
