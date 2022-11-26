@@ -308,15 +308,6 @@ lt-inv-shorten x y (s<s x y h1) = h1
 
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
 
--- _*_ : Nat -> Nat -> Nat
--- zero  * m = zero
--- suc n * m = (n * m) + m
--- +-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p) 
-
--- _+'_ : N' ->  N' ->  N'
--- zero +' n = n
--- (suc m) +' n = suc (m +' n)
--- infixl 30 _+'_
 -- +-assoc eq proof
 
 +-assoc3 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
@@ -340,15 +331,51 @@ lt-inv-shorten x y (s<s x y h1) = h1
   ≡⟨⟩
     suc m + (n + p)
    ∎
- -- ≡⟨⟩ 
- -- {!   !}
+
+
+
+-- _+'_ : N' ->  N' ->  N'
+-- zero +' n = n
+-- (suc m) +' n = suc (m +' n)
+-- infixl 30 _+'_
+
 *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
 *-distrib-+' zero n p =
   begin 
-    (zero + n) * p 
+    (zero + n) * p  -- (zero + n) * p ≡ zero * p + n
   ≡⟨⟩
-    {!   !}
+    n * p
+  ≡⟨⟩
+    (zero * p) + n * p
+  ≡⟨⟩ 
+    zero + n * p
+  ≡⟨⟩
+    n * p
+   ∎
+-- _*_ : ℕ -> ℕ -> ℕ
+-- zero    * n  =  zero
+-- (suc m) * n  =  n + (m * n)
 
+-- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+
+*-distrib-+' (suc m) n p = -- (suc m + n) * p ≡ suc m * p + n * p
+  begin
+    (suc m + n) * p
+  ≡⟨⟩
+    suc (m + n) * p
+  ≡⟨⟩
+    p + ((m + n) * p)
+  ≡⟨ cong (p +_) (*-distrib-+' m n p) ⟩  -- *-distrib-+' m n p only gives a term
+                                         -- of the form: (m + n) * p
+                                         -- the cong combinator applied to the (p +_)
+                                         -- partial application gives evidence of a term:
+                                      -- p + ((m + n) * p) (which is the one we need to match against)
+    p + (m * p + n * p) 
+  ≡⟨ sym (+-assoc2 p (m * p) (n * p)) ⟩ -- sym 'flips' the instantiated assoc proof
+    (p + m * p) + n * p  -- sym (+-assoc2 p (m * p) (n * p)) 
+    ∎
+   -- +-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
+ 
 *-distrib-+ : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
 *-distrib-+ zero n p = refl
 *-distrib-+ (suc m) n p                   -- gives (suc m + n) * p ≡ suc m * p + n * p which becomes:
@@ -368,4 +395,4 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- (suc m + n) * p ≡ suc m * p + n * p becomes
 -- (n * m) + m                        (by ind. hyp)
 -- 
-   -- n * p + p * m
+   -- n * p + p * m  
