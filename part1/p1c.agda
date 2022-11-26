@@ -1,7 +1,7 @@
 module p1c where
 
 import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl; cong)
+open Eq using (_≡_; refl; sym; cong)
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
 open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
 open import Data.Nat.Properties using (+-comm; +-identityʳ)
@@ -305,3 +305,67 @@ lt-inv-shorten x y (s<s x y h1) = h1
   rewrite +-comm' n (m + p)   -- goal after: m + (n + p) ≡ (m + p) + n
   rewrite +-assoc2 m p n      -- goal after: m + (n + p) ≡ m + (p + n)
   rewrite +-comm' p n = refl  -- goal after: m + (p + n) ≡ m + (p + n)
+
+-- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
+
+-- _*_ : Nat -> Nat -> Nat
+-- zero  * m = zero
+-- suc n * m = (n * m) + m
+-- +-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p) 
+
+-- _+'_ : N' ->  N' ->  N'
+-- zero +' n = n
+-- (suc m) +' n = suc (m +' n)
+-- infixl 30 _+'_
+-- +-assoc eq proof
+
++-assoc3 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
++-assoc3 zero n p =
+  begin
+    (zero + n) + p 
+  ≡⟨⟩
+    n + p 
+  ≡⟨⟩
+    zero + (n + p)
+   ∎
++-assoc3 (suc m) n p =
+  begin
+    (suc m + n) + p
+  ≡⟨⟩
+    suc (m + n) + p
+  ≡⟨⟩
+    suc ((m + n) + p)
+  ≡⟨ cong suc (+-assoc3 m n p) ⟩
+    suc (m + (n + p))
+  ≡⟨⟩
+    suc m + (n + p)
+   ∎
+ -- ≡⟨⟩ 
+ -- {!   !}
+*-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+*-distrib-+' zero n p =
+  begin 
+    (zero + n) * p 
+  ≡⟨⟩
+    {!   !}
+
+*-distrib-+ : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+*-distrib-+ zero n p = refl
+*-distrib-+ (suc m) n p                   -- gives (suc m + n) * p ≡ suc m * p + n * p which becomes:
+                                          -- (m + n * m) + p
+   rewrite *-distrib-+ m n p = {!   !}   -- p + (m * p + n * p) ≡ p + m * p + n * p
+   -- rewrite sym (+-assoc2 p (m * p) (n * p)) = refl
+
+    -- ?0 : p + (m * p + n * p) ≡ p + m * p + n * p
+-- idea: use +-assoc....
+-- closer: 
+  -- cong suc {m * p + n * p} {m * p + n * p} (*-distrib-+ m n p)
+
+-- cong suc {m * p + n * p} {m * p + n * p} (*-distrib-+ m n p) 
+
+-- cong suc {m * p + n * p} {m * p + n * p} has type: 
+-- ∀ (m n p : ℕ) -> m * p + n * p ≡ m * p + n * p -> suc(m * p + n * p) ≡ suc(m * p + n * p)
+-- (suc m + n) * p ≡ suc m * p + n * p becomes
+-- (n * m) + m                        (by ind. hyp)
+-- 
+   -- n * p + p * m
