@@ -380,8 +380,8 @@ lt-inv-shorten x y (s<s x y h1) = h1
 *-distrib-+ zero n p = refl
 *-distrib-+ (suc m) n p                   -- gives (suc m + n) * p ≡ suc m * p + n * p which becomes:
                                           -- (m + n * m) + p
-   rewrite *-distrib-+ m n p = {!   !}   -- p + (m * p + n * p) ≡ p + m * p + n * p
-   -- rewrite sym (+-assoc2 p (m * p) (n * p)) = refl
+   rewrite *-distrib-+ m n p    -- p + (m * p + n * p) ≡ p + m * p + n * p
+  rewrite sym (+-assoc2 p (m * p) (n * p)) = refl
 
     -- ?0 : p + (m * p + n * p) ≡ p + m * p + n * p
 -- idea: use +-assoc....
@@ -396,3 +396,45 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- (n * m) + m                        (by ind. hyp)
 -- 
    -- n * p + p * m  
+*-assoc : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
+*-assoc zero n p = 
+  begin 
+    (zero * n) * p
+  ≡⟨⟩
+    zero * p
+  ≡⟨⟩
+   zero
+  ≡⟨⟩
+   zero * (n * p)
+  ≡⟨⟩
+   zero
+  ∎
+
+-- _*_ : ℕ -> ℕ -> ℕ
+-- zero    * n  =  zero
+-- (suc m) * n  =  n + (m * n)
+
+-- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+-- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
+-- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
+*-assoc (suc m) n p = 
+  begin -- (suc m) * n  =  n + (m * n)
+    (suc m * n) * p
+  ≡⟨⟩
+    (n + (m * n)) * p 
+  ≡⟨ (*-distrib-+' n (m * n) p) ⟩ 
+    n * p + ((m * n) * p)
+    -- goal: n * p + m * n * p ≡ n * p + m * (n * p)
+  ≡⟨ cong ((n * p) +_ ) (*-assoc m n p) ⟩  
+            -- constructing a term 
+            -- of the right shape w/ the help of the 
+            -- ind. hypothesis (app of *-assoc) 
+    n * p + (m * (n * p)) 
+  ∎
+
+-- with rewrite ind. def (without chains of equations)
+*-assoc' : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
+*-assoc' zero n p = refl
+*-assoc' (suc m) n p 
+  rewrite (*-distrib-+' n (m * n) p) 
+  rewrite (cong ((n * p) +_ ) (*-assoc m n p)) = refl
