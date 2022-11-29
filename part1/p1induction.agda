@@ -1,4 +1,4 @@
-module p1b where
+module p1induction where
 
 import Data.Nat
 import Relation.Binary.PropositionalEquality as Eq

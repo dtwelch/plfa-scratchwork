@@ -1,4 +1,4 @@
-module p1c where
+module p1relations where
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; cong)
@@ -469,21 +469,36 @@ lt-inv-shorten x y (s<s x y h1) = h1
 *-zero-is-zero' : ∀ (n : ℕ) -> n * 0 ≡ 0
 *-zero-is-zero' zero = refl 
 *-zero-is-zero' (suc n) rewrite (*-zero-is-zero n) = refl
--- suc n * 0 ≡ 0
--- 0 + (n * 0) ≡ 0 rewrite n * 0 as 0 in goal, gives: 0 + 0 = refl...
--- so with rewrite, you're always substituting something in the goal 
--- based on lhs ≡ rhs evidence you're giving for the rewrite.
+-- goal: suc n * 0 ≡ 0 simplies (via the def. to:)
+--       0 + (n * 0) ≡ 0 rewrite n * 0 as 0 in goal via ind. hypothesis:(*-zero-is-zero n), 
+--       gives: 0 + 0 = refl...
+-- so with rewrite, you're always substituting some term key term τ in the goal G
+-- based on an extensional equality term of the form lhs ≡ rhs  produced by some 
+-- other definition (in the service of constructing evidence of something)
+-- .. so  every occurrence of τ in the goal G is substitute by rhs..)
 
--- cong (0 +_ ) (*-zero-is-zero n)
+-- _*_ : ℕ -> ℕ -> ℕ
+-- zero    * n  =  zero
+-- (suc m) * n  =  n + (m * n)
+
+-- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
+-- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+-- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
+*-succ : ∀ (m n : ℕ) -> m * (suc m) ≡ m + m * n
+*-succ zero n = refl
+*-succ (suc m) n = 
+  begin 
+    m * (suc m)
+  ≡⟨⟩ 
+    ?
+ 
+  
 *-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
 *-comm n zero = *-zero-is-zero' n
 *-comm zero n = sym (*-zero-is-zero' n)
-
-
 -- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
 -- *-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
 -- +-swap : ∀ (m n p : ℕ) -> m + (n + p) ≡ n + (m + p)
-
 *-comm (suc m) n =
   begin
     (suc m) * n 
