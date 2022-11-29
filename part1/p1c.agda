@@ -438,3 +438,65 @@ lt-inv-shorten x y (s<s x y h1) = h1
 *-assoc' (suc m) n p 
   rewrite (*-distrib-+' n (m * n) p) 
   rewrite (cong ((n * p) +_ ) (*-assoc m n p)) = refl
+
+-- _*_ : ℕ -> ℕ -> ℕ
+-- zero    * n  =  zero
+-- (suc m) * n  =  n + (m * n)
+
+-- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
+-- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+-- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
+*-zero-is-zero : ∀ (n : ℕ) -> n * 0 ≡ 0
+*-zero-is-zero zero = refl 
+*-zero-is-zero (suc n) = 
+  begin 
+    (suc n) * 0
+  ≡⟨⟩
+    0 + (suc n * 0)
+  ≡⟨⟩
+    (suc n * 0) 
+  ≡⟨⟩
+    0 + (n * 0)
+  ≡⟨ cong (0 +_ ) (*-zero-is-zero n) ⟩
+    0 + (0 * n)
+  ≡⟨⟩
+    0 + 0
+  ≡⟨⟩
+    0
+  ∎
+
+-- todo: *-comm' (traditional ind rewrite based proof)
+
+-- cong (0 +_ ) (*-zero-is-zero n)
+*-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
+*-comm n zero = *-zero-is-zero n 
+
+
+-- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
+-- *-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
+-- +-swap : ∀ (m n p : ℕ) -> m + (n + p) ≡ n + (m + p)
+
+*-comm (suc m) n =
+  begin
+    (suc m) * n 
+  ≡⟨⟩
+    n + (m * n)
+  -- ≡⟨ cong (n +_ ) (+-swap 0 (m * n) 0) ⟩ -- (+-swap 0 (m * n) 0) -> m * n + 0 ≡ m * n + 0
+  --  n + (m * n + 0)
+  ≡⟨⟩
+    {!   !}
+  -- (+-swap 0 (m * n) 0) -- gives m + (n + 0) ≡ n + (m + 0)
+  -- hmm .. need to get the * in there..
+  -- (+-swap n (m * n) 0) -- gives (m * n) + ((n * m) + 0) ≡ (n * m) + ((m * n) + 0)
+
+
+    -- n + ((m * n) + 0) . using +-swap
+-- (+-swap m n 0)
+-- goal: n + m * n ≡ n * suc m
+-- (+-swap 
+    -- cong ( n +_ ) (*-comm n m )
+-- n + m * n ≡ n * suc m
+-- sym:
+-- n * suc m ≡ n + m * n
+-- *-comm 
+-- (*-distrib-+' zero n zero)
