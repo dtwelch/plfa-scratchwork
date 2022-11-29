@@ -465,11 +465,19 @@ lt-inv-shorten x y (s<s x y h1) = h1
     0
   ∎
 
--- todo: *-comm' (traditional ind rewrite based proof)
+-- todo: *-zero-is-zero' (traditional ind rewrite based proof)
+*-zero-is-zero' : ∀ (n : ℕ) -> n * 0 ≡ 0
+*-zero-is-zero' zero = refl 
+*-zero-is-zero' (suc n) rewrite (*-zero-is-zero n) = refl
+-- suc n * 0 ≡ 0
+-- 0 + (n * 0) ≡ 0 rewrite n * 0 as 0 in goal, gives: 0 + 0 = refl...
+-- so with rewrite, you're always substituting something in the goal 
+-- based on lhs ≡ rhs evidence you're giving for the rewrite.
 
 -- cong (0 +_ ) (*-zero-is-zero n)
 *-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
-*-comm n zero = *-zero-is-zero n 
+*-comm n zero = *-zero-is-zero' n
+*-comm zero n = sym (*-zero-is-zero' n)
 
 
 -- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
