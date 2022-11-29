@@ -16,4 +16,5 @@ infix 4 _≡_
     -> y ≡ z 
     ---------
     -> x ≡ z
-≡-trans a b c refl refl = {!   !}
+≡-trans a b c refl refl = refl 
+
