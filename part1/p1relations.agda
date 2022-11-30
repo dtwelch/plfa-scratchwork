@@ -6,20 +6,28 @@ open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
 open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
 open import Data.Nat.Properties using (+-comm; +-identityʳ)
 
-data _⩽_ : ℕ -> ℕ -> Set where
-  z⩽n : ∀ (n : ℕ)
+data _≤_ : ℕ -> ℕ -> Set where
+  z≤n : ∀ (n : ℕ)
       ------------
-      -> zero ⩽ n
+      -> zero ≤ n
 
-  s⩽s : ∀ (m n : ℕ)
-      -> m ⩽ n
+  s≤s : ∀ (m n : ℕ)
+      -> m ≤ n
       -------------
-      -> suc m ⩽ suc n
+      -> suc m ≤ suc n
 
 -- _ : 2 ⩽ 4
 -- _ = s⩽s (s⩽s 0 2 (z⩽n 2))
 
-infix 4 _⩽_
+infix 4 _≤_
+
+inv-s≤s : ∀ (m n : ℕ) 
+    -> suc m ≤ suc n  -- h1
+       --------------
+    -> m ≤ n 
+inv-s≤s zero n h1 = (z≤n n)
+inv-s≤s (suc m) n h1 =
+  {!   !}
 
 -- commutativity with rewrite (practice from the prior ch)
 +-id' : ∀ (n : ℕ)
@@ -69,10 +77,10 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
 
 -- claim:
 leq-inv-shorten : ∀ (m n : ℕ)
-  -> suc m ⩽ suc n    -- h1
+  -> suc m ≤ suc n    -- h1
      --------------
-  -> m ⩽ n
-leq-inv-shorten x y (s⩽s x y h1)  = h1
+  -> m ≤ n
+leq-inv-shorten x y (s≤s x y h1)  = h1
 -- how does it know what hyp2 refers to the last -> m ⩽ n .. I thought
 -- I was trying to provide evidence that m ⩽ n
 
@@ -81,66 +89,66 @@ leq-inv-shorten x y (s⩽s x y h1)  = h1
  -- claim:
 leq-refl : ∀ (n : ℕ)
   ------------------
-  -> n ⩽ n
-leq-refl zero = z⩽n zero
-leq-refl (suc moo) = s⩽s _ _ (leq-refl moo)
+  -> n ≤ n
+leq-refl zero = z≤n zero
+leq-refl (suc moo) = s≤s _ _ (leq-refl moo)
 
 -- claim (hint: two defining equations):
 leq-trans : ∀ (m n p : ℕ)
-  -> m ⩽ n -- hypothesis 1 (h1)
-  -> n ⩽ p -- hypothesis 2 (h2)
+  -> m ≤ n -- hypothesis 1 (h1)
+  -> n ≤ p -- hypothesis 2 (h2)
   -------
-  -> m ⩽ p
-  -- zero ⩽ n
-leq-trans zero y z h1 h2  = z⩽n _
-leq-trans (suc x) (suc y) (suc z) (s⩽s x y h1) (s⩽s y z h2) = s⩽s x z (leq-trans x y z h1 h2)
+  -> m ≤ p
+  -- zero ≤ n
+leq-trans zero y z h1 h2  = z≤n _
+leq-trans (suc x) (suc y) (suc z) (s≤s x y h1) (s≤s y z h2) = s≤s x z (leq-trans x y z h1 h2)
 
 {-
-z⩽n : ∀ (n : ℕ)
+z≤n : ∀ (n : ℕ)
     ------------
-    -> zero ⩽ n
+    -> zero ≤ n
 
-s⩽s : ∀ (m n : ℕ)
-    -> m ⩽ n
+s≤s : ∀ (m n : ℕ)
+    -> m ≤ n
     -------------
-    -> suc m ⩽ suc n
+    -> suc m ≤ suc n
 -}
 leq-antisym : ∀ (m n : ℕ)
-  -> m ⩽ n
-  -> n ⩽ m
+  -> m ≤ n
+  -> n ≤ m
   ---------
   -> m ≡ n
                     -- constructing evidence for the first part of the claim (after ->) -- i.e.: m ⩽ n
-leq-antisym zero zero (z⩽n zero) (z⩽n zero) = refl
-leq-antisym (suc x) (suc y) (s⩽s x y h1) (s⩽s y x h2) = cong suc (leq-antisym x y h1 h2)
+leq-antisym zero zero (z≤n zero) (z≤n zero) = refl
+leq-antisym (suc x) (suc y) (s≤s x y h1) (s≤s y x h2) = cong suc (leq-antisym x y h1 h2)
 -- recall cong: in this case, saying cong suc (leq-antisym x y h1 h2)  is
 -- applying the successor fn 'suc' to each side of the equation resulting from
 -- the app: (leq-antisym x y h1 h2)
 
 data Total : ℕ -> ℕ -> Set where
   forward : ∀ (m n : ℕ)
-          -> m ⩽ n
+          -> m ≤ n
           -------------
           -> Total m n
 
   flipped : ∀ (m n : ℕ)
-          -> n ⩽ m
+          -> n ≤ m
           -------------
           -> Total m n
 
-⩽-total : ∀ (m n : ℕ) -> Total m n
-⩽-total zero n             = forward zero n (z⩽n n)
-⩽-total (suc x) zero       = flipped (suc x) zero (z⩽n (suc x))
-⩽-total (suc x) (suc y) with ⩽-total x y
-...                        | forward x y h1  =  forward (suc x) (suc y) (s⩽s x y h1) -- forward case of ind. hypo
-...                        | flipped x y h2  =  flipped (suc x) (suc y) ((s⩽s y x) h2) -- flipped case of ind, hypo
+≤-total : ∀ (m n : ℕ) -> Total m n
+≤-total zero n             = forward zero n (z≤n n)
+≤-total (suc x) zero       = flipped (suc x) zero (z≤n (suc x))
+≤-total (suc x) (suc y) with ≤-total x y
+...                        | forward x y h1  =  forward (suc x) (suc y) (s≤s x y h1) -- forward case of ind. hypo
+...                        | flipped x y h2  =  flipped (suc x) (suc y) ((s≤s y x) h2) -- flipped case of ind, hypo
 
-+-right-mono-wrt-⩽ : ∀ (n p q : ℕ)
-  -> p ⩽ q
++-right-mono-wrt-≤ : ∀ (n p q : ℕ)
+  -> p ≤ q
   -------------
-  -> n + p ⩽ n + q
-+-right-mono-wrt-⩽ zero    p q h1   = h1
-+-right-mono-wrt-⩽ (suc x) y z h2   = s⩽s (x + y) (x + z) (+-right-mono-wrt-⩽ x y z h2)
+  -> n + p ≤ n + q
++-right-mono-wrt-≤ zero    p q h1   = h1
++-right-mono-wrt-≤ (suc x) y z h2   = s≤s (x + y) (x + z) (+-right-mono-wrt-≤ x y z h2)
                                           -- if you don't do (x + y) (x + z)
                                           -- and just instantiate it with x y, it (rightly)
                                           -- doesn't prove
@@ -148,37 +156,37 @@ data Total : ℕ -> ℕ -> Set where
 
 -- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
 
-+-left-mono-wrt-⩽ : ∀ (m n p : ℕ)
-  -> m ⩽ n    -- h1
++-left-mono-wrt-≤ : ∀ (m n p : ℕ)
+  -> m ≤ n    -- h1
   ----------
-  -> m + p ⩽ n + p
-+-left-mono-wrt-⩽ x y z h1 rewrite
-  (+-comm' x z) | (+-comm' y z) = +-right-mono-wrt-⩽ z x y h1
+  -> m + p ≤ n + p
++-left-mono-wrt-≤ x y z h1 rewrite
+  (+-comm' x z) | (+-comm' y z) = +-right-mono-wrt-≤ z x y h1
 
--- x + z ⩽ y + z
+-- x + z ≤ y + z
 -- apply +-comm' x z
--- z + x ⩽ y + z
+-- z + x ≤ y + z
 -- apply +-comm' y z
--- z + x ⩽ z + y
+-- z + x ≤ z + y
 --  =
--- +-right-mono-wrt-⩽ z y x h1 [gives: z + x ⩽ z + y]
--- (this is how we construct a term with 'type' z + x ⩽ z + y)
+-- +-right-mono-wrt-⩽ z y x h1 [gives: z + x ≤ z + y]
+-- (this is how we construct a term with 'type' z + x ≤ z + y)
 
 -- now we can combine the left and right results:
 
--- +-left-mono-wrt-⩽  : ∀ (m n p : ℕ) -> m ⩽ n -> m + p ⩽ n + p
--- +-right-mono-wrt-⩽ : ∀ (n p q : ℕ) -> p ⩽ q -> n + p ⩽ n + q
--- leq-trans : ∀ (m n p : ℕ) -> m ⩽ n -> n ⩽ p -> m ⩽ p
+-- +-left-mono-wrt-≤  : ∀ (m n p : ℕ) -> m ≤ n -> m + p ≤ n + p
+-- +-right-mono-wrt-≤ : ∀ (n p q : ℕ) -> p ≤ q -> n + p ≤ n + q
+-- leq-trans : ∀ (m n p : ℕ) -> m ≤ n -> n ≤ p -> m ≤ p
 
 +-mono-⩽ : ∀ (m n p q : ℕ)
-  -> m ⩽ n  -- h1
-  -> p ⩽ q  -- h2
+  -> m ≤ n  -- h1
+  -> p ≤ q  -- h2
   ---------
-  -> m + p ⩽ n + q
+  -> m + p ≤ n + q
 +-mono-⩽ i j k l h1 h2 =
   leq-trans (i + k) (j + k) (j + l) -- ((i + k) ⩽ (j + k)) -> ((j + k) ⩽ (j + l)) -> (i + k) ⩽ (j + l)
-    (+-left-mono-wrt-⩽ i j k h1) -- i + k ⩽ j + k
-    (+-right-mono-wrt-⩽ j k l h2)   -- j + k ⩽ j + 1
+    (+-left-mono-wrt-≤ i j k h1) -- i + k ⩽ j + k
+    (+-right-mono-wrt-≤ j k l h2)   -- j + k ⩽ j + 1
 -- goal: i + k ⩽ j + l
 -- phew.
 
@@ -239,7 +247,7 @@ s⩽s : ∀ (m n : ℕ)
 
 -}
 -- this is the evidence we need to provide in order to use the ind. hypo:
--- suc (suc m) ⩽ suc n
+-- suc (suc m) ≤ suc n
 lt-inv-shorten : ∀ (m n : ℕ)
   -> suc m < suc n    -- h1
      --------------
@@ -247,11 +255,11 @@ lt-inv-shorten : ∀ (m n : ℕ)
 lt-inv-shorten x y (s<s x y h1) = h1
 
 <-suc1' : ∀ (m n : ℕ)
-  -> suc m ⩽ n   -- h1
+  -> suc m ≤ n   -- h1
   -------------
   -> m < n
 <-suc1' zero (suc y) h1 = z<s y
-<-suc1' (suc x) (suc y) (s⩽s (suc x) y h1) = s<s x y (<-suc1' x y h1)
+<-suc1' (suc x) (suc y) (s≤s (suc x) y h1) = s<s x y (<-suc1' x y h1)
 -- note (as mentioned below): on lhs of the = above, the (s⩽s (suc x) y h1)
 -- is constructing a term that is the same shape as the one for the
 -- ind. hypothesis h1
@@ -259,9 +267,9 @@ lt-inv-shorten x y (s<s x y h1) = h1
 <-suc2' : ∀ (m n : ℕ)
   -> m < n    -- h1
   -------------
-  -> suc m ⩽ n
-<-suc2' zero (suc y) h1 = s⩽s zero y (z⩽n y)
-<-suc2' (suc x) (suc y) (s<s x y h1) = s⩽s (suc x) y (<-suc2' x y h1)
+  -> suc m ≤ n
+<-suc2' zero (suc y) h1 = s≤s zero y (z≤n y)
+<-suc2' (suc x) (suc y) (s<s x y h1) = s≤s (suc x) y (<-suc2' x y h1)
 -- So I think the (s<s x y h1) on the lhs of = is like the inductive hypothesis...
 -- i.e.: you're constructing a term that is the claim for the nth element
 -- of whatever sequence you're dealing with -- so you're just it seems constructing
@@ -273,7 +281,7 @@ lt-inv-shorten x y (s<s x y h1) = h1
 
 
 
---s⩽s (suc x) (suc y) (<-suc2' x y
+-- s≤s (suc x) (suc y) (<-suc2' x y
 -- goal: suc (suc x) ⩽ suc y
 
 {-
@@ -289,237 +297,3 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- https://agda.readthedocs.io/en/v2.6.2.2/getting-started/a-taste-of-agda.html
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
-
-+-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p) 
-+-assoc2 zero n p = refl
-+-assoc2 (suc m) n p = (cong suc {(m + n) + p} {m + (n + p)}) (+-assoc2 m n p) 
-                                -- note: ^ filling in the implicits with what we're trying to prove 
-                                -- equivalents of... then applying suc to that
-
--- associative and commutative
-
--- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
-
-+-swap : ∀ (m n p : ℕ) -> m + (n + p) ≡ n + (m + p)
-+-swap m n p 
-  rewrite +-comm' n (m + p)   -- goal after: m + (n + p) ≡ (m + p) + n
-  rewrite +-assoc2 m p n      -- goal after: m + (n + p) ≡ m + (p + n)
-  rewrite +-comm' p n = refl  -- goal after: m + (p + n) ≡ m + (p + n)
-
--- +-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
-
--- +-assoc eq proof
-
-+-assoc3 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
-+-assoc3 zero n p =
-  begin
-    (zero + n) + p 
-  ≡⟨⟩
-    n + p 
-  ≡⟨⟩
-    zero + (n + p)
-   ∎
-+-assoc3 (suc m) n p =
-  begin
-    (suc m + n) + p
-  ≡⟨⟩
-    suc (m + n) + p
-  ≡⟨⟩
-    suc ((m + n) + p)
-  ≡⟨ cong suc (+-assoc3 m n p) ⟩
-    suc (m + (n + p))
-  ≡⟨⟩
-    suc m + (n + p)
-   ∎
-
-
-
--- _+'_ : N' ->  N' ->  N'
--- zero +' n = n
--- (suc m) +' n = suc (m +' n)
--- infixl 30 _+'_
-
-*-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
-*-distrib-+' zero n p =
-  begin 
-    (zero + n) * p  -- (zero + n) * p ≡ zero * p + n
-  ≡⟨⟩
-    n * p
-  ≡⟨⟩
-    (zero * p) + n * p
-  ≡⟨⟩ 
-    zero + n * p
-  ≡⟨⟩
-    n * p
-   ∎
--- _*_ : ℕ -> ℕ -> ℕ
--- zero    * n  =  zero
--- (suc m) * n  =  n + (m * n)
-
--- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
-
-*-distrib-+' (suc m) n p = -- (suc m + n) * p ≡ suc m * p + n * p
-  begin
-    (suc m + n) * p
-  ≡⟨⟩
-    suc (m + n) * p
-  ≡⟨⟩
-    p + ((m + n) * p)
-  ≡⟨ cong (p +_) (*-distrib-+' m n p) ⟩  -- *-distrib-+' m n p only gives a term
-                                         -- of the form: (m + n) * p
-                                         -- the cong combinator applied to the (p +_)
-                                         -- partial application gives evidence of a term:
-                                      -- p + ((m + n) * p) (which is the one we need to match against)
-    p + (m * p + n * p) 
-  ≡⟨ sym (+-assoc2 p (m * p) (n * p)) ⟩ -- sym 'flips' the instantiated assoc proof
-    (p + m * p) + n * p  -- sym (+-assoc2 p (m * p) (n * p)) 
-    ∎
-   -- +-assoc2 : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
- 
-*-distrib-+ : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
-*-distrib-+ zero n p = refl
-*-distrib-+ (suc m) n p                   -- gives (suc m + n) * p ≡ suc m * p + n * p which becomes:
-                                          -- (m + n * m) + p
-   rewrite *-distrib-+ m n p    -- p + (m * p + n * p) ≡ p + m * p + n * p
-  rewrite sym (+-assoc2 p (m * p) (n * p)) = refl
-
-    -- ?0 : p + (m * p + n * p) ≡ p + m * p + n * p
--- idea: use +-assoc....
--- closer: 
-  -- cong suc {m * p + n * p} {m * p + n * p} (*-distrib-+ m n p)
-
--- cong suc {m * p + n * p} {m * p + n * p} (*-distrib-+ m n p) 
-
--- cong suc {m * p + n * p} {m * p + n * p} has type: 
--- ∀ (m n p : ℕ) -> m * p + n * p ≡ m * p + n * p -> suc(m * p + n * p) ≡ suc(m * p + n * p)
--- (suc m + n) * p ≡ suc m * p + n * p becomes
--- (n * m) + m                        (by ind. hyp)
--- 
-   -- n * p + p * m  
-*-assoc : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
-*-assoc zero n p = 
-  begin 
-    (zero * n) * p
-  ≡⟨⟩
-    zero * p
-  ≡⟨⟩
-   zero
-  ≡⟨⟩
-   zero * (n * p)
-  ≡⟨⟩
-   zero
-  ∎
-
--- _*_ : ℕ -> ℕ -> ℕ
--- zero    * n  =  zero
--- (suc m) * n  =  n + (m * n)
-
--- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
--- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
--- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
-*-assoc (suc m) n p = 
-  begin -- (suc m) * n  =  n + (m * n)
-    (suc m * n) * p
-  ≡⟨⟩
-    (n + (m * n)) * p 
-  ≡⟨ (*-distrib-+' n (m * n) p) ⟩ 
-    n * p + ((m * n) * p)
-    -- goal: n * p + m * n * p ≡ n * p + m * (n * p)
-  ≡⟨ cong ((n * p) +_ ) (*-assoc m n p) ⟩  
-            -- constructing a term 
-            -- of the right shape w/ the help of the 
-            -- ind. hypothesis (app of *-assoc) 
-    n * p + (m * (n * p)) 
-  ∎
-
--- with rewrite ind. def (without chains of equations)
-*-assoc' : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
-*-assoc' zero n p = refl
-*-assoc' (suc m) n p 
-  rewrite (*-distrib-+' n (m * n) p) 
-  rewrite (cong ((n * p) +_ ) (*-assoc m n p)) = refl
-
--- _*_ : ℕ -> ℕ -> ℕ
--- zero    * n  =  zero
--- (suc m) * n  =  n + (m * n)
-
--- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
--- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
--- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
-*-zero-is-zero : ∀ (n : ℕ) -> n * 0 ≡ 0
-*-zero-is-zero zero = refl 
-*-zero-is-zero (suc n) = 
-  begin 
-    (suc n) * 0
-  ≡⟨⟩
-    0 + (suc n * 0)
-  ≡⟨⟩
-    (suc n * 0) 
-  ≡⟨⟩
-    0 + (n * 0)
-  ≡⟨ cong (0 +_ ) (*-zero-is-zero n) ⟩
-    0 + (0 * n)
-  ≡⟨⟩
-    0 + 0
-  ≡⟨⟩
-    0
-  ∎
-
--- todo: *-zero-is-zero' (traditional ind rewrite based proof)
-*-zero-is-zero' : ∀ (n : ℕ) -> n * 0 ≡ 0
-*-zero-is-zero' zero = refl 
-*-zero-is-zero' (suc n) rewrite (*-zero-is-zero n) = refl
--- goal: suc n * 0 ≡ 0 simplies (via the def. to:)
---       0 + (n * 0) ≡ 0 rewrite n * 0 as 0 in goal via ind. hypothesis:(*-zero-is-zero n), 
---       gives: 0 + 0 = refl...
--- so with rewrite, you're always substituting some term key term τ in the goal G
--- based on an extensional equality term of the form lhs ≡ rhs  produced by some 
--- other definition (in the service of constructing evidence of something)
--- .. so  every occurrence of τ in the goal G is substitute by rhs..)
-
--- _*_ : ℕ -> ℕ -> ℕ
--- zero    * n  =  zero
--- (suc m) * n  =  n + (m * n)
-
--- *-assoc      : ∀ (m n p : ℕ) -> (m * n) * p ≡ m * (n * p)
--- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
--- +-assoc3     : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
-*-succ : ∀ (m n : ℕ) -> m * (suc m) ≡ m + m * n
-*-succ zero n = refl
-*-succ (suc m) n = 
-  begin 
-    m * (suc m)
-  ≡⟨⟩ 
-    ?
- 
-  
-*-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
-*-comm n zero = *-zero-is-zero' n
-*-comm zero n = sym (*-zero-is-zero' n)
--- *-distrib-+' : ∀ (m n p : ℕ) -> (m + n) * p ≡ m * p + n * p
--- *-comm : ∀ (m n : ℕ) -> m * n ≡ n * m 
--- +-swap : ∀ (m n p : ℕ) -> m + (n + p) ≡ n + (m + p)
-*-comm (suc m) n =
-  begin
-    (suc m) * n 
-  ≡⟨⟩
-    n + (m * n)
-  -- ≡⟨ cong (n +_ ) (+-swap 0 (m * n) 0) ⟩ -- (+-swap 0 (m * n) 0) -> m * n + 0 ≡ m * n + 0
-  --  n + (m * n + 0)
-  ≡⟨⟩
-    {!   !}
-  -- (+-swap 0 (m * n) 0) -- gives m + (n + 0) ≡ n + (m + 0)
-  -- hmm .. need to get the * in there..
-  -- (+-swap n (m * n) 0) -- gives (m * n) + ((n * m) + 0) ≡ (n * m) + ((m * n) + 0)
-
-
-    -- n + ((m * n) + 0) . using +-swap
--- (+-swap m n 0)
--- goal: n + m * n ≡ n * suc m
--- (+-swap 
-    -- cong ( n +_ ) (*-comm n m )
--- n + m * n ≡ n * suc m
--- sym:
--- n * suc m ≡ n + m * n
--- *-comm 
--- (*-distrib-+' zero n zero)
