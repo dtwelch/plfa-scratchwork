@@ -7,10 +7,10 @@ open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
 open import Data.Nat  using ( zero; suc; _*_; _∸_; _≡ᵇ_) renaming (ℕ to N'; _+_ to _+'_)
 open import Data.Bool using (Bool; true; false; T; _∧_; _∨_; not; if_then_else_)
 
---_+'_ : N' ->  N' ->  N'
---zero +' n = n
---(suc m) +' n = suc (m +' n)
---infixl 30 _+'_
+-- _+'_ : N' ->  N' ->  N'
+-- zero +' n = n
+-- (suc m) +' n = suc (m +' n)
+-- infixl 30 _+'_
 
 +-assoc : ∀ (m n p : N') -> (m +' n) +' p ≡ m +' (n +' p)
 -- first need to estbalish the base case of the property trying to be proved..

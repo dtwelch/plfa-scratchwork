@@ -21,13 +21,12 @@ data _≤_ : ℕ -> ℕ -> Set where
 
 infix 4 _≤_
 
-inv-s≤s : ∀ (m n : ℕ) 
+inv-s≤s : ∀ (m n : ℕ)
     -> suc m ≤ suc n  -- h1
        --------------
     -> m ≤ n 
-inv-s≤s zero n h1 = (z≤n n)
-inv-s≤s (suc m) n h1 =
-  {!   !}
+inv-s≤s zero n h1 = (z≤n n) -- <-- technically not needed...
+inv-s≤s m n (s≤s m n h1) = h1
 
 -- commutativity with rewrite (practice from the prior ch)
 +-id' : ∀ (n : ℕ)
