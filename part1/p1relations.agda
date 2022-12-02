@@ -32,46 +32,7 @@ inv-z≤n : ∀ (m : ℕ)
   ->  m ≤ zero 
       --------
   ->  m ≡ zero
-inv-z≤n n   
-
--- commutativity with rewrite (practice from the prior ch)
-+-id' : ∀ (n : ℕ)
-  ----------------
-  -> n + zero ≡ n
-+-id' zero = refl
-+-id' (suc x) rewrite +-id' x = refl
-
-+-suc' : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
-+-suc' zero n = refl
-+-suc' (suc m) n rewrite +-suc' m n = refl
-
-_test : zero + suc 1 ≡ suc (zero + 1)
-_test = refl  -- the terms are definitionally equal, see base case for _+_
-
-+-comm' : ∀ (m n : ℕ) -> m + n ≡ n + m
-+-comm' m zero    rewrite +-id' m = refl
-+-comm' m (suc n) rewrite +-suc' m n | +-comm' m n = refl
--- the bar | allows us to use *two* equations:
---   +-suc' m n [m + (suc n) ≡ suc (m + n)] and
---   +-comm' m n [m + n ≡ n + m]
--- NOTE: order of rewrites specified between |s matter
--- so rewrite.. here are the sequence of rewrites here (I think):
--- initially we apply the first rewrite rule
---      +-suc' m n [m + (suc n) ≡ (suc n) + m] to get:
---          suc (m + n) ≡ (suc n) + m
---        then we simplify r.h.s using the suc constructor from _+_
---        suc (n + m) to get:
---          suc (m + n) ≡ suc (n + m)
---        now the +-comm' m n rewrite rule will come in handy to achieve:
---          suc (n + m) ≡ suc (n + m)
---        and we can solve using reflexivity (refl)
-
--- associativity with rewrite (practice from the prior ch)
-+-assoc' : ∀ (m n p : ℕ)
-  -------------------------
-  -> (m + n) + p ≡ m + (n + p)
-+-assoc' zero y z     = refl
-+-assoc' (suc x) y z rewrite +-assoc' x y z = refl
+inv-z≤n n = {!   !}  
 
 
 -- claim:
@@ -84,10 +45,6 @@ leq-inv-shorten : ∀ (m n : ℕ)
      --------------
   -> m ≤ n
 leq-inv-shorten x y (s≤s x y h1)  = h1
--- how does it know what hyp2 refers to the last -> m ⩽ n .. I thought
--- I was trying to provide evidence that m ⩽ n
-
--- hyp2 has to refer to m ⩽ n since the term (s⩽s x y hyp2) evaluates to it..i guess.
 
  -- claim:
 leq-refl : ∀ (n : ℕ)
@@ -164,7 +121,7 @@ data Total : ℕ -> ℕ -> Set where
   ----------
   -> m + p ≤ n + p
 +-left-mono-wrt-≤ x y z h1 rewrite
-  (+-comm' x z) | (+-comm' y z) = +-right-mono-wrt-≤ z x y h1
+  (+-comm x z) | (+-comm y z) = +-right-mono-wrt-≤ z x y h1
 
 -- x + z ≤ y + z
 -- apply +-comm' x z
