@@ -28,6 +28,12 @@ inv-s≤s : ∀ (m n : ℕ)
 inv-s≤s zero n h1 = (z≤n n) -- <-- technically not needed...
 inv-s≤s m n (s≤s m n h1) = h1
 
+inv-z≤n : ∀ (m : ℕ)
+  ->  m ≤ zero 
+      --------
+  ->  m ≡ zero
+inv-z≤n n   
+
 -- commutativity with rewrite (practice from the prior ch)
 +-id' : ∀ (n : ℕ)
   ----------------
@@ -67,8 +73,6 @@ _test = refl  -- the terms are definitionally equal, see base case for _+_
 +-assoc' zero y z     = refl
 +-assoc' (suc x) y z rewrite +-assoc' x y z = refl
 
--- data Square : ℕ -> Set where
---
 
 -- claim:
 -- rt₁ : (n : ℕ) -> Square n -> Nat
