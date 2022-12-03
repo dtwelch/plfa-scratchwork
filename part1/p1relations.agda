@@ -32,14 +32,52 @@ inv-z≤n : ∀ (m : ℕ)
   ->  m ≤ zero 
       --------
   ->  m ≡ zero
-inv-z≤n n = {!   !}  
+inv-z≤n m (z≤n m) = refl
+
+-- exercise:
+-- Give an example of a preorder that is not a partial order.
+-- fixing a domain (vertex set)
+-- V = {a, b, c, d}
+-- E = {(a, b), (b, c) (c, d)}
+-- G = (V, E)
+
+-- Is_Connected_to_In_G : V x V -> Bool
+--  a Is_Connected_to_In_G a (reflexivity)
+--  b Is_Connected_to_In_G b (reflexivity)
+--  etc.
+
+--  if a Is_Connected_to_In_G b and  
+--     b Is_Connected_to_In_G c then 
+--     a Is_Connected_to_In_G c (transitivity)
+
+-- so reln 'Is_Connected_to_In_G' is a preordering
+-- is it anti-symmetric? no. 
+-- 
+-- Consider:
+--  a Is_Connected_to_In_G c and c Is_Connected_to_In_G a is true,
+--  but it is not the case that a = c (diff nodes), so the
+--  Is_Connected_to_In_G is an example of a relation that is a 
+--  preordering, but not a partial order.
+
+≤-refl : ∀ (n : ℕ)
+     -------
+    -> n ≤ n 
+≤-refl zero = (z≤n zero)  
+≤-refl (suc x) = (s≤s x x (≤-refl x))
 
 
--- claim:
--- rt₁ : (n : ℕ) -> Square n -> Nat
--- rt₁ _ (sq m) = m
+≤-trans : ∀ (m n p : ℕ)
+    -> m ≤ n
+    -> n ≤ p 
+    --------
+    -> m ≤ p 
+≤-trans 
 
--- claim:
+
+
+
+
+
 leq-inv-shorten : ∀ (m n : ℕ)
   -> suc m ≤ suc n    -- h1
      --------------
