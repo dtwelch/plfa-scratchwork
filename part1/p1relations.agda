@@ -79,7 +79,7 @@ inv-z≤n m (z≤n m) = refl
 
 ≤-antisym : ∀ (m n : ℕ) 
     -> m ≤ n 
-    -> n ≤ m 
+    -> n ≤ m  
     ---------
     -> m ≡ n
 ≤-antisym zero n (z≤n n) h2 = sym (inv-z≤n n h2)
