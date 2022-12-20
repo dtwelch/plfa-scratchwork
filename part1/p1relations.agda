@@ -77,6 +77,14 @@ inv-z≤n m (z≤n m) = refl
 -- note: need to say (s≤s m n h1), etc. to construct evidence for the ind cases hypotheses
 -- (due to our instantiation of m n and p for the ind. case)
 
+≤-antisym : ∀ (m n : ℕ) 
+    -> m ≤ n 
+    -> n ≤ m 
+    ---------
+    -> m ≡ n
+≤-antisym zero n (z≤n n) h2 = sym (inv-z≤n n h2)
+≤-antisym (suc m) (suc n) h1 h2 = 
+    cong suc (≤-antisym m n (inv-s≤s m n h1) (inv-s≤s n m h2) ) 
 
 
 
@@ -297,3 +305,4 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- https://agda.readthedocs.io/en/v2.6.2.2/getting-started/a-taste-of-agda.html
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
+ 
