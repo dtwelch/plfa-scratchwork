@@ -67,13 +67,15 @@ inv-z≤n m (z≤n m) = refl
 
 
 ≤-trans : ∀ (m n p : ℕ)
-    -> m ≤ n
-    -> n ≤ p 
+    -> m ≤ n -- h1
+    -> n ≤ p -- h2
     --------
     -> m ≤ p 
-≤-trans 
+≤-trans zero m p h1 h2 =  (z≤n p)
+≤-trans (suc m) (suc n) (suc p) (s≤s m n h1) (s≤s n p h2) = s≤s m p (≤-trans m n p h1 h2) 
 
-
+-- note: need to say (s≤s m n h1), etc. to construct evidence for the ind cases hypotheses
+-- (due to our instantiation of m n and p for the ind. case)
 
 
 
