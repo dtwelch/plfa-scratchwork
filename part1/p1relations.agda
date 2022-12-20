@@ -75,7 +75,8 @@ inv-z≤n m (z≤n m) = refl
 ≤-trans (suc m) (suc n) (suc p) (s≤s m n h1) (s≤s n p h2) = s≤s m p (≤-trans m n p h1 h2) 
 
 -- note: need to say (s≤s m n h1), etc. to construct evidence for the ind cases hypotheses
--- (due to our instantiation of m n and p for the ind. case)
+-- (due to our instantiation of (suc m), (suc n), and (suc p) to the 
+--  left of the = in the ind. case)
 
 ≤-antisym : ∀ (m n : ℕ) 
     -> m ≤ n 
