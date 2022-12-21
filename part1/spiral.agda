@@ -26,10 +26,7 @@ toℕ² (suc (suc (suc n)))    = succ (toℕ² (suc (suc n)))
 
 {-# BUILTIN FROMNAT toℕ² #-}
 
-+0 : ∀ (x : ℕ) -> x + zero ≡ x
-+0 zero = refl
-+0 (suc x) rewrite (+0 x) = ?
-    
+
 {-  
 -- works..
 fail : ℕ²
