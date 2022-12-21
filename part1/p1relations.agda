@@ -87,8 +87,6 @@ inv-z≤n m (z≤n m) = refl
 ≤-antisym (suc m) (suc n) h1 h2 = 
     cong suc (≤-antisym m n (inv-s≤s m n h1) (inv-s≤s n m h2) ) 
 
-
-
 leq-inv-shorten : ∀ (m n : ℕ)
   -> suc m ≤ suc n    -- h1
      --------------
@@ -307,3 +305,19 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
  
+-- data Total' (m n : ℕ) : Set where 
+data Total' : ℕ -> ℕ -> Set where 
+  fwd : ∀ (m n : ℕ) 
+    -> m ≤ n 
+    -------------
+    -> Total' m n
+
+  flp : ∀ (m n : ℕ) 
+    -> n ≤ m 
+    -------------
+    -> Total' m n
+
+≤-total' : ∀ (m n : ℕ) -> Total' m n 
+≤-total' zero n = fwd zero n (z≤n n)
+≤-total' (suc m) zero =  (flp (suc m) zero) ( z≤n (suc m) ) 
+≤-total' (suc m) (suc n) = {!   !}
