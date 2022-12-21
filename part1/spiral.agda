@@ -45,9 +45,9 @@ ok' = 3
 -- Sp_Loc - 'Spiral Location'
 -- cen(k) - the central spiral location
 -- ss(k)(p) -- the spiral successor (ss) of location p for a spiral of arity k
--- rs(k)(p) -- the radial successor (rs) "       "               "
+-- rs(k)(p) -- the radial successor (rs) .. "      
 data Sp_Loc (A : Set) : ℕ² -> Set where
-    Cen : (k : ℕ²) -> Sp_Loc A k                
+    Cen : (k : ℕ²) ->  Sp_Loc A k                
     SS  : (k : ℕ²) -> (Sp_Loc A k) -> Sp_Loc A k 
     RS  : (k : ℕ²) -> (Sp_Loc A k) -> Sp_Loc A k 
 

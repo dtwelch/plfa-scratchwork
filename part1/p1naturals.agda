@@ -20,6 +20,8 @@ zero + n = n                -- base case
 +0 zero = refl
 +0 (suc x) rewrite (+0 x) = refl
     
+
+
 _ : 2 + 3 ≡ 5
 _ =
   begin
