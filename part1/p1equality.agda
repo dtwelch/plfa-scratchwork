@@ -32,8 +32,16 @@ sym : ∀ {A : Set} (x y : A)
     ---------
     -> y ≡ x
 sym b a refl = refl
+-- so the above works when supplied
+-- with refl as evidence since some 
+-- 'unification' process when refl is
+-- applied above ends up triggering an 
+-- automatic rewrite/simplification of 
+-- the goal and context (given) into:
+-- b ≡ b -> b ≡ b
+-- (imagine y being substituted for x in the defn)
 
--- ok, for an explanation of why refl works above,
+-- for an explanation of why refl works above,
 -- see: https://cs.uwaterloo.ca/~plragde/747/notes/Equality.html
 {-
 7.1 Equality is an equivalence relation
@@ -51,3 +59,34 @@ modest complexity, unification will often fail
 (the kind of problem it is trying to solve is 
 undecidable in general).
 -}
+
+trans : ∀ {A : Set} (x y z : A)
+    -> x ≡ y 
+    -> y ≡ z 
+    --------
+    -> x ≡ z 
+trans a .a c refl h2 = h2 
+
+-- so the a .a renaming on the case split
+-- above is an indication that agda relealized
+-- no matter the instantiation for 
+-- x and y, they are going to be the same.
+-- (some unification algorithm to recognize )
+
+-- equality satisfies congruence: if two terms t1, t2
+-- are equal, then they are also equal after application
+-- of some function f to both terms
+cong : ∀ {A B : Set} (f : A -> B) (x y : A)
+    -> x ≡ y 
+    ---------
+    -> f x ≡ f y 
+cong f b a refl = refl
+
+cong₂ : ∀ {A B C : Set} 
+          (f : A -> B -> C) 
+          (u x : A) (v y : B)
+    -> x ≡ u 
+    -> y ≡ v 
+    ----------------
+    -> f u v ≡ f x y
+cong₂ f a b i j refl refl = refl
