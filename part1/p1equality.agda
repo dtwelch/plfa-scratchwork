@@ -1,20 +1,35 @@
 module p1equality where
+open import Data.Nat using (ℕ; zero)
+-- data _≡_ {A : Set} (x : A) : A -> Set where 
+--    refl : x ≡ x 
 
-data _≡_ {A : Set} (x : A) : A -> Set where 
-    refl : x ≡ x 
+-- note: above and below (indexed vs parameterized versions)
+
+data _≡_ {A : Set} : A -> A -> Set where
+    refl : (a : A) -> a ≡ a
+-- refl {ℕ} (0) gives/constructs/provides-evidence-for the term: 0 ≡ 0
 
 infix 4 _≡_
 
-≡-symmetric : ∀ {A : Set} (x y : A)
+
+{-
+-- yields (for first version of ≡ above)
+
+refl {ℕ} {0} : 0 ≡ 0
+refl {ℕ} {1} : 1 ≡ 1
+refl {ℕ} {2} : 2 ≡ 2
+...
+refl {Bool} {true} : true ≡ true
+...
+refl {Bool} {not b} : not b ≡ not b   -- if 'b : Bool' is a parameter
+
+-}
+
+
+
+sym : ∀ {A : Set} (x y : A)
     -> x ≡ y 
     ---------
     -> y ≡ x
-≡-symmetric b a refl = refl 
-
-≡-trans : ∀ {A : Set} (x y z : A)
-    -> x ≡ y
-    -> y ≡ z 
-    ---------
-    -> x ≡ z
-≡-trans a b c refl refl = refl 
+sym .a .a (refl a) = refl a
 

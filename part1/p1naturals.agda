@@ -1,4 +1,4 @@
-module p1intro where
+module p1naturals where
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl)
@@ -8,11 +8,19 @@ data ℕ : Set where
   zero : ℕ
   suc  : ℕ → ℕ
 
+
+    
 {-# BUILTIN NATURAL ℕ #-}
 
 _+_ : ℕ → ℕ → ℕ
 zero + n = n                -- base case
 (suc m) + n = suc (m + n)   -- ind hypo
+
++0 : ∀ (x : ℕ) -> x + zero ≡ x
++0 zero = refl
++0 (suc x) rewrite (+0 x) = refl
+    
+
 
 _ : 2 + 3 ≡ 5
 _ =

@@ -32,14 +32,61 @@ inv-z≤n : ∀ (m : ℕ)
   ->  m ≤ zero 
       --------
   ->  m ≡ zero
-inv-z≤n n = {!   !}  
+inv-z≤n m (z≤n m) = refl
+
+-- exercise:
+-- Give an example of a preorder that is not a partial order.
+-- fixing a domain (vertex set)
+-- V = {a, b, c, d}
+-- E = {(a, b), (b, c) (c, d)}
+-- G = (V, E)
+
+-- Is_Connected_to_In_G : V x V -> Bool
+--  a Is_Connected_to_In_G a (reflexivity)
+--  b Is_Connected_to_In_G b (reflexivity)
+--  etc.
+
+--  if a Is_Connected_to_In_G b and  
+--     b Is_Connected_to_In_G c then 
+--     a Is_Connected_to_In_G c (transitivity)
+
+-- so reln 'Is_Connected_to_In_G' is a preordering
+-- is it anti-symmetric? no. 
+-- 
+-- Consider:
+--  a Is_Connected_to_In_G c and c Is_Connected_to_In_G a is true,
+--  but it is not the case that a = c (diff nodes), so the
+--  Is_Connected_to_In_G is an example of a relation that is a 
+--  preordering, but not a partial order.
+
+≤-refl : ∀ (n : ℕ)
+     -------
+    -> n ≤ n 
+≤-refl zero = (z≤n zero)  
+≤-refl (suc x) = (s≤s x x (≤-refl x))
 
 
--- claim:
--- rt₁ : (n : ℕ) -> Square n -> Nat
--- rt₁ _ (sq m) = m
+≤-trans : ∀ (m n p : ℕ)
+    -> m ≤ n -- h1
+    -> n ≤ p -- h2
+    --------
+    -> m ≤ p 
+≤-trans zero m p h1 h2 =  (z≤n p)
+≤-trans (suc m) (suc n) (suc p) (s≤s m n h1) (s≤s n p h2) = s≤s m p (≤-trans m n p h1 h2) 
 
--- claim:
+-- note: need to say (s≤s m n h1), etc. to construct evidence for the ind cases hypotheses
+-- (due to our instantiation of (suc m), (suc n), and (suc p) to the 
+--  left of the = in the ind. case)
+
+≤-antisym : ∀ (m n : ℕ) 
+    -> m ≤ n 
+    -> n ≤ m  
+    ---------
+    -> m ≡ n
+≤-antisym zero n (z≤n n) h2 = sym (inv-z≤n n h2)
+≤-antisym (suc m) (suc n) h1 h2 = 
+    cong suc (≤-antisym m n (inv-s≤s m n h1) (inv-s≤s n m h2) ) 
+
 leq-inv-shorten : ∀ (m n : ℕ)
   -> suc m ≤ suc n    -- h1
      --------------
@@ -257,3 +304,20 @@ lt-inv-shorten x y (s<s x y h1) = h1
 -- https://agda.readthedocs.io/en/v2.6.2.2/getting-started/a-taste-of-agda.html
 -- good tutorial showing you the steps and tools you can
 -- use to go about this proof
+ 
+-- data Total' (m n : ℕ) : Set where 
+data Total' : ℕ -> ℕ -> Set where 
+  fwd : ∀ (m n : ℕ) 
+    -> m ≤ n 
+    -------------
+    -> Total' m n
+
+  flp : ∀ (m n : ℕ) 
+    -> n ≤ m 
+    -------------
+    -> Total' m n
+
+≤-total' : ∀ (m n : ℕ) -> Total' m n 
+≤-total' zero n = fwd zero n (z≤n n)
+≤-total' (suc m) zero =  (flp (suc m) zero) ( z≤n (suc m) ) 
+≤-total' (suc m) (suc n) = {!   !}
