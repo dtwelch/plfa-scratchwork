@@ -1,5 +1,6 @@
 module p1equality where
 open import Data.Nat using (ℕ; zero)
+
 data _≡_ {A : Set} (x : A) : A -> Set where 
     refl : x ≡ x 
 
@@ -10,8 +11,6 @@ data _≡_ {A : Set} (x : A) : A -> Set where
 -- refl {ℕ} (0) gives/constructs/provides-evidence-for the term: 0 ≡ 0
 
 infix 4 _≡_
-
-
 {-
 -- yields (for first version of ≡ above)
 
@@ -22,10 +21,7 @@ refl {ℕ} {2} : 2 ≡ 2
 refl {Bool} {true} : true ≡ true
 ...
 refl {Bool} {not b} : not b ≡ not b   -- if 'b : Bool' is a parameter
-
 -}
-
-
 
 sym : ∀ {A : Set} (x y : A)
     -> x ≡ y 
@@ -90,3 +86,17 @@ cong₂ : ∀ {A B C : Set}
     ----------------
     -> f u v ≡ f x y
 cong₂ f a b i j refl refl = refl
+
+-- if two fns f and g are ≡, then applying 
+-- them two the same term from the codomain A
+-- yields the same result in the codomain B
+cong-app : ∀ {A B : Set} (f g : A -> B)
+    -> f ≡ g 
+    --------
+    -> ∀ (x : A) -> f x ≡ g x
+cong-app f1 f2 refl x = refl
+
+-- Equality also satisfies substitution. If two values 
+-- are equal and a predicate holds of the first then 
+-- it also holds of the second:
+

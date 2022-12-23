@@ -2,6 +2,9 @@ module spiral where
 open import Data.Nat  using (ℕ; zero; suc; _*_; _+_; _∸_; _≡ᵇ_)
 -- open import Agda.Utils.Function
 
+import Relation.Binary.PropositionalEquality as Eq
+open Eq using (_≡_; refl; cong; sym)
+
 open import Agda.Builtin.Nat
 open import Data.Empty
 open import Data.Unit.Base
@@ -54,8 +57,13 @@ data Sp_Loc (A : Set) : ℕ² -> Set where
 {-
 -- pty1
 inf : {A : Set} 
-    (∀ k : ℕ²) -- <--should be N^2
+    (∀ k : ℕ²) 
     (∀ p : Sp_Loc A k) -> 
     (∃ n : ℕ²) -> 
         iterate' n ss 
 -}
+
+-- pty3:
+cen-rt : ∀ {A : Set} -> ∀ (k : ℕ²)
+    -> RS k (Cen k) ≡ SS k (Cen k)
+cen-rt k = {!   !} 
