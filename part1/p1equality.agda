@@ -100,3 +100,4 @@ cong-app f1 f2 refl x = refl
 -- are equal and a predicate holds of the first then 
 -- it also holds of the second:
 
+-- idea(?): recognitions function almost as typeclasses...naw.
