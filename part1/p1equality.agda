@@ -69,3 +69,14 @@ cong-app f' g' (refl f' _) x = (refl (f' x) (f' x))
 
 -- the refl above creates evidence that forces f' and g' to
 -- be considered ≡ fns in the context
+
+module Equiv-Reasoning {A : Set} where 
+    infix  1 begin_ 
+    -- infixr 2 _Equiv⟨⟩_   _Equiv⟨_⟩_
+   -- infix  3 _∎
+
+    begin_ : ∀ (x y : A)
+        -> Equiv x y 
+        ------------
+        -> Equiv x y 
+    begin_ x' y' h = h
