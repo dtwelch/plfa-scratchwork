@@ -72,11 +72,32 @@ cong-app f' g' (refl f' _) x = (refl (f' x) (f' x))
 
 module Equiv-Reasoning {A : Set} where 
     infix  1 begin_ 
-    -- infixr 2 _Equiv⟨⟩_   _Equiv⟨_⟩_
+    infixr 2 _Equiv⟨⟩_   _Equiv⟨_⟩_
    -- infix  3 _∎
 
+-- constructing the operators used to do forward chain 
+-- reasoning about the Equiv datatype
     begin_ : ∀ (x y : A)
         -> Equiv x y 
         ------------
         -> Equiv x y 
     begin_ x' y' h = h
+
+    -- asserting two are equal 
+    -- (ver. where no justification evidence/term of type A 
+    --  is needed: ⟨⟩)
+    _Equiv⟨⟩_ : ∀ (x : A) (y : A)
+        -> Equiv x y 
+        -------------
+        -> Equiv x y
+    _Equiv⟨⟩_ x' y' (refl x _) = refl x x
+
+    -- asserting two are equal 
+    -- justification evidence/term provided upon application --
+    -- within the: ⟨_⟩ 
+    _Equiv⟨_⟩_ : ∀ (x : A) (y z : A)
+        -> Equiv x y 
+        -> Equiv y z 
+        -------------
+        -> Equiv x z 
+    _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' (_Equiv⟨⟩_ x' y' h1) (_Equiv⟨⟩_ y' z' h2)
