@@ -96,8 +96,11 @@ module Equiv-Reasoning {A : Set} where
     -- justification evidence/term provided upon application --
     -- within the: ⟨_⟩ 
     _Equiv⟨_⟩_ : ∀ (x : A) (y z : A)
-        -> Equiv x y 
-        -> Equiv y z 
+        -> Equiv x y  -- h1
+        -> Equiv y z  -- h2
         -------------
         -> Equiv x z 
-    _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' (_Equiv⟨⟩_ x' y' h1) (_Equiv⟨⟩_ y' z' h2)
+    -- _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' (_Equiv⟨⟩_ x' y' h1) (_Equiv⟨⟩_ y' z' h2)
+    -- this way is much shorter and to the point:
+    _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' h1 h2 
+    -- h1 and h2 are already in exactly the form we need
