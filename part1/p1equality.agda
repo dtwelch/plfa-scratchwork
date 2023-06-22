@@ -110,17 +110,16 @@ module Equiv-Reasoning {A : Set} where
         -> Equiv x x
     x ∎  =  (refl x x)
 
-    -- transitivity proof using chains of equations
-    trans' : ∀ {A : Set} (x y z : A) 
-        -> Equiv x y 
-        -> Equiv y z 
-        -------------
-        -> Equiv x z 
-    trans' x' y' z' h1 h2 = 
-        begin 
-            x'
-        Equiv⟨ h1 ⟩ 
-            y'           -- x is equivalent to y via h1
-        Equiv⟨ h2 ⟩ 
-            z' 
-        ∎
+-- NOTE: important that trans' is outdented 
+-- (otherwise type A gets shadowed by the module level 
+­--  type param -- also called A -- and scary stuff starts 
+--  happening with subscripted types)
+
+-- transitivity proof using chains of equations
+trans' : ∀ {A : Set} (x y z : A)
+    -> Equiv x y 
+    -> Equiv y z 
+    -------------
+    -> Equiv x z 
+trans' x' y' = {!   !}
+ -- x' is equivalent to y' via h1
