@@ -41,14 +41,31 @@ trans : ∀ {A : Set} (x y z : A)
     -> Equiv y z 
     ------------
     -> Equiv x z 
-trans x y z (refl x _) (refl z _) = {!   !}
-
+trans x y z (refl x _) (refl y _) = refl x x
+-- note: could've also done (refl x _) for both -- including (refl z _)
 
 -- refl x provides evidence that Equiv(x, x) and is passed into trans
 -- as the first piece of evidence/hypothesis... but doing so 
--- implies that y must = x  (that's why y = x shows up in the context)
+-- implies that y must equal x  (that's why y = x shows up in the context)
 
 -- applying refl again produces a term that forces z and x 
--- to be the same (otherwise it couldn't be used as a hypothesis)
+-- to be the same (otherwise it couldn't be used as a hypothesis)..
+-- correspondingly z = x is added to the context (y = x is still there)
 
 -- in order to match the y in the first '-> Equiv x y'
+
+-- congruence
+cong : ∀ {A B : Set} (f : A -> B) (x y : A)
+    -> Equiv x y 
+    --------------
+    -> Equiv (f x) (f y)
+cong f' x' y' (refl x' _) = (refl (f' x') (f' x')) 
+
+cong-app : ∀ {A B : Set} (f g : A -> B)
+    -> Equiv f g 
+    ---------------------------------
+    -> ∀ (x : A) -> Equiv (f x) (g x)
+cong-app f' g' (refl f' _) x = (refl (f' x) (f' x))
+
+-- the refl above creates evidence that forces f' and g' to
+-- be considered ≡ fns in the context
