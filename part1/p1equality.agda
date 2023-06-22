@@ -73,7 +73,7 @@ cong-app f' g' (refl f' _) x = (refl (f' x) (f' x))
 module Equiv-Reasoning {A : Set} where 
     infix  1 begin_ 
     infixr 2 _Equiv⟨⟩_   _Equiv⟨_⟩_
-   -- infix  3 _∎
+    infix  3 _∎
 
 -- constructing the operators used to do forward chain 
 -- reasoning about the Equiv datatype
@@ -104,3 +104,23 @@ module Equiv-Reasoning {A : Set} where
     -- this way is much shorter and to the point:
     _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' h1 h2 
     -- h1 and h2 are already in exactly the form we need
+
+    _∎ : ∀ (x : A)
+        -------------
+        -> Equiv x x
+    x ∎  =  (refl x x)
+
+    -- transitivity proof using chains of equations
+    trans' : ∀ {A : Set} (x y z : A) 
+        -> Equiv x y 
+        -> Equiv y z 
+        -------------
+        -> Equiv x z 
+    trans' x' y' z' h1 h2 = 
+        begin 
+            x'
+        Equiv⟨ h1 ⟩ 
+            y'           -- x is equivalent to y via h1
+        Equiv⟨ h2 ⟩ 
+            z' 
+        ∎
