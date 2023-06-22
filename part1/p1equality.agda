@@ -1,9 +1,9 @@
 module p1equality where
-open import Data.Nat using (ℕ; zero)
 
 -- called _≡_ in the text (rightly so)
-data Equiv {A : Set} (x : A) : A -> Set where 
-    refl : Equiv x x 
+-- so this is a super explicit (indexed) version of the official _≡_
+data Equiv {A : Set} : A -> A -> Set where 
+    refl : ∀ (x y : A) -> Equiv x x 
 
 -- note: above and below (indexed vs parameterized versions)
 
@@ -27,10 +27,17 @@ sym : ∀ {A : Set} (x y : A)
     -> Equiv x y 
     -------------
     -> Equiv y x
-sym x y = {!   !}
+sym z y (Equiv.refl z _) = Equiv.refl z z
 -- sym x y : Equiv x y → Equiv y x
 -- so if we pass in refl as the next arg in the pattern, we force the y already instantiated
 -- to be treated as an x..
 
 -- sym x y e = {!   !} -- gives type: Equiv x y (due to the fact we instantiated sym (applied) x and then y)
 -- sym has tpe : ∀ {A : Set} (x y : A) -> x ≡ y -> y ≡ x 
+
+trans : ∀ {A : Set} (x y z : A) 
+    -> Equiv x y 
+    -> Equiv y z 
+    ------------
+    -> Equiv x z 
+trans x y z (refl x _) = {!   !} 
