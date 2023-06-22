@@ -35,9 +35,20 @@ sym z y (Equiv.refl z _) = Equiv.refl z z
 -- sym x y e = {!   !} -- gives type: Equiv x y (due to the fact we instantiated sym (applied) x and then y)
 -- sym has tpe : ∀ {A : Set} (x y : A) -> x ≡ y -> y ≡ x 
 
+-- transitivity of Equiv
 trans : ∀ {A : Set} (x y z : A) 
     -> Equiv x y 
     -> Equiv y z 
     ------------
     -> Equiv x z 
-trans x y z (refl x _) = {!   !} 
+trans x y z (refl x _) (refl z _) = {!   !}
+
+
+-- refl x provides evidence that Equiv(x, x) and is passed into trans
+-- as the first piece of evidence/hypothesis... but doing so 
+-- implies that y must = x  (that's why y = x shows up in the context)
+
+-- applying refl again produces a term that forces z and x 
+-- to be the same (otherwise it couldn't be used as a hypothesis)
+
+-- in order to match the y in the first '-> Equiv x y'
