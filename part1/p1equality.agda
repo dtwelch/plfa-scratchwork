@@ -133,18 +133,33 @@ trans' x' y' z' h1 h2 =
 -- the proof of Equiv y z (instead of using h2 directly) is constructed
 -- out of applications of _equiv⟨_⟩_
 
+-- reproducing basic nat datatype for convenience
+-- (not using import here to avoid uses cyliclic uses prelude/equality <-> nat)
+data ℕ : Set where
+  zero : ℕ
+  suc  : ℕ -> ℕ
 
+_+_ : ℕ -> ℕ -> ℕ
+zero    + n  =  n
+(suc m) + n  =  suc (m + n)
 
--- begin (x ≡⟨ x≡y ⟩ (y ≡⟨ y≡z ⟩ (z ∎)))
+postulate
+  +-identity : ∀ (m : ℕ) -> (Equiv (m + zero) m)
+  +-suc : ∀ (m n : ℕ) -> Equiv (m + suc n) (m + n)
 
+-- A 'postulate' specifies a signature for an identifier 
+-- but no definition. Here we postulate something proved earlier 
+-- to save space
 
--- (_equiv⟨_⟩_ y' z' x' h2) 
-  --  _equiv⟨_⟩_ x' y' z' h1 h2  -- works... (but not really chain style)
-    
--- bgn_ x' y'               gives: Equiv x' y' → Equiv x' y'
+--  _equiv⟨_⟩_ : ∀ (x : A) (y z : A) -> Equiv x y  -> Equiv y z  
+--  _equiv⟨⟩_ : ∀ (x : A) (y : A) -> Equiv x y -> Equiv x y
++-comm : ∀ (m n : ℕ) → Equiv (m + n) (n + m)
++-comm m zero = ({!  !} ) 
+-- _equiv⟨_⟩_ m zero m : Equiv m zero → Equiv zero m → Equiv m m
 
+-- _equiv⟨_⟩_ m zero m 
+-- goal: Equiv (m + zero) (zero + m)
++-comm m (suc n) = {!   !} 
 
-
--- _equiv⟨_⟩_ x' y' z' h1 (_equiv⟨_⟩_ y' z' x' h2)      gives: Equiv y' z' → Equiv x' z'
--- (_equiv⟨_⟩_ y' z' x' h2)                             gives: Equiv z' x' → Equiv y' x'
- 
+-- +-identity : ∀ (m : ℕ) → (Equiv (m + zero) m) ≡ m
+-- +-suc      : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
