@@ -71,38 +71,38 @@ cong-app f' g' (refl f' _) x = (refl (f' x) (f' x))
 -- be considered ≡ fns in the context
 
 module Equiv-Reasoning {A : Set} where 
-    infix  1 begin_ 
-    infixr 2 _Equiv⟨⟩_   _Equiv⟨_⟩_
+    infix  1 bgn_ 
+    infixr 2 _equiv⟨⟩_   _equiv⟨_⟩_
     infix  3 _∎
 
 -- constructing the operators used to do forward chain 
 -- reasoning about the Equiv datatype
-    begin_ : ∀ (x y : A)
+    bgn_ : ∀ (x y : A)
         -> Equiv x y 
         ------------
         -> Equiv x y 
-    begin_ x' y' h = h
+    bgn_ x' y' h = h
 
     -- asserting two are equal 
     -- (ver. where no justification evidence/term of type A 
     --  is needed: ⟨⟩)
-    _Equiv⟨⟩_ : ∀ (x : A) (y : A)
+    _equiv⟨⟩_ : ∀ (x : A) (y : A)
         -> Equiv x y 
         -------------
         -> Equiv x y
-    _Equiv⟨⟩_ x' y' (refl x _) = refl x x
+    _equiv⟨⟩_ x' y' (refl x _) = refl x x
 
     -- asserting two are equal 
     -- justification evidence/term provided upon application --
     -- within the: ⟨_⟩ 
-    _Equiv⟨_⟩_ : ∀ (x : A) (y z : A)
+    _equiv⟨_⟩_ : ∀ (x : A) (y z : A)
         -> Equiv x y  -- h1
         -> Equiv y z  -- h2
         -------------
         -> Equiv x z 
     -- _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' (_Equiv⟨⟩_ x' y' h1) (_Equiv⟨⟩_ y' z' h2)
     -- this way is much shorter and to the point:
-    _Equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' h1 h2 
+    _equiv⟨_⟩_ x' y' z' h1 h2 = trans x' y' z' h1 h2 
     -- h1 and h2 are already in exactly the form we need
 
     _∎ : ∀ (x : A)
@@ -112,14 +112,39 @@ module Equiv-Reasoning {A : Set} where
 
 -- NOTE: important that trans' is outdented 
 -- (otherwise type A gets shadowed by the module level 
-­--  type param -- also called A -- and scary stuff starts 
---  happening with subscripted types)
+--  type param -- also called A -- and spooky stuff starts 
+--  happening i.e.: types start getting subscripted universe levels)
 
+open Equiv-Reasoning
+
+--  _equiv⟨_⟩_ : ∀ (x : A) (y z : A) -> Equiv x y  -> Equiv y z  -- h2
 -- transitivity proof using chains of equations
 trans' : ∀ {A : Set} (x y z : A)
     -> Equiv x y 
     -> Equiv y z 
     -------------
     -> Equiv x z 
-trans' x' y' = {!   !}
- -- x' is equivalent to y' via h1
+trans' x' y' z' h1 h2 = 
+    (_equiv⟨_⟩_ x' y' z' h1) 
+        (_equiv⟨_⟩_ y' z' z' h2 (_∎ z') )  
+-- kind of circuitous way, as we could've just used h2 directly.. as in:
+--  .. = (_equiv⟨_⟩_ x' y' z' h1 h2) 
+-- though perhaps not in 'chain of equation' form. So instead
+-- the proof of Equiv y z (instead of using h2 directly) is constructed
+-- out of applications of _equiv⟨_⟩_
+
+
+
+-- begin (x ≡⟨ x≡y ⟩ (y ≡⟨ y≡z ⟩ (z ∎)))
+
+
+-- (_equiv⟨_⟩_ y' z' x' h2) 
+  --  _equiv⟨_⟩_ x' y' z' h1 h2  -- works... (but not really chain style)
+    
+-- bgn_ x' y'               gives: Equiv x' y' → Equiv x' y'
+
+
+
+-- _equiv⟨_⟩_ x' y' z' h1 (_equiv⟨_⟩_ y' z' x' h2)      gives: Equiv y' z' → Equiv x' z'
+-- (_equiv⟨_⟩_ y' z' x' h2)                             gives: Equiv z' x' → Equiv y' x'
+ 
