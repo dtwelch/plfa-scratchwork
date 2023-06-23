@@ -143,6 +143,7 @@ _+_ : ℕ -> ℕ -> ℕ
 zero    + n  =  n
 (suc m) + n  =  suc (m + n)
 
+-- 'postulate' is like 'axiom' in agda
 postulate
   +-identity : ∀ (m : ℕ) -> (Equiv (m + zero) m)
   +-suc : ∀ (m n : ℕ) -> Equiv (m + suc n) (m + n)
@@ -153,13 +154,9 @@ postulate
 
 --  _equiv⟨_⟩_ : ∀ (x : A) (y z : A) -> Equiv x y  -> Equiv y z  
 --  _equiv⟨⟩_ : ∀ (x : A) (y : A) -> Equiv x y -> Equiv x y
-+-comm : ∀ (m n : ℕ) → Equiv (m + n) (n + m)
-+-comm m zero = ({!  !} ) 
--- _equiv⟨_⟩_ m zero m : Equiv m zero → Equiv zero m → Equiv m m
++-comm : ∀ (m n : ℕ) -> Equiv (m + n) (n + m)
++-comm m zero = {!  !}  
 
--- _equiv⟨_⟩_ m zero m 
--- goal: Equiv (m + zero) (zero + m)
+-- scratch work:
+-- _equiv⟨_⟩_ (m + zero) m m (+-identity m) (_equiv⟨⟩_  )
 +-comm m (suc n) = {!   !} 
-
--- +-identity : ∀ (m : ℕ) → (Equiv (m + zero) m) ≡ m
--- +-suc      : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
