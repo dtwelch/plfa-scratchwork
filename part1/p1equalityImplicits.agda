@@ -103,9 +103,55 @@ postulate
         m + suc n 
     equiv⟨ +-suc m n ⟩ -- no intermediate proofs needed? 
         suc (m + n)
-    equiv⟨ cong suc (+-comm m n) ⟩ -- gives us in context the equality: Equiv suc (m + n) suc (n + m)
+    equiv⟨ cong suc (+-comm m n) ⟩ -- gives us in context the equality: Equiv suc (m + n) suc (n + m) -- i.e. suc (m + n) ≡ suc (n m)
         suc (n + m)
     equiv⟨⟩ 
         suc n + m 
     ∎
+
+{-
+Agda always treats a term as equivalent to its simplified term. 
+The reason that one can write:
+    suc (n + m)
+    ≡⟨⟩
+    suc n + m
+is because Agda treats both terms as the same. This also means that one could instead 
+interchange the lines and write:
+    suc n + m
+    ≡⟨⟩
+    suc (n + m)
+and Agda would not object. Agda only checks that the terms separated by ≡⟨⟩ have the same 
+simplified form; it’s up to us to write them in an order that will make sense to the 
+reader.
+-}
     
+-- rewriting
+data even : ℕ → Set
+data odd  : ℕ → Set
+
+data even where
+
+  even-zero : even zero
+
+  even-suc : ∀ {n : ℕ}
+    -> odd n
+    ---------------
+    -> even (suc n)
+
+data odd where
+  odd-suc : ∀ {n : ℕ}
+    -> even n
+    ---------------
+    -> odd (suc n)
+
+{-# BUILTIN EQUALITY Equiv #-}
+
+even-comm : ∀ (m n : ℕ)
+    -> even (m + n)
+    ---------------
+    -> even (n + m)
+?
+-- h1 : even (m + n)
+-- (+-comm m n) : Equiv (m + n) (n + m)
+-- so h1 : even (m + n)  rewrite (+-comm m n) produces: 
+-- even (n + m)
