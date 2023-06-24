@@ -12,6 +12,12 @@ trans : ∀ {A : Set} (x y z : A)
     -> Equiv x z 
 trans x' y' z' refl refl = refl
 
+cong : ∀ {A B : Set} (f : A -> B) {x y : A}
+  -> Equiv x y
+  --------------------
+  -> Equiv (f x) (f y)
+cong f refl  =  refl
+
 -- constructing the operators used to do forward chain 
 -- reasoning about the Equiv datatype
 module Equiv-Reasoning {A : Set} where 
@@ -39,10 +45,11 @@ module Equiv-Reasoning {A : Set} where
         ------------
         -> Equiv x z 
     _equiv⟨_⟩_ x' {y'} {z'} h1 h2 = trans x' y' z' h1 h2
-    -- just remember the x in the pattern could've been called anything
+    -- just remember the x' in the pattern could've been called anything
     -- and since {y z : A} are in curly braces, we can't add them to the 
     -- pattern as easily as we can x' (i.e.: we need to say: {y'} {z'})..
-    -- I guess this says we're explicitly filling in implicit types
+    -- I guess this says we're explicitly saying the thing we're introducing
+    -- is an implicit variable
     
     _∎ : ∀ (x : A)
         ------------
@@ -78,3 +85,27 @@ postulate
   +-identity : ∀ (m : ℕ) -> Equiv (m + zero) m
   +-suc : ∀ (m n : ℕ) -> Equiv (m + suc n) (suc (m + n))
 
++-comm : ∀ (m n : ℕ) -> Equiv (m + n) (n + m)
++-comm m zero =
+    begin 
+        m + zero
+    equiv⟨ +-identity m ⟩
+        m
+    equiv⟨⟩ 
+        zero + m -- note: no justification needed for this step -- it's due rewrites using
+        --  base case of _+_ (this happens automatically as part of definitional equality substs)
+        -- (this is why we were able to use normal equiv⟨⟩ that equates a to b -- 
+        --  as opposed to the justified version that inserts an extra piece of evidence, p,
+        --  that helps convert a to b... i.e: a p b)
+    ∎
++-comm m (suc n) = 
+    begin 
+        m + suc n 
+    equiv⟨ +-suc m n ⟩ -- no intermediate proofs needed? 
+        suc (m + n)
+    equiv⟨ cong suc (+-comm m n) ⟩ -- gives us in context the equality: Equiv suc (m + n) suc (n + m)
+        suc (n + m)
+    equiv⟨⟩ 
+        suc n + m 
+    ∎
+    
