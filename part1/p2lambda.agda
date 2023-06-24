@@ -30,9 +30,23 @@ two : Exp
 two = `suc `suc `zero
 
 -- a value is a term/expr that corresponds to an answer
-data Value : Exp -> Set where 
+-- So the predicate Value M holds if term M is a value:
+data Value : Exp -> Set where
 
-    V-ƛ : ∀ {x : Id} {N : Exp} 
-    --------------------------
-    -> Value (ƛ x ⇒ N)
+    V-ƛ : {x : Id} {N : Exp} -> Value(`zero)
 
+    V-zero : Value(`zero)
+
+    V-suc : ∀ {E : Exp}
+        -> Value E 
+        ----------
+        -> Value (`suc E)
+
+
+-- substitution over closed terms/exprs 
+-- (closed meaning the terms being substituted don't contain any free vars)
+
+infix 9 _[_:=_] 
+
+-- todo: need to learn some notation to understand this defn...
+-- backtracking to p1isomorphism
