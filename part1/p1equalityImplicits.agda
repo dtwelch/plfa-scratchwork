@@ -75,6 +75,6 @@ zero    + n  =  n
 
 -- again, 'postulate' in agda means 'axiom' (there is no explicit axiom keyword)
 postulate
-  +-identity : ∀ (m : ℕ) → m + zero ≡ m
-  +-suc : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
+  +-identity : ∀ (m : ℕ) -> Equiv (m + zero) m
+  +-suc : ∀ (m n : ℕ) -> Equiv (m + suc n) (suc (m + n))
 
