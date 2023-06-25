@@ -28,3 +28,12 @@ postulate
 _+'_ : ℕ -> ℕ -> ℕ
 zero +' n = n 
 (suc m) +' n = suc (m + n)
+
+-- we want a theorem to show that _+_ and _+'_ (defined above) always
+-- give back the same result given the same arguments 
+-- (using extensionality thm)
+
+-- equating results of applications for different plus operators: _+'_ and _+
+same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
+-- now to prove it...
+same-app 
