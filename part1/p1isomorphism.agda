@@ -35,5 +35,5 @@ zero +' n = n
 
 -- equating results of applications for different plus operators: _+'_ and _+
 same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
--- now to prove it...
-same-app 
+-- now to prove it via rewrite
+same-app m n = ?
