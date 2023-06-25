@@ -82,8 +82,8 @@ zero    + n  =  n
 
 -- again, 'postulate' in agda means 'axiom' (there is no explicit axiom keyword)
 postulate
-  +-identity : ∀ (m : ℕ) -> Equiv (m + zero) m
-  +-suc : ∀ (m n : ℕ) -> Equiv (m + suc n) (suc (m + n))
+  +-identity    : ∀ (m : ℕ) -> Equiv (m + zero) m
+  +-suc         : ∀ (m n : ℕ) -> Equiv (m + suc n) (suc (m + n))
 
 +-comm : ∀ (m n : ℕ) -> Equiv (m + n) (n + m)
 +-comm m zero =
@@ -152,7 +152,7 @@ even-comm : ∀ (m n : ℕ)
     -> even (m + n)
     ---------------
     -> even (n + m)
-even-comm  x y = {!   !}
+even-comm  m n ev rewrite +-comm m n = ev
 -- h1 : even (m + n)
 -- (+-comm m n) : Equiv (m + n) (n + m)
 -- so h1 : even (m + n)  rewrite (+-comm m n) introduces the following 
@@ -161,3 +161,40 @@ even-comm  x y = {!   !}
 -- this allows us to rewrite the goal into:
 --   even (n + m) ≡ even (n + m)
 -- which is proven via refl
+
+-- multiple rewrites
+
+-- "here is a second proof that addition is commutative, 
+-- relying on rewrites rather than chains of equalities.."
++-comm' : ∀ (m n : ℕ) -> Equiv (m + n) (n + m)
++-comm' zero n rewrite +-identity n  = refl
++-comm' (suc m) n rewrite +-suc n m | +-comm' m n  = refl
+-- --   +-suc         : ∀ (m n : ℕ) -> Equiv (m + suc n) (suc (m + n))
+
+-- goal: first we have:
+--   Equiv (suc m + n) (n + suc m)
+--
+-- then rewrite it with: rewrite +-suc n m to yield:
+--   Equiv (suc (m + n)) (suc (n + m))
+--
+-- but we still have to flip m and n, so add the commutativity
+-- inductive hypothesis (itself an Equivalence/equality term) as a rewrite 
+-- that rule allows us to flip the arguments to the top level Equiv .. 
+
+-- base case notes:
+-- +-comm' zero n yields a term of type: Equiv (zero + n) (n + zero)
+-- rewriting zero + n to be n using the +-identity postulate above.. 
+--
+-- To summarize:
+-- +-comm' zero n : Equiv (zero + n) (n + zero)
+-- +-comm' zero n rewrite (+-identity n) : Equiv n n 
+--           (where +identity : ∀ (m : ℕ) -> Equiv (m + zero) m)
+-- this last exp can be produced/matched via a final refl..
+
+{-
+even-comm' : ∀ (m n : ℕ) 
+    -> even (m + n) 
+    ---------------
+    -> even (n + m)
+even-comm' m n even with 
+-}
