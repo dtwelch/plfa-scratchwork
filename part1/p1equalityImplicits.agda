@@ -147,17 +147,12 @@ data odd where
     -> odd (suc n)
 
 {-# BUILTIN EQUALITY Equiv #-}
-
+{-
 even-comm : ∀ (m n : ℕ)
     -> even (m + n)
     ---------------
     -> even (n + m)
-<<<<<<< HEAD
-even-comm 
-
-=======
-even-comm  m n ev rewrite +-comm m n = ev
->>>>>>> 39bd4ab5d3927393932a6f387d6b7d25a07584d2
+-}
 -- h1 : even (m + n)
 -- (+-comm m n) : Equiv (m + n) (n + m)
 -- so h1 : even (m + n)  rewrite (+-comm m n) introduces the following 
