@@ -19,6 +19,8 @@ postulate
         ----------------------------
         -> f ≡ g
 
+-- this version (_+'_) does m +' zero 
+-- instead of zero + m (ditto for induct. case)
 _+'_ : ℕ -> ℕ -> ℕ
 m +' zero = m 
 m +' (suc n) = suc (m +' n)
