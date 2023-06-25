@@ -126,8 +126,10 @@ reader.
 -}
     
 -- rewriting
-data even : ℕ → Set
-data odd  : ℕ → Set
+
+data even : ℕ -> Set
+
+data odd  : ℕ -> Set
 
 data even where
 
@@ -150,8 +152,12 @@ even-comm : ∀ (m n : ℕ)
     -> even (m + n)
     ---------------
     -> even (n + m)
-even-comm 
+even-comm  x y = {!   !}
 -- h1 : even (m + n)
 -- (+-comm m n) : Equiv (m + n) (n + m)
--- so h1 : even (m + n)  rewrite (+-comm m n) produces: 
--- even (n + m) 
+-- so h1 : even (m + n)  rewrite (+-comm m n) introduces the following 
+--                       into context: m + n ≡ n + m  ..i.e.: put in our long
+--                       form notation Equiv (m + n) (n + m)
+-- this allows us to rewrite the goal into:
+--   even (n + m) ≡ even (n + m)
+-- which is proven via refl
