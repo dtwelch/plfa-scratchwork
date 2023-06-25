@@ -18,3 +18,13 @@ postulate
         -> (∀ (x : A) -> f x ≡ g x )
         ----------------------------
         -> f ≡ g
+
+-- ".. consider that we need results from two libraries, one where addition is 
+--  defined, as in Chapter Naturals, and one where it is defined the other way 
+--  around."
+-- 
+-- Note: normal _+_ operator defines the patterns different:
+--  m + zero for base case, m + (suc n) for ind. case
+_+'_ : ℕ -> ℕ -> ℕ
+zero +' n = n 
+(suc m) +' n = suc (m + n)
