@@ -9,8 +9,8 @@ _∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
 (g ∘ f) x  = g (f x)
 
 -- can also do it this way:
-_∘′_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
-g ∘′ f  =  λ x -> g (f x)
+_∘'_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
+g ∘' f  =  λ x -> g (f x)
 
 -- extensionality
 postulate 
@@ -18,3 +18,7 @@ postulate
         -> (∀ (x : A) -> f x ≡ g x )
         ----------------------------
         -> f ≡ g
+
+_+'_ : ℕ -> ℕ -> ℕ
+m +' zero = m 
+m +' (suc n) = suc (m +' n)

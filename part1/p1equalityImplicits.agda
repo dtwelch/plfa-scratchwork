@@ -151,6 +151,7 @@ even-comm : ∀ (m n : ℕ)
     ---------------
     -> even (n + m)
 even-comm 
+
 -- h1 : even (m + n)
 -- (+-comm m n) : Equiv (m + n) (n + m)
 -- so h1 : even (m + n)  rewrite (+-comm m n) produces: 
