@@ -35,10 +35,34 @@ zero +' n = n
 
 -- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
 
+
+
 -- equating results of applications for different plus operators: _+'_ and _+
 same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
 -- now to prove it via rewrite
 same-app m n rewrite +-comm m n = {!   !}
 
 -- same-app m n = ?                    -- goal: (m +' n) ≡ m + n 
--- same-app m n rewrite +-comm m n = ? -- 
+-- same-app m n rewrite +-comm m n = ? -- goal: (m +' n) ≡ n + m (flips m and n on rhs)
+
+cong' : ∀ {A B : Set} (f : A -> B) {x y : A}
+    -> x ≡ y
+    ------------
+    -> f x ≡ f y
+cong' f refl  =  refl
+
+cong-app' : ∀ {A B : Set} {f g : A -> B}
+    -> f ≡ g
+    ---------------------
+    -> ∀ (x : A) -> f x ≡ g x
+cong-app' refl v = refl
+-- instantiating hypothesis 1 w/ refl makes f ≡ f for 
+-- the rest of the context (then you get (x : A) -> f x ≡ f x) then 
+-- add some var: v as the last pattern var and the goal becomes:
+-- f v ≡ f v (which can be discharged via refl)
+
+-- helper fn:
+helper : ∀ (m n : ℕ) -> m +' n ≡ m + n 
+helper m n = {!   !}
+
+-- extensionality (_+_) (_+'_) produces ((x : ℕ) -> _+_ x ≡ _+'_ x) → _+_ ≡ _+'_

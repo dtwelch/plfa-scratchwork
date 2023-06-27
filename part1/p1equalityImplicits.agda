@@ -16,7 +16,7 @@ cong : ∀ {A B : Set} (f : A -> B) {x y : A}
   -> Equiv x y
   --------------------
   -> Equiv (f x) (f y)
-cong f refl  =  refl
+cong f refl = refl
 
 -- constructing the operators used to do forward chain 
 -- reasoning about the Equiv datatype
