@@ -23,33 +23,18 @@ postulate
 --  defined, as in Chapter Naturals, and one where it is defined the other way 
 --  around."
 -- 
--- Note: normal _+_ operator defines the patterns different:
---  m + zero for base case, m + (suc n) for ind. case
+-- Note: normal _+_ operator defines the patterns different (case patterns flipped):
+-- _+_ : ℕ → ℕ → ℕ
+-- zero + n = n                -- base case
+-- (suc m) + n = suc (m + n)   -- ind hypo
+
 _+'_ : ℕ -> ℕ -> ℕ
-zero +' n = n 
-(suc m) +' n = suc (m + n)
+m +' zero = m 
+m +' (suc n) = suc (m +' n)
 
 -- we want a theorem to show that _+_ and _+'_ (defined above) always
 -- give back the same result given the same arguments 
 -- (using extensionality thm)
-
--- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
-
-
-
--- equating results of applications for different plus operators: _+'_ and _+
-same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
--- now to prove it via rewrite
-same-app m n rewrite +-comm m n = {!   !}
-
--- same-app m n = ?                    -- goal: (m +' n) ≡ m + n 
--- same-app m n rewrite +-comm m n = ? -- goal: (m +' n) ≡ n + m (flips m and n on rhs)
-
-cong' : ∀ {A B : Set} (f : A -> B) {x y : A}
-    -> x ≡ y
-    ------------
-    -> f x ≡ f y
-cong' f refl  =  refl
 
 cong-app' : ∀ {A B : Set} {f g : A -> B}
     -> f ≡ g
@@ -61,8 +46,24 @@ cong-app' refl v = refl
 -- add some var: v as the last pattern var and the goal becomes:
 -- f v ≡ f v (which can be discharged via refl)
 
+-- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
 -- helper fn:
-helper : ∀ (m n : ℕ) -> m +' n ≡ m + n 
-helper m n = {!   !}
+helper : ∀ (m n : ℕ) -> m +' n ≡ n + m
+helper m zero =  refl  -- m + zero or m +' zero both match the base case and simplification happens to get m ≡ m 
+helper m (suc n) = {!   !}
 
--- extensionality (_+_) (_+'_) produces ((x : ℕ) -> _+_ x ≡ _+'_ x) → _+_ ≡ _+'_
+-- extensionality (_+_) (_+'_) : ((x : ℕ) -> _+_ x ≡ _+'_ x) -> _+_ ≡ _+'_
+
+-- equating results of applications for different plus operators: _+'_ and _+
+same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
+-- now to prove it via rewrite
+same-app m n rewrite +-comm m n = {!   !}
+
+-- same-app m n = ?                    -- goal: (m +' n) ≡ m + n 
+-- same-app m n rewrite +-comm m n = ? -- goal: (m +' n) ≡ n + m (flips m and n on rhs)
+
+
+
+-- extensionality (_+_) (_+'_) produces ((x : ℕ) -> _+_ x ≡ _+'_ x) -> _+_ ≡ _+'_
+
+-- extensionality (_+_) (_+'_) (λ v -> (m + v) ≡ (m +' v)) ??
