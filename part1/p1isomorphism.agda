@@ -33,7 +33,12 @@ zero +' n = n
 -- give back the same result given the same arguments 
 -- (using extensionality thm)
 
+-- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
+
 -- equating results of applications for different plus operators: _+'_ and _+
 same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
 -- now to prove it via rewrite
-same-app m n = {!   !}
+same-app m n rewrite +-comm m n = {!   !}
+
+-- same-app m n = ?                    -- goal: (m +' n) ≡ m + n 
+-- same-app m n rewrite +-comm m n = ? -- 
