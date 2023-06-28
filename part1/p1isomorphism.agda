@@ -42,7 +42,7 @@ cong-app' : ∀ {A B : Set} {f g : A -> B}
 cong-app' refl v = refl
 -- instantiating hypothesis 1 w/ refl forces f ≡ f for 
 -- the rest of the context .. so we've satisfied the f ≡ g part..
--- then, when dealing w/ the ∀ you get part w/ ty term: 
+-- then, when dealing w/ the ∀ part: 
 -- (x : A) -> f x ≡ f x
 -- you add some var, v, as the last pattern var and the goal subsequently 
 -- becomes:
@@ -61,46 +61,40 @@ cong' f refl  =  refl
 -- helper fn:
 helper : ∀ (m n : ℕ) -> m +' n ≡ n + m
 helper m zero =  refl  -- m + zero or m +' zero both match the base case and simplification happens to get m ≡ m 
-helper m (suc n) = {!   !}
+helper m (suc n) = cong suc (helper m n) 
 
--- applying the inductive hypothesis, assume helper m n holds ...
--- we use this to construct a term of rougly the shape of the goal
--- ..this gives us an initial term to work with where the left hand 
---  side of the ≡ is _+'_ while the right contains an app of _+_ 
--- (this is high level shape of the term we need to build in order to
---  match the goal)
+-- some details on proof for 'helper' constant above: 
 
+-- the right hand side (above) beginning with 'cong' constructs a term that has the following 
+-- as its type^*:
+--  (m +' suc n) ≡ suc n + m
+-- so we need to construct a term of this general shape ^*OR one definitionally equal 
+-- via ≡ (based on the way its constructor defined in the datatype). Start w/ ind. hypothesis
+--   helper m n 
+-- which produces a term of rougly the shape of the goal .. i.e.: an ≡-term w/ an app of _+'_ 
+-- as the top level subterm of the lhs and an app of _+_ on the rhs. Here is the term
+-- that results from the ind. hypothesis app (helper m n):
+--   (m +' n) ≡ n + m
+-- now it just needs to get 'turned/transformed' into the goal: (m +' suc n) ≡ suc n + m..
+-- This is done via:
+--   cong suc (helper m n)
+-- cong applies the provided fn (in this case, suc(·)) to the evidence produced by 
+-- the inductive hypothesis to produce a term seemingly different (but VERY) close to 
+-- the goal: 
+--   (m +' suc n) ≡ suc (n + m)    -- this is the goal type
+--   suc (m +' n) ≡ suc (n + m)    -- this type results from: cong suc (helper m n)
+-- these two terms actually match (see how _+'_ ind. case below):
+--   x +' (suc y) = suc (x +' y)   -- ind. case of _+'_ .. (using x and y instead of m n)
+-- ..
+-- so the term that results from cong suc (helper m n) is definitionally equal to the goal.
 
-
--- suc (m +' n) ≡ suc (n + m)
-
--- goal: (m +' suc n) ≡ suc n + m
---
--- +-comm m n
---
--- where +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
--- gives:
--- 
-
--- from one of this shape: (m +' suc n) ≡ suc n + m 
--- commutativity
-
--- somehow get the suc on the outside of the lhs and rhs of the goal (then apply cong' which equates the arguments of
-
-
--- 
--- extensionality (_+_) (_+'_) : ((x : ℕ) -> _+_ x ≡ _+'_ x) -> _+_ ≡ _+'_
-
--- equating results of applications for different plus operators: _+'_ and _+
+-- remember: same-app m n leaves us with a type: m +' n ≡ m + n, which we rewrite using +-comm m n
 same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
--- now to prove it via rewrite
-same-app m n rewrite +-comm m n = {!   !}
+same-app m n rewrite +-comm m n = helper m n
 
--- same-app m n = ?                    -- goal: (m +' n) ≡ m + n 
--- same-app m n rewrite +-comm m n = ? -- goal: (m +' n) ≡ n + m (flips m and n on rhs)
+-- better to assert that the two operators are actually indistinguishable. This
+-- we can do via two applications of extensionality:
 
-
-
--- extensionality (_+_) (_+'_) produces ((x : ℕ) -> _+_ x ≡ _+'_ x) -> _+_ ≡ _+'_
-
--- extensionality (_+_) (_+'_) (λ v -> (m + v) ≡ (m +' v)) ??
+same : _+'_ ≡ _+_  
+same = extensionality (_+'_) (_+_) {! λ x λ y -> same-app x y  !}
+-- extensionality op1 op2 
