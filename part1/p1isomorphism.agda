@@ -1,3 +1,5 @@
+module p1isomorphism where
+
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong; cong-app)
 open Eq.≡-Reasoning
@@ -14,10 +16,10 @@ g ∘' f  =  λ x -> g (f x)
 
 -- extensionality
 postulate 
-    extensionality : ∀ {A B : Set} (f g : A -> B)
-        -> (∀ (x : A) -> f x ≡ g x )
-        ----------------------------
-        -> f ≡ g
+  extensionality : ∀ {A B : Set} (f g : A -> B)
+    -> (∀ (x : A) -> f x ≡ g x)
+    ----------------------------
+    -> f ≡ g
 
 -- ".. consider that we need results from two libraries, one where addition is 
 --  defined, as in Chapter Naturals, and one where it is defined the other way 
@@ -32,28 +34,7 @@ _+'_ : ℕ -> ℕ -> ℕ
 m +' zero = m 
 m +' (suc n) = suc (m +' n)
 
--- we want a theorem to show that _+_ and _+'_ (defined above) always
--- give back the same result given the same arguments
 
-cong-app' : ∀ {A B : Set} {f g : A -> B}
-    -> f ≡ g
-    ---------------------
-    -> ∀ (x : A) -> f x ≡ g x
-cong-app' refl v = refl
--- instantiating hypothesis 1 w/ refl forces f ≡ f for 
--- the rest of the context .. so we've satisfied the f ≡ g part..
--- then, when dealing w/ the ∀ part: 
--- (x : A) -> f x ≡ f x
--- you add some var, v, as the last pattern var and the goal subsequently 
--- becomes:
--- f v ≡ f v (which can be discharged via refl)
-
--- already imported (hence the prime on the name)
-cong' : ∀ {A B : Set} (f : A -> B) {x y : A}
-    -> x ≡ y
-    ------------
-    -> f x ≡ f y
-cong' f refl  =  refl
 
 -- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
 -- +-suc  : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
@@ -62,6 +43,12 @@ cong' f refl  =  refl
 helper : ∀ (m n : ℕ) -> m +' n ≡ n + m
 helper m zero =  refl  -- m + zero or m +' zero both match the base case and simplification happens to get m ≡ m 
 helper m (suc n) = cong suc (helper m n) 
+
+-- we want a theorem to show that _+_ and _+'_ (defined above) always
+-- give back the same result given the same arguments (see above para for proof via helper lemma idea)
+same-app : ∀ (m n : ℕ) → m +' n ≡ m + n
+same-app m n rewrite +-comm m n = helper m n
+
 
 -- some details on proof for 'helper' constant above: 
 
@@ -88,13 +75,28 @@ helper m (suc n) = cong suc (helper m n)
 -- ..
 -- so the term that results from cong suc (helper m n) is definitionally equal to the goal.
 
--- remember: same-app m n leaves us with a type: m +' n ≡ m + n, which we rewrite using +-comm m n
-same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
-same-app m n rewrite +-comm m n = helper m n
 
--- better to assert that the two operators are actually indistinguishable. This
--- we can do via two applications of extensionality:
+-- NOTE: not currently typechecking due to the fact that the quantified 
+-- function vars f and g are not marked as implicit parameters.. i.e.:
+--    extensionality : ∀ {A B : Set} (f g : A -> B)
+-- vs:
+--    extensionality : ∀ {A B : Set} {f g : A -> B} -- in this ver. the typechecking works 
+-- going to try to do it in the explicit way (passing in _+_, etc)
+--same : _+'_ ≡ _+_  
+--same = {!   !}
 
-same : _+'_ ≡ _+_  
-same = extensionality (_+'_) (_+_) {! λ x λ y -> same-app x y  !}
--- extensionality op1 op2 
+same : _+'_ ≡ _+_
+same = extensionality (_+'_) (_+_) (λ x -> extensionality (_+'_ x) (_+_ x) ({!   !}))
+--extensionality (λ m → extensionality {!(λ n → ?)!})
+-- ?0 : (x : ℕ) → (m +' x) ≡ m + x
+-- ------------
+--extensionality (λ x -> extensionality {!?!} )
+--?0 : (x₁ : ℕ) → (x +' x₁) ≡ x + x₁  -- so it is a fn...
+
+-- in the explicit version, you need to partially apply the outer λ to account for needing to 
+-- apply functions f and g in a curried way this is why we do: extensionality (_+'_ x) (_+_ x) 
+-- instead of just: extensionality (_+'_) (_+_) -- we already did that over the outermost extensionality
+-- app 
+
+-- extensionality (_+'_) (_+_) (λ x -> extensionality (_+'_) (_+_) (λ y -> same-app x y))
+
