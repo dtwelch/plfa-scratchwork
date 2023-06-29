@@ -46,7 +46,7 @@ helper m (suc n) = cong suc (helper m n)
 
 -- we want a theorem to show that _+_ and _+'_ (defined above) always
 -- give back the same result given the same arguments (see above para for proof via helper lemma idea)
-same-app : ∀ (m n : ℕ) → m +' n ≡ m + n
+same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
 same-app m n rewrite +-comm m n = helper m n
 
 
@@ -75,16 +75,6 @@ same-app m n rewrite +-comm m n = helper m n
 -- ..
 -- so the term that results from cong suc (helper m n) is definitionally equal to the goal.
 
-
--- NOTE: not currently typechecking due to the fact that the quantified 
--- function vars f and g are not marked as implicit parameters.. i.e.:
---    extensionality : ∀ {A B : Set} (f g : A -> B)
--- vs:
---    extensionality : ∀ {A B : Set} {f g : A -> B} -- in this ver. the typechecking works 
--- going to try to do it in the explicit way (passing in _+_, etc)
---same : _+'_ ≡ _+_  
---same = {!   !}
-
 same : _+'_ ≡ _+_
 same = extensionality (_+'_) (_+_) 
     (λ x -> extensionality (_+'_ x) (_+_ x) ( λ y -> same-app x y ))
@@ -99,5 +89,96 @@ same = extensionality (_+'_) (_+_)
 -- instead of just: extensionality (_+'_) (_+_) -- we already did that over the outermost extensionality
 -- app 
 
--- extensionality (_+'_) (_+_) (λ x -> extensionality (_+'_) (_+_) (λ y -> same-app x y))
+-- isomorphism...
+-- "two sets are isomorphic if they are in one-to-one correspondence. Here is a formal definition
+--  of isomorphism:"
+-- (symbol cmd is: \simeq
+infix 0 _≃_ 
 
+-- A 'isIsomorphicTo' B
+record _≃_ (A B : Set) : Set where 
+    field 
+        to      : A -> B 
+        from    : B -> A
+        from∘to : ∀ (x : A) -> from (to x) ≡ x 
+        to∘from : ∀ (y : B) -> to (from y) ≡ y
+
+open _≃_
+
+-- An isomorphism between sets A and B consists of four things:
+-- 1. A function to from A to B,
+-- 2. A function from from B back to A,
+-- 3. Evidence from∘to asserting that from is a left-inverse for to,
+-- 4. Evidence to∘from asserting that from is a right-inverse for to.
+
+-- A record declaration behaves similar to a single-constructor data 
+-- declaration (for example):
+data _≃'_ (A B : Set): Set where
+  mk-≃' : ∀ (to : A -> B) ->
+          ∀ (from : B -> A) ->
+          ∀ (from∘to : (∀ (x : A) → from (to x) ≡ x)) ->
+          ∀ (to∘from : (∀ (y : B) → to (from y) ≡ y)) ->
+          A ≃' B
+
+to' : ∀ {A B : Set} -> (A ≃' B) -> (A -> B)
+to' (mk-≃' f g g∘f f∘g) = f
+
+from' : ∀ {A B : Set} -> (A ≃' B) -> (B -> A)
+from' (mk-≃' f g g∘f f∘g) = g
+
+-- from∘to, etc
+
+-- isomorhism is reflexive - any set is isomorphic to itself
+
+≃-refl : ∀ {A : Set} 
+    ------
+    -> A ≃ A 
+≃-refl = record 
+    {
+        to = λ x -> x ;
+        from = λ x -> x ;
+        from∘to = λ x -> refl ;
+        to∘from = λ x -> refl 
+    }
+
+-- isomorphism is symmetric
+≃-sym : ∀ {A B : Set} 
+    -> A ≃ B 
+    --------
+    -> B ≃ A 
+≃-sym isoH1 = record 
+    {
+        to = from isoH1 ;  -- flip everything.. (from isoH1) extracts the 'from' component/fn of the isoH1 record
+        from = to isoH1 ; -- ditto w/ to and even to∘from, from∘to
+        from∘to = to∘from isoH1 ; 
+        to∘from = from∘to isoH1
+    }
+
+{-
+-- reproducing compose (from top of this module)
+
+_∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
+g ∘ f  =  λ x -> g (f x)
+-}
+
+-- isomorphism is transitive 
+≃-trans : ∀ {A B C : Set} 
+    -> A ≃ B 
+    -> B ≃ C 
+    --------
+    -> A ≃ C 
+-- _∘_ : (B -> C) -> (A -> B) -> (A -> C)
+-- g ∘ f  =  λ x -> g (f x)
+
+≃-trans A≃B B≃C = record
+    {
+        -- need to construct a fn from A -> C (using hyp 1 and 2)
+        -- to h1 : 
+        to =  λ v{- v : A -}    -> ((to B≃C) ∘ (to A≃B)) v ;
+
+        -- need to construct a term: C -> A
+        from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v 
+
+        -- need to construct a term: ∀ (x : C) → from (to x) ≡ x)
+        from∘to = λ v{- v : C -}
+    }
