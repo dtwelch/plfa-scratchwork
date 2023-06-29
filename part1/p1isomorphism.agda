@@ -86,7 +86,8 @@ same-app m n rewrite +-comm m n = helper m n
 --same = {!   !}
 
 same : _+'_ ≡ _+_
-same = extensionality (_+'_) (_+_) (λ x -> extensionality (_+'_ x) (_+_ x) ({!   !}))
+same = extensionality (_+'_) (_+_) 
+    (λ x -> extensionality (_+'_ x) (_+_ x) ( λ y -> same-app x y ))
 --extensionality (λ m → extensionality {!(λ n → ?)!})
 -- ?0 : (x : ℕ) → (m +' x) ≡ m + x
 -- ------------
