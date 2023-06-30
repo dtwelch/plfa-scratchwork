@@ -135,7 +135,7 @@ from' (mk-≃' f g g∘f f∘g) = g
     -> A ≃ A 
 ≃-refl = record 
     {
-        to = λ x -> x ;
+        to   = λ x -> x ;
         from = λ x -> x ;
         from∘to = λ x -> refl ;
         to∘from = λ x -> refl 
@@ -148,7 +148,7 @@ from' (mk-≃' f g g∘f f∘g) = g
     -> B ≃ A 
 ≃-sym isoH1 = record 
     {
-        to = from isoH1 ;  -- flip everything.. (from isoH1) extracts the 'from' component/fn of the isoH1 record
+        to   = from isoH1 ;  -- flip everything.. (from isoH1) extracts the 'from' component/fn of the isoH1 record
         from = to isoH1 ; -- ditto w/ to and even to∘from, from∘to
         from∘to = to∘from isoH1 ; 
         to∘from = from∘to isoH1
@@ -173,12 +173,14 @@ g ∘ f  =  λ x -> g (f x)
 ≃-trans A≃B B≃C = record
     {
         -- need to construct a fn from A -> C (using hyp 1 and 2)
-        -- to h1 : 
+        -- term
         to =  λ v{- v : A -}    -> ((to B≃C) ∘ (to A≃B)) v ;
 
-        -- need to construct a term: C -> A
-        from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v 
+        -- need to construct a term/fn from C -> A
+        from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v ;
 
-        -- need to construct a term: ∀ (x : C) → from (to x) ≡ x)
-        from∘to = λ v{- v : C -}
+        --                                          g     ∘    f
+        -- need to construct a term: (x : A) -> (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
+        from∘to = {!   !}
     }
+    -- ?0 : (x : A) → (from A≃B ∘ from B≃C) (?0 x) ≡ x
