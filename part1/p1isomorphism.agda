@@ -155,7 +155,7 @@ from' (mk-≃' f g g∘f f∘g) = g
     }
 
 {-
--- reproducing compose (from top of this module)
+-- reproducing compose for ref. (from top of this module)
 
 _∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
 g ∘ f  =  λ x -> g (f x)
@@ -167,9 +167,6 @@ g ∘ f  =  λ x -> g (f x)
     -> B ≃ C 
     --------
     -> A ≃ C 
--- _∘_ : (B -> C) -> (A -> B) -> (A -> C)
--- g ∘ f  =  λ x -> g (f x)
-
 ≃-trans A≃B B≃C = record
     {
         -- need to construct a fn from A -> C (using hyp 1 and 2)
@@ -179,8 +176,19 @@ g ∘ f  =  λ x -> g (f x)
         -- need to construct a term/fn from C -> A
         from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v ;
 
-        --                                          g     ∘    f
-        -- need to construct a term: (x : A) -> (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
-        from∘to = {!   !}
+        -- need to construct a term: (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
+        -- (hint: use equational reasoning to combine the inverses)
+        from∘to = λ {v {- v : A -} -> 
+            begin  
+                (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) v)
+            ≡⟨⟩ -- removing the ∘ apps
+                from A≃B ( from B≃C ( to B≃C ( (to A≃B) v) ) )
+            ≡⟨  ⟩
+            {!   !} -- need:  from A≃B (from B≃C (to B≃C (to A≃B v))) 
+        }
     }
-    -- ?0 : (x : A) → (from A≃B ∘ from B≃C) (?0 x) ≡ x
+
+-- from∘to :  (r : A ≃ B) (x : A) → from r (to r x) ≡ x
+
+-- from A≃B ( from B≃C ( to B≃C ( (to A≃B) v) ) )
+-- ?0 : (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
