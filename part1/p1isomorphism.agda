@@ -244,11 +244,39 @@ module ≃-Reasoning where
         -> B ≃ C 
         --------
         -> A ≃ C 
-    _≃⟨_⟩_ A A≃B B≃C = {!   !}
+    _≃⟨_⟩_ A A≃B B≃C = ≃-trans A≃B B≃C 
 
     _≃-∎ : ∀ (A : Set)
         --------
         -> A ≃ A
-    ≃-∎ A = ≃-refl
+    _≃-∎ A = ≃-refl
 
 open ≃-Reasoning
+
+-- ".. embedding is a weakening of isomorphism. While an
+--  isomorphism shows that two types are in one-to-one 
+--  correspondence, an embedding shows that the first type
+--  is included in the second; or equivalently, that there is
+--  a many-to-one correspondence between the second type and
+--  the first"
+
+-- formal def of embedding
+infix 0 _≲_
+
+record _≲_ (A B : Set) : Set where 
+    field
+        to      : A -> B 
+        from    : B -> A
+        from∘to : ∀ (x : A) -> from (to x) ≡ x 
+
+open _≲_
+
+-- embedding is reflexive and transitive, but not symmetric
+
+≲-refl : ∀ {A : Set} -> A ≲ A 
+≲-refl = record {
+        to      = λ x -> x ;
+        from    = λ x -> x ;
+        from∘to = λ x -> refl
+    }
+
