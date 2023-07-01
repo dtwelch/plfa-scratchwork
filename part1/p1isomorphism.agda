@@ -131,12 +131,12 @@ from' (mk-≃' f g g∘f f∘g) = g
 ≃-refl : ∀ {A : Set} 
     ------
     -> A ≃ A 
-≃-refl = record 
+≃-refl {A} = record 
     {
-        to   = λ x -> x ;
-        from = λ x -> x ;
-        from∘to = λ x -> refl ;
-        to∘from = λ x -> refl 
+        to   = λ (v : A) -> v ;
+        from = λ (v : A) -> v ;
+        from∘to = λ (v : A) -> refl ;
+        to∘from = λ (v : A) -> refl 
     }
 
 -- isomorphism is symmetric
@@ -165,16 +165,16 @@ g ∘ f  =  λ x -> g (f x)
     -> B ≃ C 
     --------
     -> A ≃ C 
-≃-trans A≃B B≃C = record
+--                  h1  h2
+≃-trans {A} {B} {C} A≃B B≃C = record
     {
-        -- need to construct a fn from A -> C (using hyp 1 and 2)
-        -- term
-        to =  λ v{- v : A -}    -> ((to B≃C) ∘ (to A≃B)) v ;
+        -- need to construct a fn from A -> C using hypothesis (h1 and h2)
+        to   = λ (v : A) -> ((to B≃C) ∘ (to A≃B)) v ;
 
         -- need to construct a term/fn from C -> A
-        from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v ;
+        from = λ (v : C) -> ((from A≃B) ∘ (from B≃C)) v ;
 
-        from∘to = λ {v {- v : A -} -> 
+        from∘to = λ (v : A) -> 
             begin  
                 (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) v)
             ≡⟨⟩ -- removing the ∘ apps
@@ -184,9 +184,9 @@ g ∘ f  =  λ x -> g (f x)
             ≡⟨ from∘to A≃B v ⟩
                 v
             ∎
-        } ;
+        ;
         
-        to∘from = λ {v {- v : C -} ->
+        to∘from = λ (v : C) ->
             begin
                 (to B≃C ∘ to A≃B) ((from A≃B ∘ from B≃C) v)
             ≡⟨⟩
@@ -196,7 +196,6 @@ g ∘ f  =  λ x -> g (f x)
             ≡⟨  to∘from B≃C v  ⟩
                  v  
             ∎
-        }
     }
 
 -- this is for the to∘from part
@@ -237,14 +236,14 @@ module ≃-Reasoning where
         -> A ≃ B 
         --------
         -> A ≃ B 
-    ≃-begin A≃B = A≃B
+    ≃-begin_ {A} {B} A≃B = A≃B
 
     _≃⟨_⟩_ : ∀ (A : Set) {B C : Set}
         -> A ≃ B 
         -> B ≃ C 
         --------
         -> A ≃ C 
-    _≃⟨_⟩_ A A≃B B≃C = ≃-trans A≃B B≃C 
+    _≃⟨_⟩_ A {B} {C} A≃B B≃C = ≃-trans A≃B B≃C 
 
     _≃-∎ : ∀ (A : Set)
         --------
@@ -274,9 +273,16 @@ open _≲_
 -- embedding is reflexive and transitive, but not symmetric
 
 ≲-refl : ∀ {A : Set} -> A ≲ A 
-≲-refl = record {
-        to      = λ x -> x ;
-        from    = λ x -> x ;
-        from∘to = λ x -> refl
+≲-refl {A} = record {
+        to      = λ (v : A) -> v ;
+        from    = λ (v : A) -> v ;
+        from∘to = λ (v : A) -> refl
     }
-
+{-
+≲-trans : ∀ {A B C : Set} -> A ≲ B -> B ≲ C -> A ≲ C 
+≲-trans {A} {B} {C} A≲B B≲C =
+    record {
+        -- A -> C
+        to =  λ (x : A) -> {!   !}  
+    }
+-}

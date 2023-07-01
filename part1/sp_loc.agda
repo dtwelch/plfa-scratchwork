@@ -43,8 +43,8 @@ data SpLoc (A : Set) : ℕ² -> Set where
     RS  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k 
 
 -- postulates
-
-postulate                               -- iterate' the SS fn k times starting from Cen k
+postulate        
+    -- left side of hypo: iterate' the (SS k) function m times starting from (Cen k)
     pty2 : ∀ (k : ℕ²) -> ∀ (m n : ℕ) 
         -> iterate' m (SS k) (Cen k) ≡ iterate' n (SS k) (Cen k) 
         ---------------------------------------------------------
