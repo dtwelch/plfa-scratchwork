@@ -119,11 +119,12 @@ data _≃'_ (A B : Set): Set where
 
 to' : ∀ {A B : Set} -> (A ≃' B) -> (A -> B)
 to' (mk-≃' f g g∘f f∘g) = f
+-- to' (mk-≃' f _ _ _) = f    -- guess this approach would work too?
 
 from' : ∀ {A B : Set} -> (A ≃' B) -> (B -> A)
 from' (mk-≃' f g g∘f f∘g) = g
+-- from' (mk-≃' _ g _ _) = g
 
--- from∘to, etc
 
 -- isomorhism is reflexive - any set is isomorphic to itself
 
@@ -186,19 +187,34 @@ g ∘ f  =  λ x -> g (f x)
         } ;
         
         to∘from = λ {v {- v : C -} ->
-            begin 
-                to B≃C (to A≃B ((from A≃B ∘ from B≃C) v))
+            begin
+                (to B≃C ∘ to A≃B) ((from A≃B ∘ from B≃C) v)
             ≡⟨⟩
-                to B≃C ( to A≃B ( from A≃B ((from B≃C) v) ) )
-            ≡⟨ {!  !} ⟩
-                {!  !}
+                to B≃C (to A≃B ( from A≃B ((from B≃C) v) )) 
+            ≡⟨ cong (to B≃C) ( to∘from A≃B ((from B≃C) v) ) ⟩
+                to B≃C (from B≃C v)
+            ≡⟨  to∘from B≃C v  ⟩
+                 v  
+            ∎
         }
     }
--- to∘from          : (r : A ≃ B) (y : B) -> to r (from r y) ≡ y
--- to∘from A≃B      : (y : B) -> to A≃B (from A≃B y) ≡ y
--- to∘from A≃B      : 
+-- this is for the to∘from part
+-- to∘from                      : (r : A ≃ B) (y : B) -> to r (from r y) ≡ y
+-- to∘from A≃B                  : (y : B) -> to A≃B (from A≃B y) ≡ y
+-- to∘from A≃B ((from B≃C) v)   : to A≃B (from A≃B ((from B≃C) v)) ≡ ((from B≃C) v)
 
--- ---------------------------
+-- cong (to B≃C) ( to∘from A≃B ((from B≃C) v) )
+
+-- to B≃C (to A≃B (from A≃B (from B≃C v))) ≡ to B≃C (from B≃C v)
+
+
+-- if t1 is the term: to A≃B (from A≃B ((from B≃C) v)) ≡ ((from B≃C) v)
+-- (type of last line above) then you do:
+--      cong (from A≃B) t1
+-- you get:
+-- 
+-----------------------------
+
 
 -- from∘to                  :   (r : A ≃ B) (x : A) -> from r (to r x) ≡ x
 -- from∘to B≃C              :   (x : B) -> from B≃C (to B≃C x) ≡ x
