@@ -34,8 +34,6 @@ _+'_ : ℕ -> ℕ -> ℕ
 m +' zero = m 
 m +' (suc n) = suc (m +' n)
 
-
-
 -- +-comm : ∀ (m n : ℕ) -> (m + n) ≡ (n + m)
 -- +-suc  : ∀ (m n : ℕ) -> m + suc n ≡ suc (m + n)
 
@@ -48,7 +46,6 @@ helper m (suc n) = cong suc (helper m n)
 -- give back the same result given the same arguments (see above para for proof via helper lemma idea)
 same-app : ∀ (m n : ℕ) -> m +' n ≡ m + n
 same-app m n rewrite +-comm m n = helper m n
-
 
 -- some details on proof for 'helper' constant above: 
 
@@ -78,11 +75,11 @@ same-app m n rewrite +-comm m n = helper m n
 same : _+'_ ≡ _+_
 same = extensionality (_+'_) (_+_) 
     (λ x -> extensionality (_+'_ x) (_+_ x) ( λ y -> same-app x y ))
---extensionality (λ m → extensionality {!(λ n → ?)!})
+-- extensionality (λ m → extensionality {!(λ n → ?)!})
 -- ?0 : (x : ℕ) → (m +' x) ≡ m + x
 -- ------------
---extensionality (λ x -> extensionality {!?!} )
---?0 : (x₁ : ℕ) → (x +' x₁) ≡ x + x₁  -- so it is a fn...
+-- extensionality (λ x -> extensionality {!?!} )
+-- ?0 : (x₁ : ℕ) → (x +' x₁) ≡ x + x₁  -- so it is a fn...
 
 -- in the explicit version, you need to partially apply the outer λ to account for needing to 
 -- apply functions f and g in a curried way this is why we do: extensionality (_+'_ x) (_+_ x) 
@@ -176,19 +173,42 @@ g ∘ f  =  λ x -> g (f x)
         -- need to construct a term/fn from C -> A
         from = λ v{- v : C -} -> ((from A≃B) ∘ (from B≃C)) v ;
 
-        -- need to construct a term: (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
-        -- (hint: use equational reasoning to combine the inverses)
         from∘to = λ {v {- v : A -} -> 
             begin  
                 (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) v)
             ≡⟨⟩ -- removing the ∘ apps
                 from A≃B ( from B≃C ( to B≃C ( (to A≃B) v) ) )
-            ≡⟨  ⟩
-            {!   !} -- need:  from A≃B (from B≃C (to B≃C (to A≃B v))) 
+            ≡⟨ cong (from A≃B) (from∘to B≃C (to A≃B v)) ⟩
+                from A≃B (to A≃B v)
+            ≡⟨ from∘to A≃B v ⟩
+                v
+            ∎
+        } ;
+        
+        to∘from = λ {v {- v : C -} ->
+            begin 
+                to B≃C (to A≃B ((from A≃B ∘ from B≃C) v))
+            ≡⟨⟩
+                to B≃C ( to A≃B ( from A≃B ((from B≃C) v) ) )
+            ≡⟨ {!  !} ⟩
+                {!  !}
         }
     }
+-- to∘from          : (r : A ≃ B) (y : B) -> to r (from r y) ≡ y
+-- to∘from A≃B      : (y : B) -> to A≃B (from A≃B y) ≡ y
+-- to∘from A≃B      : 
 
--- from∘to :  (r : A ≃ B) (x : A) → from r (to r x) ≡ x
+-- ---------------------------
 
--- from A≃B ( from B≃C ( to B≃C ( (to A≃B) v) ) )
--- ?0 : (from A≃B ∘ from B≃C) ((to B≃C ∘ to A≃B) x) ≡ x
+-- from∘to                  :   (r : A ≃ B) (x : A) -> from r (to r x) ≡ x
+-- from∘to B≃C              :   (x : B) -> from B≃C (to B≃C x) ≡ x
+--  (adding the app: ((to A≃B) v) produces type: B 
+ 
+-- cong (from A≃B) (from∘to B≃C (to A≃B v)) produces:
+--  from A≃B (from B≃C (to B≃C (to A≃B v))) ≡ from A≃B (to A≃B v)
+-- gives us:
+--  from A≃B (to A≃B v)
+
+
+
+-- Equational reasoning for isomorphism
