@@ -198,6 +198,7 @@ g ∘ f  =  λ x -> g (f x)
             ∎
         }
     }
+
 -- this is for the to∘from part
 -- to∘from                      : (r : A ≃ B) (y : B) -> to r (from r y) ≡ y
 -- to∘from A≃B                  : (y : B) -> to A≃B (from A≃B y) ≡ y
@@ -225,6 +226,29 @@ g ∘ f  =  λ x -> g (f x)
 -- gives us:
 --  from A≃B (to A≃B v)
 
-
-
 -- Equational reasoning for isomorphism
+
+module ≃-Reasoning where 
+    infix  1 ≃-begin_ 
+    infixr 2 _≃⟨_⟩_
+    infix  3 _≃-∎
+
+    ≃-begin_ : ∀ {A B : Set} 
+        -> A ≃ B 
+        --------
+        -> A ≃ B 
+    ≃-begin A≃B = A≃B
+
+    _≃⟨_⟩_ : ∀ (A : Set) {B C : Set}
+        -> A ≃ B 
+        -> B ≃ C 
+        --------
+        -> A ≃ C 
+    _≃⟨_⟩_ A A≃B B≃C = {!   !}
+
+    _≃-∎ : ∀ (A : Set)
+        --------
+        -> A ≃ A
+    ≃-∎ A = ≃-refl
+
+open ≃-Reasoning
