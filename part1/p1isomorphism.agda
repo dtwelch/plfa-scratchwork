@@ -290,7 +290,7 @@ open _≲_
 -- NOTE: type queries involving cong don't appear to be working from within equational proofs
 -- for some reason..
 -- cong (to  A≲B) 
---?0 : from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ x
+-- ?0 : from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ x
         from∘to = λ (x : A) ->
             begin
                 from A≲B (from B≲C (to B≲C (to A≲B x)))
@@ -303,9 +303,26 @@ open _≲_
  -- cong (from A≲B) (from∘to B≲C (to A≲B x))  produces simplification equality:
  -- from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ from A≲B (to A≲B x)
 
- 
--- every isomorphism implies an embedding
+-- weak form of antisymmetry:
+-- "if two types embed in each other, and the embedding fns correspond, then they
+-- are isomorphic"
+≲-antisym : ∀ {A B : Set}
+    -> (A≲B : A ≲ B) 
+    -> (B≲A : B ≲ A)
+    -> (to A≲B ≡ from B≲A)
+    -> (from A≲B ≡ to B≲A)
+    ----------------------
+    -> A ≃ B 
+≲-antisym {A} {B} A≲B B≲A to≡from from≡to = 
+    record {
+        to      = λ (x : A) -> (to A≲B x) ; -- A -> B
+        from    = λ (x : B) -> (to B≲A x) ; -- B -> A
+        from∘to = λ (x : A) -> {!   !}  ;
+        to∘from = {!   !}
+    }
 
+-- every isomorphism implies an embedding
+{- 
 ≃-implies-≲ : ∀ {A B : Set}
     -> A ≲ B 
     --------
@@ -316,3 +333,4 @@ open _≲_
         from = {!   !} ;
         from∘to = {!   !}
     }
+    -}
