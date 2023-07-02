@@ -117,12 +117,12 @@ data _≃'_ (A B : Set): Set where
           ∀ (to∘from : (∀ (y : B) → to (from y) ≡ y)) ->
           A ≃' B
 
-to' : ∀ {A B : Set} -> (A ≃' B) -> (A -> B)
-to' (mk-≃' f g g∘f f∘g) = f
+long-to' : ∀ {A B : Set} -> (A ≃' B) -> (A -> B)
+long-to' (mk-≃' f g g∘f f∘g) = f
 -- to' (mk-≃' f _ _ _) = f    -- guess this approach would work too?
 
-from' : ∀ {A B : Set} -> (A ≃' B) -> (B -> A)
-from' (mk-≃' f g g∘f f∘g) = g
+long-from' : ∀ {A B : Set} -> (A ≃' B) -> (B -> A)
+long-from' (mk-≃' f g g∘f f∘g) = g
 -- from' (mk-≃' _ g _ _) = g
 
 
@@ -144,7 +144,7 @@ from' (mk-≃' f g g∘f f∘g) = g
     -> A ≃ B 
     --------
     -> B ≃ A 
-≃-sym isoH1 = record 
+≃-sym {A} {B} isoH1 = record 
     {
         to   = from isoH1 ;  -- flip everything.. (from isoH1) extracts the 'from' component/fn of the isoH1 record
         from = to isoH1 ; -- ditto w/ to and even to∘from, from∘to
@@ -227,8 +227,9 @@ g ∘ f  =  λ x -> g (f x)
 
 -- Equational reasoning for isomorphism
 
+-- (doesn't appear to be used - at least in this ch/sect)
 module ≃-Reasoning where 
-    infix  1 ≃-begin_ 
+    infix  1 ≃-begin_
     infixr 2 _≃⟨_⟩_
     infix  3 _≃-∎
 
@@ -249,7 +250,7 @@ module ≃-Reasoning where
         --------
         -> A ≃ A
     _≃-∎ A = ≃-refl
-
+ 
 open ≃-Reasoning
 
 -- ".. embedding is a weakening of isomorphism. While an
@@ -260,14 +261,13 @@ open ≃-Reasoning
 --  the first"
 
 -- formal def of embedding
+
 infix 0 _≲_
-
-record _≲_ (A B : Set) : Set where 
-    field
-        to      : A -> B 
-        from    : B -> A
-        from∘to : ∀ (x : A) -> from (to x) ≡ x 
-
+record _≲_ (A B : Set) : Set where
+  field
+    to      : A → B
+    from    : B → A
+    from∘to : ∀ (x : A) → from (to x) ≡ x
 open _≲_
 
 -- embedding is reflexive and transitive, but not symmetric
@@ -287,6 +287,32 @@ open _≲_
 
         -- C -> A
         from    = λ (x : C) -> from A≲B ((from B≲C) x) ;
+-- NOTE: type queries involving cong don't appear to be working from within equational proofs
+-- for some reason..
+-- cong (to  A≲B) 
+--?0 : from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ x
+        from∘to = λ (x : A) ->
+            begin
+                from A≲B (from B≲C (to B≲C (to A≲B x)))
+            ≡⟨ cong (from A≲B) (from∘to B≲C (to A≲B x)) ⟩
+                from A≲B (to A≲B x)
+            ≡⟨ from∘to A≲B x ⟩
+                x 
+            ∎
+    }
+ -- cong (from A≲B) (from∘to B≲C (to A≲B x))  produces simplification equality:
+ -- from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ from A≲B (to A≲B x)
 
+ 
+-- every isomorphism implies an embedding
+
+≃-implies-≲ : ∀ {A B : Set}
+    -> A ≲ B 
+    --------
+    -> A ≲ B 
+≃-implies-≲ {A} {B} A≃B = 
+    record {
+        to = {!   !} ;
+        from = {!   !} ;
         from∘to = {!   !}
     }
