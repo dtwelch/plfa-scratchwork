@@ -129,12 +129,12 @@ from' (mk-≃' f g g∘f f∘g) = g
 -- isomorhism is reflexive - any set is isomorphic to itself
 
 ≃-refl : ∀ {A : Set} 
-    ------
+    --------
     -> A ≃ A 
 ≃-refl {A} = record 
     {
-        to   = λ (v : A) -> v ;
-        from = λ (v : A) -> v ;
+        to      = λ (v : A) -> v ;
+        from    = λ (v : A) -> v ;
         from∘to = λ (v : A) -> refl ;
         to∘from = λ (v : A) -> refl 
     }
@@ -278,11 +278,15 @@ open _≲_
         from    = λ (v : A) -> v ;
         from∘to = λ (v : A) -> refl
     }
-{-
+
 ≲-trans : ∀ {A B C : Set} -> A ≲ B -> B ≲ C -> A ≲ C 
 ≲-trans {A} {B} {C} A≲B B≲C =
     record {
         -- A -> C
-        to =  λ (x : A) -> {!   !}  
+        to      = λ (x : A) -> to B≲C ((to A≲B) x) ;
+
+        -- C -> A
+        from    = λ (x : C) -> from A≲B ((from B≲C) x) ;
+
+        from∘to = {!   !}
     }
--}
