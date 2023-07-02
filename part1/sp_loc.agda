@@ -38,9 +38,9 @@ toℕ² (suc (suc (suc n)))    = succ (toℕ² (suc (suc n)))
 --data Sp_Loc : Nat -> Set where
 
 data SpLoc (A : Set) : ℕ² -> Set where
-    Cen : (k : ℕ²) -> (SpLoc A k)               -- center
-    SS  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- spiral successor
-    RS  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- radial successor
+    cen : (k : ℕ²) -> (SpLoc A k)               -- center loc
+    ss  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- spiral successor
+    rs  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- radial successor
 
 -- postulates
 {-
@@ -54,9 +54,9 @@ postulate
 
 -- spiral center dist.
 scd : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> ℕ
-scd k (Cen k) = 0
-scd k (SS k p)  = (scd k p) + 1
-scd k (RS k p)  = (scd k p) + {!   !} -- how many sploc's skipped in general?
+scd k (cen k) = 0
+scd k (ss k p)  = (scd k p) + 1
+scd k (rs k p)  = (scd k p) + {!   !} -- how many sploc's skipped in general?
 
 -- radial predecessor
 rp : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> (SpLoc A k)
@@ -65,11 +65,12 @@ rp : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> (SpLoc A k)
 sod : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> ℕ 
 
 -- now defining equations can reference both the rp and sod operators above 
-rp k (Cen k) = Cen k
-rp k (SS k p) = {!   !}
-rp k (RS k p) =  {!   !} 
+rp k (cen k) = cen k
+rp k (ss k p) = {!   !}
+rp k (rs k p) =  {!   !} 
 
-sod k (Cen k) = 0
-
+sod k (cen k) = 0
+sod k (ss k p) = {!   !}
+sod k (rs k p) =  {!   !} 
 -- will need for computing properties
 -- Corollary 3: ∀ k: N≥2, ∀ p: Sp_Loc(k), RP(k)(p) = SS(k)(SCD(k)(p)∸1)÷k (Cen(k));

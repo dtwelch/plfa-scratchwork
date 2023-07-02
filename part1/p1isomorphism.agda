@@ -265,9 +265,9 @@ open ≃-Reasoning
 infix 0 _≲_
 record _≲_ (A B : Set) : Set where
   field
-    to      : A → B
-    from    : B → A
-    from∘to : ∀ (x : A) → from (to x) ≡ x
+    to      : A -> B
+    from    : B -> A
+    from∘to : ∀ (x : A) -> from (to x) ≡ x
 open _≲_
 
 -- embedding is reflexive and transitive, but not symmetric
@@ -300,37 +300,16 @@ open _≲_
                 x 
             ∎
     }
- -- cong (from A≲B) (from∘to B≲C (to A≲B x))  produces simplification equality:
- -- from A≲B (from B≲C (to B≲C (to A≲B x))) ≡ from A≲B (to A≲B x)
-
--- weak form of antisymmetry:
--- "if two types embed in each other, and the embedding fns correspond, then they
--- are isomorphic"
-≲-antisym : ∀ {A B : Set}
-    -> (A≲B : A ≲ B) 
-    -> (B≲A : B ≲ A)
-    -> (to A≲B ≡ from B≲A)
-    -> (from A≲B ≡ to B≲A)
-    ----------------------
-    -> A ≃ B 
-≲-antisym {A} {B} A≲B B≲A to≡from from≡to = 
-    record {
-        to      = λ (x : A) -> (to A≲B x) ; -- A -> B
-        from    = λ (x : B) -> (to B≲A x) ; -- B -> A
-        from∘to = λ (x : A) -> {!   !}  ;
-        to∘from = {!   !}
-    }
 
 -- every isomorphism implies an embedding
-{- 
+
 ≃-implies-≲ : ∀ {A B : Set}
-    -> A ≲ B 
+    -> A ≃ B 
     --------
     -> A ≲ B 
 ≃-implies-≲ {A} {B} A≃B = 
     record {
-        to = {!   !} ;
+        to =  λ (x : A) -> {!   !}  ;
         from = {!   !} ;
         from∘to = {!   !}
     }
-    -}
