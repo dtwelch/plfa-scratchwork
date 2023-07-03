@@ -301,7 +301,25 @@ open _≲_
             ∎
     }
 
--- every isomorphism implies an embedding
+-- weak antisymmetry of ≲ 
+{-
+≲-antisym : ∀ {A B : Set}
+    -> (A≲B : A ≲ B)
+    -> (B≲A : B ≲ A)
+    -> (to A≲B ≡ from B≲A)
+    -> (from A≲B ≡ to B≲A)
+    ----------------------
+    -> A ≃ B 
+≲-antisym {A} {B} A≲B B≲A to≡from from≡to = 
+    record {
+        to      = λ (x : A) -> {!   !} ;
+        from    = {!   !} ;
+        from∘to = {!   !} ;
+        to∘from = {!   !}
+    }
+-}
+
+-- every isomorphism implies an embedding (practice)
 
 ≃-implies-≲ : ∀ {A B : Set}
     -> A ≃ B 
@@ -309,7 +327,10 @@ open _≲_
     -> A ≲ B 
 ≃-implies-≲ {A} {B} A≃B = 
     record {
-        to =  λ (x : A) -> {!   !}  ;
-        from = {!   !} ;
-        from∘to = {!   !}
+        to      = λ (x : A) -> (to A≃B x)   ;     -- A -> B
+        from    = λ (x : B) -> (from A≃B x) ;     -- B -> A
+
+        -- goal (x :A) -> from A≃B (to A≃B x) ≡ x
+        from∘to = λ (x : A) -> (from∘to A≃B x)
     }
+
