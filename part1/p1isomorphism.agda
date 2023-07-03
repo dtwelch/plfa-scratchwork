@@ -302,6 +302,7 @@ open _≲_
     }
 
 -- weak antisymmetry of ≲ 
+-- todo: return to this (one case is pretty intricate)
 {-
 ≲-antisym : ∀ {A B : Set}
     -> (A≲B : A ≲ B)
@@ -334,3 +335,29 @@ open _≲_
         from∘to = λ (x : A) -> (from∘to A≃B x)
     }
 
+-- equivalence of propositions (if and only if)
+record _iff_ (A B : Set) : Set where 
+    field 
+        to      : A -> B 
+        from    : B -> A
+    
+open _iff_
+
+-- show that equivalence is reflexive, symmetric, and transitive 
+
+-- reflexivity
+_iff_-refl : {A : Set} 
+    ----------
+    -> A iff A 
+_iff_-refl {A} = 
+    record {
+        to   = λ (x : A) -> x ;
+        from = λ (x : A) -> x
+    }
+
+-- symmetry
+_iff_-sym : ∀ {A B : Set} 
+    -> A iff B 
+    ----------
+    -> B iff A
+_iff_-sym {A} {B} AiffB = {!   !}
