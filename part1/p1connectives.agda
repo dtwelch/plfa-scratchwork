@@ -75,9 +75,16 @@ open _×'_
 
 ×-comm : {A B : Set} -> A × B ≃ B × A 
 ×-comm {A} {B} = 
-    record {
-        to = λ (x : A)  -> (⟨ x , _ ⟩ -> ⟨ _ , x ⟩) ;
+    record { -- construct a record since top level app is ≃ 
+             -- (and that operator is modeled using a record)
+        to = {!   !} ;
         from = {!   !} ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
+rev : ∀ {A B} 
+    -> A × B 
+    --------
+    -> B × A 
+rev {A} {B} (⟨_,_⟩ x y) = ⟨ y , x ⟩
+
