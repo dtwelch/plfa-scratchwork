@@ -75,10 +75,13 @@ open _×'_
 
 ×-comm : {A B : Set} -> A × B ≃ B × A 
 ×-comm {A} {B} = 
-    record { -- construct a record since top level app is ≃ 
-             -- (and that operator is modeled using a record)
-        to = {!   !} ;
-        from = {!   !} ;
+    -- construct a record since top level app is ≃ 
+    -- (and ≃ is modeled using a record)
+    record { 
+        to      =  λ (p : A × B) -> ⟨ (proj₂ p) , (proj₁ p) ⟩  ;
+        -- can also do it like (via pattern matching lambdas):
+        -- λ{ ⟨ x , y ⟩ → ⟨ y , x ⟩ }
+        from    = λ (p : B × A) -> ⟨ (proj₂ p) , (proj₁ p) ⟩  ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
