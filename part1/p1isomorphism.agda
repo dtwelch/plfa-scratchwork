@@ -360,4 +360,22 @@ _iff_-sym : ∀ {A B : Set}
     -> A iff B 
     ----------
     -> B iff A
-_iff_-sym {A} {B} AiffB = {!   !}
+_iff_-sym {A} {B} iffAB =  
+    record {
+        to      = λ (x : B) -> (from iffAB x) ;
+        from    = λ (x : A) -> (to iffAB x)
+        
+    }
+
+-- transitivity
+_iff_-trans : {A B C : Set} 
+    -> A iff B 
+    -> B iff C 
+    ----------
+    -> A iff C 
+_iff_-trans {A} {B} {C} iffAB iffBC =
+    record {
+        to      = λ (x : A) -> to iffBC (to iffAB x) ;
+        from    = λ (x : C) -> from iffAB (from iffBC x)
+    }
+  
