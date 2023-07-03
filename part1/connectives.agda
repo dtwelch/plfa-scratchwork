@@ -17,3 +17,17 @@ data _×_ (A B : Set) : Set where
         -> B
         --------
         -> A × B 
+
+-- evidenence that A × B holds is of the form ⟨ M , N ⟩ 
+-- where M provides evidence that A and N provides evidence that B holds 
+
+proj₁ : ∀ {A B : Set} 
+    -> A × B 
+    --------
+    -> A
+proj₁ {A} {B} (⟨_,_⟩ x y) = x
+-- nicer way of writing (that uses the mixfix below):
+-- proj₁ {A} {B} ⟨ x , y ⟩  = {!   !}
+-- the {A} and {B} bit there can also be removed 
+-- (necessary only if you want to explicitly annotate 
+--  types in various spots in the defining equations)
