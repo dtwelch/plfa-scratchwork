@@ -1,4 +1,4 @@
-module connectives where 
+module p1connectives where 
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl)
