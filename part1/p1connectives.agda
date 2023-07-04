@@ -50,6 +50,11 @@ proj₂ {A} {B} (⟨_,_⟩ x y) = y
 -- projection fns provide identity over products
 η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
 η-× {A} {B} (⟨_,_⟩ x y) = refl
+-- goal is: ⟨ proj₁ ⟨ x , y ⟩ , proj₂ ⟨ x , y ⟩ ⟩ ≡ ⟨ x , y ⟩
+-- which is definitionally equal (via the way the prod fns are defined) to:
+-- ⟨ x , y ⟩ ≡ ⟨ x , y ⟩
+--
+-- which is dischargeable via refl
 
 -- alternative way of modeling products using records 
 -- (provides some shortcuts vs data version... η-equality
@@ -71,7 +76,7 @@ record _×'_ (A B : Set) : Set where
 -- for commutativity, the to fn swaps a pair, taking ⟨ x , y ⟩ to ⟨ y , x ⟩ 
 -- and the from fn does the same (up to renaming)
 
-×-comm : {A B : Set} -> A × B ≃ B × A 
+×-comm : ∀ {A B : Set} -> A × B ≃ B × A 
 ×-comm {A} {B} = 
     -- construct a record since top level app is ≃ 
     -- (and ≃ is modeled using a record)
@@ -85,8 +90,20 @@ record _×'_ (A B : Set) : Set where
         from    = λ (p : B × A) -> ⟨ (proj₂ p) , (proj₁ p) ⟩  ;
 
         -- goal: ⟨ proj₂ ⟨ proj₂ p , proj₁ p ⟩ , proj₁ ⟨ proj₂ p , proj₁ p ⟩ ⟩ ≡ p
-        to∘from = λ (p : B × A) -> {!   !}  ;
-        from∘to = {!   !} 
+
+        to∘from = λ (p : B × A) -> (η-× p)    ; -- here's the type of (η-× p): ⟨ proj₁ p , proj₂ p ⟩ ≡ p
+        -- which is definitionally equal to (after applying/'eliminating' the projection fns):
+        --  Ev: ⟨ p , p ⟩ ≡ p 
+        --
+        -- NOW here's the goal we need to EV to match...:
+        --  ⟨ proj₂ ⟨ proj₂ p , proj₁ p ⟩ , proj₁ ⟨ proj₂ p , proj₁ p ⟩ ⟩ ≡ p
+        -- which is definitionally equal to:
+        --  ⟨ proj₂ ⟨ p , p ⟩ , proj₁ ⟨ p , p ⟩ ⟩ ≡ p
+        -- which is definitionally equal to:
+        --  ⟨ p , p ⟩ ≡ p
+        -- so EV and ⟨ p , p ⟩ ≡ p match and can be discharged via refl
+
+        from∘to = λ (p : A × B) -> (η-× p) 
     }
 
 -- messing around:
@@ -96,3 +113,22 @@ rev : ∀ {A B}
     -> B × A 
 rev {A} {B} (⟨_,_⟩ x y) = ⟨ y , x ⟩
 
+ -- associativity
+
+×-assoc : ∀ {A B C : Set} -> (A × B) × C ≃ A × (B × C)
+×-assoc {A} {B} {C} = 
+    record {
+        --                                     -------A---------  -------------(B × C)---------------           
+        to          = λ (p : (A × B) × C) -> ⟨ (proj₁ (proj₁ p)) , ⟨ (proj₂ (proj₁ p)) , (proj₂ p) ⟩ ⟩ ;
+
+                --                            ------------(A × B)----------    -------C-------         
+        from        = λ (p : A × (B × C)) -> ⟨ ⟨ proj₁ p , proj₁ (proj₂ p) ⟩ , proj₂ (proj₂ p) ⟩ ;
+
+        -- the term we construct needs to be the identity fn for A × (B × C)
+                --                               ---A---    -------------(B × C)-------------         
+        to∘from     =  λ (p : A × (B × C)) -> η-× ⟨ (proj₁ p) , ⟨ (proj₁ (proj₂ p)) , (proj₂ (proj₂ p)) ⟩ ⟩   ; -- λ (p : (A × B) × C) -> ? ;  
+        -- ⟨ (proj₁ (proj₁ p)) , ⟨ (proj₂ (proj₁ p)) , (proj₂ p) ⟩ ⟩ 
+        -- η-× ⟨ ⟨ proj₁ p , proj₁ (proj₂ p) ⟩ , proj₂ (proj₂ p) ⟩
+        from∘to     = {!   !}       -- (proj₂ (proj₁ p)) : B
+                                     -- proj₂ p           : C
+    }
