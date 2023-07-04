@@ -1,7 +1,7 @@
 module p1connectives where 
 
 import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl)
+open Eq using (_≡_; refl; cong)
 open Eq.≡-Reasoning
 open import Data.Nat using (ℕ)
 open import Function using (_∘_)
@@ -60,8 +60,6 @@ record _×'_ (A B : Set) : Set where
         proj₁' : A 
         proj₂' : B 
 
-open _×'_
-
 -- record { proj₁′ = M ; proj₂′ = N } corresponds to term: ⟨ M , N ⟩ ..
 -- the constructor part allows us to construct 'instances' instead of having
 -- to write, as we would usually: record { proj₁′ = M ; proj₂′ = N } 
@@ -78,13 +76,20 @@ open _×'_
     -- construct a record since top level app is ≃ 
     -- (and ≃ is modeled using a record)
     record { 
+        -- NOTE: the reason to can use A × B as the type for p in the λ below is due to 
+        -- the way the record for _≃_ is defined: A is the lhs, B is the rhs.
+        -- (see p1isomorphism _≃_)
         to      =  λ (p : A × B) -> ⟨ (proj₂ p) , (proj₁ p) ⟩  ;
         -- can also do it like (via pattern matching lambdas):
         -- λ{ ⟨ x , y ⟩ → ⟨ y , x ⟩ }
         from    = λ (p : B × A) -> ⟨ (proj₂ p) , (proj₁ p) ⟩  ;
-        to∘from = {!   !} ;
+
+        -- goal: ⟨ proj₂ ⟨ proj₂ p , proj₁ p ⟩ , proj₁ ⟨ proj₂ p , proj₁ p ⟩ ⟩ ≡ p
+        to∘from = λ (p : B × A) -> {!   !}  ;
         from∘to = {!   !} 
     }
+
+-- messing around:
 rev : ∀ {A B} 
     -> A × B 
     --------
