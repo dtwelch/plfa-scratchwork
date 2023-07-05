@@ -115,20 +115,36 @@ rev {A} {B} (⟨_,_⟩ x y) = ⟨ y , x ⟩
 
  -- associativity
 
-×-assoc : ∀ {A B C : Set} -> (A × B) × C ≃ A × (B × C)
+-- NOTE: will probably need to just do pattern matching here, 
+-- it's more manageable when dealing w/ proofs involving records it seems
+{-
+×-assoc : ∀ {A B C : Set} -> (A × B) × C ≃ A × (B × C) 
+-- an attempt to do with w/o pattern matching.. got stuck on to∘from, from∘to
 ×-assoc {A} {B} {C} = 
     record {
-        --                                     -------A---------  -------------(B × C)---------------           
-        to          = λ (p : (A × B) × C) -> ⟨ (proj₁ (proj₁ p)) , ⟨ (proj₂ (proj₁ p)) , (proj₂ p) ⟩ ⟩ ;
+        --                                    -------A---------  -------------(B × C)---------------           
+        to         =  λ (p : (A × B) × C) -> ⟨ (proj₁ (proj₁ p)) , ⟨ (proj₂ (proj₁ p)) , (proj₂ p) ⟩ ⟩ ;
 
                 --                            ------------(A × B)----------    -------C-------         
-        from        = λ (p : A × (B × C)) -> ⟨ ⟨ proj₁ p , proj₁ (proj₂ p) ⟩ , proj₂ (proj₂ p) ⟩ ;
+        from       =  λ (p : A × (B × C)) -> ⟨ ⟨ proj₁ p , proj₁ (proj₂ p) ⟩ , proj₂ (proj₂ p) ⟩ ;
 
         -- the term we construct needs to be the identity fn for A × (B × C)
                 --                               ---A---    -------------(B × C)-------------         
-        to∘from     =  λ (p : A × (B × C)) -> η-× ⟨ (proj₁ p) , ⟨ (proj₁ (proj₂ p)) , (proj₂ (proj₂ p)) ⟩ ⟩   ; -- λ (p : (A × B) × C) -> ? ;  
-        -- ⟨ (proj₁ (proj₁ p)) , ⟨ (proj₂ (proj₁ p)) , (proj₂ p) ⟩ ⟩ 
-        -- η-× ⟨ ⟨ proj₁ p , proj₁ (proj₂ p) ⟩ , proj₂ (proj₂ p) ⟩
-        from∘to     = {!   !}       -- (proj₂ (proj₁ p)) : B
-                                     -- proj₂ p           : C
+        to∘from     = λ (p : A × (B × C)) -> {!   !} ; -- λ (p : A × (B × C)) -> ? ;  
+-- η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
+
+        from∘to     = λ (p : (A × B) × C) -> η-× ⟨ (proj₁ p) , (proj₂ p) ⟩ 
+    }
+-}
+
+-- 
+-- η-× ⟨ ⟨ proj₁ p , proj₂ (proj₁ p) ⟩ , proj₂ p ⟩
+
+×-assoc : ∀ {A B C : Set} -> (A × B) × C ≃ A × (B × C)
+×-assoc {A} {B} {C} = 
+    record {
+        to      = λ{ ⟨ ⟨ x , y ⟩ , z ⟩ -> ⟨ x , ⟨ y , z ⟩ ⟩ } ;
+        from    = λ{ ⟨ x , ⟨ y , z ⟩ ⟩ -> ⟨ ⟨ x , y ⟩ , z ⟩ } ;
+        to∘from = {!   !} ;
+        from∘to = {!   !}
     }
