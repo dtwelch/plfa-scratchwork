@@ -183,8 +183,19 @@ _iff_-trans {A} {B} {C} iffAB iffBC =
 iff≃× : ∀ {A B : Set} -> (A iff B) ≃ (A -> B) × (B -> A) 
 iff≃× {A} {B} = 
     record {
-        to      = λ (p : A iff B) -> ⟨ (to p) , (from p) ⟩  ;
-        from    = {!   !} ;
+        -- given a proposition p, construct a term that matches the goal:
+        -- the to and from in the λ body below are the fns defined in the 
+        -- record for _iff_
+        to      = λ (p : A iff B) -> ⟨ (to p) , (from p) ⟩  ; -- goal: (A -> B) × (B -> A) 
+
+        -- given a product of the form (A -> B) × (B -> A) show that A iff B holds by constructing a term with that as its type
+        from    = λ (prod : (A -> B) × (B -> A)) -> 
+            record {
+                to   = (proj₁ prod) ; --(proj₁ prod) : A -> B 
+                from = (proj₁ prod) --(proj₂ prod) : B -> A  
+                -- (the record {..} 'constructs' a bi-implication of the 
+                --  shape we want using the 'prod'(uct) we know)
+            } ; -- goal: A iff B
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
