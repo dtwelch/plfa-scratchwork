@@ -4,6 +4,7 @@ import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong)
 open Eq.≡-Reasoning
 open import Data.Nat using (ℕ)
+
 open import Function using (_∘_)
 open import plfa.part1.Isomorphism using (_≃_; _≲_; extensionality; _⇔_)
 open plfa.part1.Isomorphism.≃-Reasoning
@@ -132,3 +133,58 @@ rev {A} {B} (⟨_,_⟩ x y) = ⟨ y , x ⟩
         from∘to     = λ{ ⟨ ⟨ x , y ⟩ , z ⟩ -> refl }
     }
 
+-- exercise iff≃× (iff and some lemmas reproduced here from last ch):
+
+-- equivalence of propositions (if and only if)
+record _iff_ (A B : Set) : Set where 
+    field 
+        to      : A -> B 
+        from    : B -> A
+    
+open _iff_
+
+-- show that equivalence is reflexive, symmetric, and transitive 
+
+-- reflexivity
+_iff_-refl : {A : Set} 
+    ----------
+    -> A iff A 
+_iff_-refl {A} = 
+    record {
+        to   = λ (x : A) -> x ;
+        from = λ (x : A) -> x
+    }
+
+-- symmetry
+_iff_-sym : ∀ {A B : Set} 
+    -> A iff B 
+    ----------
+    -> B iff A
+_iff_-sym {A} {B} iffAB =  
+    record {
+        to      = λ (x : B) -> (from iffAB x) ;
+        from    = λ (x : A) -> (to iffAB x)
+        
+    }
+
+-- transitivity
+_iff_-trans : {A B C : Set} 
+    -> A iff B 
+    -> B iff C 
+    ----------
+    -> A iff C 
+_iff_-trans {A} {B} {C} iffAB iffBC =
+    record {
+        to      = λ (x : A) -> to iffBC (to iffAB x) ;
+        from    = λ (x : C) -> from iffAB (from iffBC x)
+    }
+-------------------------
+
+iff≃× : ∀ {A B : Set} -> (A iff B) ≃ (A -> B) × (B -> A) 
+iff≃× {A} {B} = 
+    record {
+        to      = λ (p : A iff B) -> ⟨ (to p) , (from p) ⟩  ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !} 
+    }
