@@ -341,14 +341,21 @@ infixr 1 _⊎_
 --  has m distinct members, and type B has n distinct members, 
 --  then the type A ⊎ B has m + n distinct members"
 
--- sum on types also shares a property w/ sum on numbers: it is commutative and 
--- associative up to isomorphism
+-------- exercises:
+
+-- to allow the system to ensure that pattern matching is complete
+-- can't do the thing from the last chapter in each to = λ { (inj x) -> } 
+-- agda (rightly I guess) isn't convinced that it will match all cases?
+helper-comm : ∀ {A B : Set} -> A ⊎ B -> B ⊎ A 
+helper-comm (inj₁ a) = (inj₂ a) 
+helper-comm (inj₂ b) = (inj₁ b)
 
 -- sum is commutative up to isomorphism
 ⊎-comm : ∀ {A B : Set} -> A ⊎ B ≃ B ⊎ A 
 ⊎-comm {A} {B} = 
-    ≃-begin 
-        (A ⊎ B)
-    ≃⟨ {! ≃-sym   !} ⟩
-        {!   !}
-    ≃-∎
+    record {
+        to      = λ (y : A ⊎ B) -> helper-comm {A} {B} y  ;
+        from    = λ (y : B ⊎ A) -> helper-comm {B} {A} y ;
+        to∘from = {!   !} ;
+        from∘to = {!   !} 
+    }
