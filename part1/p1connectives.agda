@@ -199,9 +199,84 @@ iff≃× {A} {B} =
             } ; 
         to∘from = λ (p : (A -> B) × (B -> A)) -> (η-× p) ; -- goal : ⟨ proj₁ p , proj₂ p ⟩ ≡ p (use product identity fn η-× over given p)
         
+        -- iff≃×  ∀ {A B  Set} -> (A iff B) ≃ (A -> B) × (B -> A) 
+
         -- goal: 
         -- record { 
         --      to = proj₁ ⟨ to p , from p ⟩ ;  from = proj₂ ⟨ to p , from p ⟩ 
         -- } ≡ p
-        from∘to = λ (p : A iff B) -> ( {!   !} ) 
+        -- (the record in the goal comment above can be made definitionally equal to p,
+        --  so refl which gives us φ ≡ φ)
+        from∘to = λ (p : A iff B) -> refl 
     }
+
+-- truth 
+
+data ⊤ : Set where 
+
+    tt : 
+        --
+        ⊤
+
+-- evidence that ⊤ holds is of the form tt.
+
+-- nullary case of η-× is η-⊤, which asserts that any value of 
+-- type ⊤ must be equal to tt
+
+η-⊤ : ∀ (w : ⊤) -> tt ≡ w 
+η-⊤ tt = refl -- matching on tt leaves us to show tt ≡ tt, (refl from there) 
+-- e.g., η-⊤ b = refl wouldn't work we need to instantiate w on the right hand side of ≡ 
+-- to tt (since the left is tt) in ∀ (w : T) -> tt ≡ w
+
+-- ⊤ is unit
+
+
+-- unit is identity of × up to isomorphism
+-- NOTE: doing it with pattern matching λs allows two proofs by refl (definitional equality works 
+-- w/o needing any helper lemmas.. the version below is a mostly completed explicit non pattern matching
+-- version that uses projection functions -- but requires a helper lemma (I think) for the from∘to case
+{-
+⊤-identity-l : ∀ {A : Set} -> ⊤ × A ≃ A 
+⊤-identity-l {A} = record {
+        to      = λ (y : (⊤ × A)) -> (proj₂ y) ;
+        from    = λ (y : A) -> ⟨ tt , y ⟩ ;
+
+        to∘from = λ (y : A) -> refl ; -- need a term proj­₂ ⟨ tt , y ⟩ ≡ y ... 
+        -- the lhs (proj₂ ⟨ tt , y ⟩) is definitionally equal to y, so we get y ≡ y 
+        -- after simplification.. which holds via refl
+
+        from∘to = λ (y : (⊤ × A)) -> {!   !}
+        -- from∘to =  λ{ ⟨ tt , ⟨ _ , x ⟩ ⟩ -> x  }
+    }
+
+-- ⊤-id-helper : ∀ {A : Set} -> ⊤ × A -> ...
+
+-}
+
+
+⊤-identity-l : ∀ {A : Set} -> ⊤ × A ≃ A 
+⊤-identity-l {A} = record {
+        to      = λ{ ⟨ tt , y ⟩  -> y } ;
+        from    = λ{ y -> ⟨ tt , y ⟩ } ;
+        to∘from = λ{ y -> refl } ; 
+
+        -- sample goal for from∘to:
+        -- ?0 : (x : ⊤ × A) →
+        --      (λ { y → ⟨ tt , y ⟩ }) ((λ { ⟨ tt , y ⟩ → y }) x) ≡ x
+        -- the big cluster of nested lambas on lhs of ≡ is definitionally equal to x 
+        -- (the product-typed argument being applied to the outermost λ term). So the 
+        -- goal becomes x ≡ x which is proved via refl
+        from∘to = λ{ ⟨ tt , y ⟩ -> refl  }
+    } 
+        
+
+-- matches a (⊤ × A) pair for some type A and matches specifically against
+-- the one and only ctor for ⊤ (which is: tt)
+
+
+
+
+    -- goal ⟨ tt , proj₂ y ⟩ ≡ y
+-- η-× ⟨ tt , proj₂ y ⟩
+--(η-× x)
+    -- (proj₂ ⟨ tt , y ⟩) 
