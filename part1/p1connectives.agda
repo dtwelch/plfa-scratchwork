@@ -188,14 +188,20 @@ iff≃× {A} {B} =
         -- record for _iff_
         to      = λ (p : A iff B) -> ⟨ (to p) , (from p) ⟩  ; -- goal: (A -> B) × (B -> A) 
 
-        -- given a product of the form (A -> B) × (B -> A) show that A iff B holds by constructing a term with that as its type
-        from    = λ (prod : (A -> B) × (B -> A)) -> 
+        -- given a product of the form (A -> B) × (B -> A) show that A iff B 
+        -- holds by constructing a term with that as its type
+        from    = λ (p : (A -> B) × (B -> A)) ->  -- goal: A iff B
             record {
-                to   = (proj₁ prod) ; --(proj₁ prod) : A -> B 
-                from = (proj₁ prod) --(proj₂ prod) : B -> A  
+                to   = (proj₁ p) ; -- goal: A -> B   (proj₁ p) : A -> B
+                from = (proj₂ p)   -- goal: B -> A   (proj₂ p) : B -> A  
                 -- (the record {..} 'constructs' a bi-implication of the 
-                --  shape we want using the 'prod'(uct) we know)
-            } ; -- goal: A iff B
-        to∘from = {!   !} ;
-        from∘to = {!   !} 
+                --  shape we want using the product p we know)
+            } ; 
+        to∘from = λ (p : (A -> B) × (B -> A)) -> (η-× p) ; -- goal : ⟨ proj₁ p , proj₂ p ⟩ ≡ p (use product identity fn η-× over given p)
+        
+        -- goal: 
+        -- record { 
+        --      to = proj₁ ⟨ to p , from p ⟩ ;  from = proj₂ ⟨ to p , from p ⟩ 
+        -- } ≡ p
+        from∘to = λ (p : A iff B) -> ( {!   !} ) 
     }
