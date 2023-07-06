@@ -283,6 +283,7 @@ data ⊤ : Set where
 -- "Given two propositions A and B, the disjunction A ⊎ B holds if either A holds
 --  or B holds. We formalise this idea by declaring a suitable inductive type:"
 
+-- Q: why ⊎ for the symbol and not ⋎ or something? (⊎ seems like multiset notation..)
 data _⊎_ (A B : Set) : Set where 
 
     inj₁ : 
@@ -296,10 +297,33 @@ data _⊎_ (A B : Set) : Set where
         -> A ⊎ B 
 
 case-⊎ : ∀ {A B C : Set} 
-    -> (A -> C)     -- a->c
-    -> (B -> C)     -- b->c
+    -> (A -> C)     -- f
+    -> (B -> C)     -- g
     -> A ⊎ B        -- h1
     -----------
-    -> C
-case-⊎ {A} {B} {C} f g (inj₁ a) = {!   !}
-case-⊎ {A} {B} {C} f g (inj₂ b) = {!   !}
+    -> C          --  inj₁ h1 produces a type A ⊎ B from the pattern variable h1 : A
+case-⊎ {A} {B} {C} f g (inj₁ h1) = f h1 
+case-⊎ {A} {B} {C} f g (inj₂ h1) = g h1 
+
+-- " .. matching against inj₁ and inj₂ is typical of how we exploit evidence that a 
+--  disjunction like A ⊎ B holds."
+
+-- "When inj₁ and inj₂ appear on the right-hand side of an equation we refer to them 
+--  as constructors, and when they appear on the left-hand side we refer to them as destructors."
+
+-- "Applying the destructor to each of the constructors is the identity:"
+η-⊎ : ∀ {A B : Set} (w : A ⊎ B) -> case-⊎ inj₁ inj₂ w ≡ w 
+η-⊎ {A} {B} (inj₁ x) = refl  -- case-⊎ inj₁ inj₂ (inj₁ x) ≡ inj₁ x
+η-⊎ {A} {B} (inj₂ x) = refl  -- case-⊎ inj₁ inj₂ (inj₁ x) ≡ inj₁ x
+
+-- so inj₁ and inj₂ are destructors if on the lhs of a definition eq, 
+-- on the rhs, they are constructors for A ⊎ B
+
+-- more generally, we can also throw in an arbitrary function from a disjunction:
+uniq-⊎ : ∀ {A B C : Set} (h : A ⊎ B -> C) (w : A ⊎ B) ->
+-- inj₁ : A -> A ⊎ B
+-- inj₂ : B -> A ⊎ B
+-- h ∘ inj₁ : (x : A) -> C
+-- h ∘ inj₂ : (x : B) -> 
+    case-⊎ ( h ∘ inj₁) (h ∘ inj₂) w ≡ h w
+uniq-⊎ {A} {B} {C} h w = {!  !}
