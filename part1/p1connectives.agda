@@ -223,15 +223,13 @@ data ⊤ : Set where
 -- nullary case of η-× is η-⊤, which asserts that any value of 
 -- type ⊤ must be equal to tt
 
+-- ⊤ is unit
 η-⊤ : ∀ (w : ⊤) -> tt ≡ w 
 η-⊤ tt = refl -- matching on tt leaves us to show tt ≡ tt, (refl from there) 
 -- e.g., η-⊤ b = refl wouldn't work we need to instantiate w on the right hand side of ≡ 
--- to tt (since the left is tt) in ∀ (w : T) -> tt ≡ w
-
--- ⊤ is unit
+-- to tt (since the left is 'hardwired' to tt specifically in the pattern) in ∀ (w : T) -> tt ≡ w
 
 
--- unit is identity of × up to isomorphism
 -- NOTE: doing it with pattern matching λs allows two proofs by refl (definitional equality works 
 -- w/o needing any helper lemmas.. the version below is a mostly completed explicit non pattern matching
 -- version that uses projection functions -- but requires a helper lemma (I think) for the from∘to case
@@ -253,7 +251,7 @@ data ⊤ : Set where
 
 -}
 
-
+-- unit is left identity of × up to isomorphism
 ⊤-identity-l : ∀ {A : Set} -> ⊤ × A ≃ A 
 ⊤-identity-l {A} = record {
         to      = λ{ ⟨ tt , y ⟩  -> y } ;
@@ -268,15 +266,40 @@ data ⊤ : Set where
         -- goal becomes x ≡ x which is proved via refl
         from∘to = λ{ ⟨ tt , y ⟩ -> refl  }
     } 
-        
 
--- matches a (⊤ × A) pair for some type A and matches specifically against
--- the one and only ctor for ⊤ (which is: tt)
+-- unit is right identity for × upto isomorphism
+⊤-identity-r : ∀ {A : Set} -> (A × ⊤) ≃ A 
+⊤-identity-r {A} = 
+    ≃-begin
+        (A × ⊤)
+    ≃⟨ ×-comm ⟩
+        (⊤ × A) 
+    ≃⟨ ⊤-identity-l ⟩
+        A
+    ≃-∎
+    
+-- disjunction is sum
 
+-- "Given two propositions A and B, the disjunction A ⊎ B holds if either A holds
+--  or B holds. We formalise this idea by declaring a suitable inductive type:"
 
+data _⊎_ (A B : Set) : Set where 
 
+    inj₁ : 
+        A 
+        --------
+        -> A ⊎ B 
 
-    -- goal ⟨ tt , proj₂ y ⟩ ≡ y
--- η-× ⟨ tt , proj₂ y ⟩
---(η-× x)
-    -- (proj₂ ⟨ tt , y ⟩) 
+    inj₂ : 
+        B 
+        --------
+        -> A ⊎ B 
+
+case-⊎ : ∀ {A B C : Set} 
+    -> (A -> C)     -- a->c
+    -> (B -> C)     -- b->c
+    -> A ⊎ B        -- h1
+    -----------
+    -> C
+case-⊎ {A} {B} {C} f g (inj₁ a) = {!   !}
+case-⊎ {A} {B} {C} f g (inj₂ b) = {!   !}
