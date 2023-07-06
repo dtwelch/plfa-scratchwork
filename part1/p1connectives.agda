@@ -321,9 +321,34 @@ case-⊎ {A} {B} {C} f g (inj₂ h1) = g h1
 
 -- more generally, we can also throw in an arbitrary function from a disjunction:
 uniq-⊎ : ∀ {A B C : Set} (h : A ⊎ B -> C) (w : A ⊎ B) ->
+    case-⊎ ( h ∘ inj₁) (h ∘ inj₂) w ≡ h w
 -- inj₁ : A -> A ⊎ B
 -- inj₂ : B -> A ⊎ B
 -- h ∘ inj₁ : (x : A) -> C
--- h ∘ inj₂ : (x : B) -> 
-    case-⊎ ( h ∘ inj₁) (h ∘ inj₂) w ≡ h w
-uniq-⊎ {A} {B} {C} h w = {!  !}
+-- h ∘ inj₂ : (x : B) -> C
+uniq-⊎ {A} {B} {C} h (inj₁ x) = refl
+uniq-⊎ {A} {B} {C} h (inj₂ x) = refl
+
+infixr 1 _⊎_ 
+
+-- so A × C ⊎ B × C parses as (A × C) ⊎ (B × C)
+
+-- some clarification on choice of symbol (⊎):
+
+-- "In set theory, it is also sometimes called the disjoint union, 
+--  and in computing it corresponds to a variant record type. 
+--  Among other reasons for calling it the sum, note that if type A 
+--  has m distinct members, and type B has n distinct members, 
+--  then the type A ⊎ B has m + n distinct members"
+
+-- sum on types also shares a property w/ sum on numbers: it is commutative and 
+-- associative up to isomorphism
+
+-- sum is commutative up to isomorphism
+⊎-comm : ∀ {A B : Set} -> A ⊎ B ≃ B ⊎ A 
+⊎-comm {A} {B} = 
+    ≃-begin 
+        (A ⊎ B)
+    ≃⟨ {! ≃-sym   !} ⟩
+        {!   !}
+    ≃-∎
