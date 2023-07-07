@@ -355,7 +355,7 @@ helper-elim : ∀ {A B : Set} -> (w : A ⊎ B) ->
 helper-elim {A} {B} (inj₁ a) = refl 
 helper-elim {A} {B} (inj₂ b) = refl
 
--- sum is commutative up to isomorphism
+-- sum is commutative up to isomorphism (_≃_)
 ⊎-comm : ∀ {A B : Set} -> A ⊎ B ≃ B ⊎ A 
 ⊎-comm {A} {B} = 
     record {
@@ -363,6 +363,9 @@ helper-elim {A} {B} (inj₂ b) = refl
         from    = λ (y : B ⊎ A) -> helper-comm {B} {A} y ;
 
         -- helper-comm (helper-comm y) ≡ y
-        to∘from = λ ( y : B ⊎ A) -> (helper-elim y) ; 
-        from∘to = {!   !} 
+        -- has to be {B} {A} in the app since y : B ⊎ A
+        to∘from = λ (y : B ⊎ A) -> (helper-elim {B} {A} y) ; 
+        from∘to = λ (y : A ⊎ B) -> (helper-elim {A} {B} y) 
     }
+
+-- sum is associative up to isomorphism (_≃_)
