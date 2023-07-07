@@ -350,12 +350,19 @@ helper-comm : ∀ {A B : Set} -> A ⊎ B -> B ⊎ A
 helper-comm (inj₁ a) = (inj₂ a) 
 helper-comm (inj₂ b) = (inj₁ b)
 
+helper-elim : ∀ {A B : Set} -> (w : A ⊎ B) -> 
+    helper-comm (helper-comm w) ≡ w 
+helper-elim {A} {B} (inj₁ a) = refl 
+helper-elim {A} {B} (inj₂ b) = refl
+
 -- sum is commutative up to isomorphism
 ⊎-comm : ∀ {A B : Set} -> A ⊎ B ≃ B ⊎ A 
 ⊎-comm {A} {B} = 
     record {
         to      = λ (y : A ⊎ B) -> helper-comm {A} {B} y  ;
         from    = λ (y : B ⊎ A) -> helper-comm {B} {A} y ;
-        to∘from = {!   !} ;
+
+        -- helper-comm (helper-comm y) ≡ y
+        to∘from = λ ( y : B ⊎ A) -> (helper-elim y) ; 
         from∘to = {!   !} 
     }
