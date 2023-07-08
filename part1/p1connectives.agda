@@ -368,4 +368,46 @@ helper-elim {A} {B} (inj₂ b) = refl
         from∘to = λ (y : A ⊎ B) -> (helper-elim {A} {B} y) 
     }
 
+{-
+inj₁ : 
+        A 
+        --------
+        -> A ⊎ B 
+
+    inj₂ : 
+        B 
+        --------
+        -> A ⊎ B
+-}
+⊎-assoc-helper-l : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C -> A ⊎ (B ⊎ C)
+-- ⊎-assoc-helper-l {A} {B} {C} (inj₁ (inj₂ b)) = inj₂ {A} (inj₁ {B} {C} b)
+-- other cases...:
+
+
+
+-- problem: (inj₁ x) in the first pattern below gives A ⊎ B from the given.. nested decomp necessary...
+⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₁ x))  = {! inj₁ {A}  !}
+⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₂ x))  = {!  !}
+⊎-assoc-helper-l {A} {B} {C} (inj₂ x)            = inj₂ {A} (inj₂ {B} x)  
+
+-- notes on pattern matching in the above helper method: ---
+
+-- pattern (inj₁ (inj₁ x))      --> x : A 
+-- pattern (inj₁ (inj₂ x))      --> x : B
+-- pattern (inj₂ x)             --> x : C
+
+-- three patterns (as opposed to two) are necessary to further decompose 
+-- the left subexpression of (A ⊎ B) ⊎ C . Specifically:
+
+-- pattern (inj₁ x)             --> x : A ⊎ B (left subexpression)
+-- pattern (inj₁ (inj₁ x))      --> x : A 
+-- pattern (inj₁ (inj₂ x))      --> x : B
+
+-- no need for two patterns to handle the right subexpression since 
+-- it's just C:
+-- pattern (inj₂ x)             --> x : C (right subexpression)
+---------
+
 -- sum is associative up to isomorphism (_≃_)
+⊎-assoc : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C ≃ A ⊎ (B ⊎ C)
+⊎-assoc {A} {B} {C} = {!   !} 
