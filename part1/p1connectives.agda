@@ -379,16 +379,27 @@ inj₁ :
         --------
         -> A ⊎ B
 -}
+
+-- (inj₁ {A} {B} x)
+⊎-assoc-helper-r : ∀ {A B C : Set} -> A ⊎ (B ⊎ C) -> (A ⊎ B) ⊎ C
+⊎-assoc-helper-r {A} {B} {C} (inj₁ x)           =       {!   !} -- matching A
+⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₁ x)) = {!   !}                   -- matching B
+⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₂ x)) = {!   !}               -- matching C
+
+
 ⊎-assoc-helper-l : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C -> A ⊎ (B ⊎ C)
--- ⊎-assoc-helper-l {A} {B} {C} (inj₁ (inj₂ b)) = inj₂ {A} (inj₁ {B} {C} b)
--- other cases...:
+⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₁ x))  = inj₁ {A} {B ⊎ C} x                   -- matching A
+⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₂ x))  = inj₂ {A} {B ⊎ C} (inj₁ {B} {C} x)    -- matching B
+⊎-assoc-helper-l {A} {B} {C} (inj₂ x)            = inj₂ {A} (inj₂ {B} {C} x)            -- matching C
+
+-- explicit instantiations used on some of the patterns above..
+
+-- inj₂ {A ⊎ B}{C} (inj₁ {A} {B} x) -- gives: (A ⊎ B) ⊎ C
 
 
+-- inj₁ {A}{B ⊎ C} (inj₁ {A} {B ⊎ C} x) -- gives: (A ⊎ B) ⊎ C
 
--- problem: (inj₁ x) in the first pattern below gives A ⊎ B from the given.. nested decomp necessary...
-⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₁ x))  = {! inj₁ {A}  !}
-⊎-assoc-helper-l {A} {B} {C}    (inj₁ (inj₂ x))  = {!  !}
-⊎-assoc-helper-l {A} {B} {C} (inj₂ x)            = inj₂ {A} (inj₂ {B} x)  
+
 
 -- notes on pattern matching in the above helper method: ---
 
@@ -410,4 +421,12 @@ inj₁ :
 
 -- sum is associative up to isomorphism (_≃_)
 ⊎-assoc : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C ≃ A ⊎ (B ⊎ C)
-⊎-assoc {A} {B} {C} = {!   !} 
+⊎-assoc {A} {B} {C} = 
+    record {
+        to      = λ (x : (A ⊎ B) ⊎ C) -> (⊎-assoc-helper-l x) ;
+        from    = λ (x : A ⊎ (B ⊎ C)) -> (⊎-assoc-helper-r x) ;
+
+        to∘from = {!   !} ; 
+        from∘to = {!   !}
+
+    }
