@@ -383,10 +383,8 @@ inj₁ :
 -- inj₂ {A ⊎ B} {C} (inj₁ {A} {B} x)
 ⊎-assoc-helper-r : ∀ {A B C : Set} -> A ⊎ (B ⊎ C) -> (A ⊎ B) ⊎ C
 ⊎-assoc-helper-r {A} {B} {C} (inj₁ x)           = (inj₁ {A ⊎ B} {C} (inj₁ {A} {B} x))   -- matching A
-
--- (inj₁ {B} {C} x) : (B ⊎ C)
-⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₁ x)) = {!   !}                               -- matching B
-⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₂ x)) = {!   !}                               -- matching C
+⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₁ x)) = inj₁ {A ⊎ B} {C} (inj₂ {A} {B} x)     -- matching B
+⊎-assoc-helper-r {A} {B} {C}    (inj₂ (inj₂ x)) = (inj₂ {A ⊎ B} {C} x)                  -- matching C
 
 
 ⊎-assoc-helper-l : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C -> A ⊎ (B ⊎ C)
