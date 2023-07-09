@@ -472,13 +472,21 @@ uniq-⊥ {C} h ()
 ⊥-in : ∀ {A : Set} -> A -> ⊥ ⊎ A
 ⊥-in {A} x = (inj₂ {⊥} {A} x)
 
+intro-elim-⊥ : ∀ {A : Set} -> (w : A) ->
+    ⊥-el (⊥-in w) ≡ w 
+intro-elim-⊥ {A} w = refl 
+
+elim-intro-⊥ : ∀ {A : Set} -> (w : ⊥ ⊎ A) ->
+    ⊥-in (⊥-el w) ≡ w 
+elim-intro-⊥ {A} (inj₂ x) = refl 
+
 -- ⊥-identity left 
 ⊥-id-l : ∀ {A : Set} -> ⊥ ⊎ A ≃ A 
 ⊥-id-l {A} = 
     record {
-        to      = λ (x : ⊥ ⊎ A) -> (⊥-el x)  ;
-        from    = λ (x : A) -> {!   !} ;
-        to∘from = {!   !} ;
-        from∘to = {!   !} 
+        to      = λ (x : ⊥ ⊎ A) -> (⊥-el x) ;
+        from    = λ (x : A)     -> (⊥-in x) ;
+        to∘from = λ (x : A)     -> (intro-elim-⊥ x) ;
+        from∘to = λ (x : ⊥ ⊎ A) -> (elim-intro-⊥ x) 
     }
 
