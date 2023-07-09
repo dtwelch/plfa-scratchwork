@@ -421,15 +421,15 @@ inj₁ :
 
 ⊎-l-cancel : ∀ {A B C : Set} -> (w : (A ⊎ B) ⊎ C) 
     -> ⊎-assoc-helper-r (⊎-assoc-helper-l w) ≡ w
-⊎-l-cancel {A} {B} {C}    (inj₁ (inj₁ x))  = refl        -- matching A
+⊎-l-cancel {A} {B} {C}    (inj₁ (inj₁ x))  = refl       -- matching A
 ⊎-l-cancel {A} {B} {C}    (inj₁ (inj₂ x))  = refl       -- matching B
-⊎-l-cancel {A} {B} {C} (inj₂ x)            = refl        -- matching C
+⊎-l-cancel {A} {B} {C} (inj₂ x)            = refl       -- matching C
 
 ⊎-r-cancel : ∀ {A B C : Set} -> (w : A ⊎ (B ⊎ C))
     -> ⊎-assoc-helper-l (⊎-assoc-helper-r w) ≡ w
 ⊎-r-cancel {A} {B} {C} (inj₁ x)           = refl   
 ⊎-r-cancel {A} {B} {C}    (inj₂ (inj₁ x)) = refl     -- matching B
-⊎-r-cancel {A} {B} {C}    (inj₂ (inj₂ x)) = refl                  -- matching C
+⊎-r-cancel {A} {B} {C}    (inj₂ (inj₂ x)) = refl     -- matching C
 
 
 -- sum is associative up to isomorphism (_≃_)
@@ -441,5 +441,44 @@ inj₁ :
 
         to∘from = λ (x : A ⊎ (B ⊎ C)) -> (⊎-r-cancel x) ; 
         from∘to = λ (x : (A ⊎ B) ⊎ C) -> (⊎-l-cancel x) 
-
     }
+
+-- false ⊥ never holds 
+
+data ⊥ : Set where 
+    -- no clauses!
+
+⊥-elim : ∀ {A : Set} 
+    -> ⊥
+    ----
+    -> A 
+⊥-elim () 
+-- given evidence that ⊥ holds, we can conclude anything
+
+uniq-⊥ : ∀ {C : Set} (h : ⊥ -> C) (w : ⊥) -> ⊥-elim w ≡ h w 
+uniq-⊥ {C} h () 
+
+⊥-count : ⊥ -> ℕ
+⊥-count ()
+
+-- in example above, absurd patter '()' indicates 
+-- that no value can match type ⊥
+
+-- ⊥ elimination
+⊥-el : ∀ {A : Set} -> ⊥ ⊎ A -> A
+⊥-el {A} (inj₂ x) = x 
+
+-- ⊥ introduction
+⊥-in : ∀ {A : Set} -> A -> ⊥ ⊎ A
+⊥-in {A} x = (inj₂ {⊥} {A} x)
+
+-- ⊥-identity left 
+⊥-id-l : ∀ {A : Set} -> ⊥ ⊎ A ≃ A 
+⊥-id-l {A} = 
+    record {
+        to      = λ (x : ⊥ ⊎ A) -> (⊥-el x)  ;
+        from    = λ (x : A) -> {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !} 
+    }
+
