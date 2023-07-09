@@ -419,6 +419,19 @@ inj₁ :
 -- pattern (inj₂ x)             --> x : C (right subexpression)
 ---------
 
+⊎-l-cancel : ∀ {A B C : Set} -> (w : (A ⊎ B) ⊎ C) 
+    -> ⊎-assoc-helper-r (⊎-assoc-helper-l w) ≡ w
+⊎-l-cancel {A} {B} {C}    (inj₁ (inj₁ x))  = refl        -- matching A
+⊎-l-cancel {A} {B} {C}    (inj₁ (inj₂ x))  = refl       -- matching B
+⊎-l-cancel {A} {B} {C} (inj₂ x)            = refl        -- matching C
+
+⊎-r-cancel : ∀ {A B C : Set} -> (w : A ⊎ (B ⊎ C))
+    -> ⊎-assoc-helper-l (⊎-assoc-helper-r w) ≡ w
+⊎-r-cancel {A} {B} {C} (inj₁ x)           = refl   
+⊎-r-cancel {A} {B} {C}    (inj₂ (inj₁ x)) = refl     -- matching B
+⊎-r-cancel {A} {B} {C}    (inj₂ (inj₂ x)) = refl                  -- matching C
+
+
 -- sum is associative up to isomorphism (_≃_)
 ⊎-assoc : ∀ {A B C : Set} -> (A ⊎ B) ⊎ C ≃ A ⊎ (B ⊎ C)
 ⊎-assoc {A} {B} {C} = 
@@ -426,7 +439,7 @@ inj₁ :
         to      = λ (x : (A ⊎ B) ⊎ C) -> (⊎-assoc-helper-l x) ;
         from    = λ (x : A ⊎ (B ⊎ C)) -> (⊎-assoc-helper-r x) ;
 
-        to∘from = {!   !} ; 
-        from∘to = {!   !}
+        to∘from = λ (x : A ⊎ (B ⊎ C)) -> (⊎-r-cancel x) ; 
+        from∘to = λ (x : (A ⊎ B) ⊎ C) -> (⊎-l-cancel x) 
 
     }
