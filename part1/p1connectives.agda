@@ -480,7 +480,7 @@ elim-intro-⊥ : ∀ {A : Set} -> (w : ⊥ ⊎ A) ->
     ⊥-in (⊥-el w) ≡ w 
 elim-intro-⊥ {A} (inj₂ x) = refl 
 
--- ⊥-identity left 
+-- ⊥ is left identity of sums (⊎) up to isomorphism (≃)
 ⊥-id-l : ∀ {A : Set} -> ⊥ ⊎ A ≃ A 
 ⊥-id-l {A} = 
     record {
@@ -490,3 +490,39 @@ elim-intro-⊥ {A} (inj₂ x) = refl
         from∘to = λ (x : ⊥ ⊎ A) -> (elim-intro-⊥ x) 
     }
 
+⊥-el2 : ∀ {A : Set} -> A ⊎ ⊥ -> A
+⊥-el2 {A} (inj₁ x) = x 
+
+⊥-in2 : ∀ {A : Set} -> A -> A ⊎ ⊥
+⊥-in2 {A} x = inj₁ {A} {⊥} x
+
+⊥-to∘from : ∀ {A : Set} -> (w : A) ->
+    ⊥-el2 (⊥-in2 w) ≡ w 
+⊥-to∘from {A} x = refl
+
+⊥-from∘to : ∀ {A : Set} -> (w : A ⊎ ⊥) ->
+    ⊥-in2 (⊥-el2 w) ≡ w 
+⊥-from∘to {A} (inj₁ x) = refl 
+
+-- ⊥ is right identity of sums (⊎) up to isomorphism (≃)
+⊥-id-r : ∀ {A : Set} -> A ⊎ ⊥ ≃ A 
+⊥-id-r {A} =
+    record {
+        to      = λ (x : A ⊎ ⊥) -> (⊥-el2 x) ;
+        from    = λ (x : A)     -> (⊥-in2 x)  ;
+        to∘from = λ (x : A)     -> (⊥-to∘from x)  ;
+        -- (elim-intro-⊥ (helper-comm x)) : ⊥-in (⊥-el (helper-comm x)) ≡ helper-comm x
+        from∘to = λ (x : A ⊎ ⊥) -> (⊥-from∘to x)
+    }
+{-
+-- this approach tries to be a bit clever w/ commutativity of sum (⊎)
+-- but got bogged down in the from∘to part (if figured out, would allow deletion
+-- of lemmas: ⊥-to∘from , ⊥-in2, ⊥-el2 , ⊥-from∘to
+    record {
+        to      = λ (x : A ⊎ ⊥) -> ⊥-el (helper-comm {A} {⊥} x) ;
+        from    = λ (x : A)     -> helper-comm {⊥} {A} (⊥-in x)  ;
+        to∘from = λ (x : A)     -> refl ;
+        -- (elim-intro-⊥ (helper-comm x)) : ⊥-in (⊥-el (helper-comm x)) ≡ helper-comm x
+        from∘to = λ (x : A ⊎ ⊥) -> {!   !} 
+    }
+-}
