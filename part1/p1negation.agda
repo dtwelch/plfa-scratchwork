@@ -34,3 +34,29 @@ infix 3 ¬_
     -------
     -> ⊥
 ¬-elim {A} notA a = notA a 
+
+¬¬-intro : ∀ {A : Set} 
+    -> A 
+    -----
+    -> ¬ ¬ A 
+¬¬-intro {A} a = λ (notA : (¬ A)) -> notA a  
+-- note: this works too (notice the notA pattern we're matching on)
+-- ¬¬-intro {A} a notA = notA a 
+-- this is happening since appearances of the const operator ¬_ .. are treated like 
+-- functions of type: A -> ⊥
+
+¬¬¬-elim : ∀ {A : Set}
+    -> ¬ (¬ (¬ A))  -- h1
+    ----------
+    -> ¬ A 
+¬¬¬-elim {A} h1 a = h1 (¬¬-intro a) 
+
+-- contraposition
+
+contraposition : ∀ {A B : Set } 
+    -> A -> B 
+    ---------
+    -> (¬ B -> ¬ A)
+contraposition {A} {B} a->b = {!   !} 
+
+-- we have a piece of evidence that A holds, and need to show ¬ A. 
