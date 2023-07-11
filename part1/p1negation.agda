@@ -54,13 +54,12 @@ infix 3 ¬_
 -- contraposition
 
 contraposition : ∀ {A B : Set } 
-    -> A -> B 
+    -> (A -> B) -- parentheses here very important 
+                -- (otherwise f pattern below would just be A -- not A -> B)
     ---------
     -> (¬ B -> ¬ A)
--- *can* do this:
--- contraposition {A} {B} a b = {!   !} 
--- above pattern vars a : A and b : B
-contraposition {A} {B} a b = {!   !} 
+contraposition f notB x = notB (f x)
 
+_≢_ : ∀ {A : Set} -> A -> A -> Set 
+_≢_ x y = ¬ (x ≡ y)
 
--- we have a piece of evidence that A holds, and need to show ¬ A. 
