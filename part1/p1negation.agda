@@ -57,6 +57,10 @@ contraposition : ∀ {A B : Set }
     -> A -> B 
     ---------
     -> (¬ B -> ¬ A)
-contraposition {A} {B} a->b = {!   !} 
+-- *can* do this:
+-- contraposition {A} {B} a b = {!   !} 
+-- above pattern vars a : A and b : B
+contraposition {A} {B} a b = {!   !} 
+
 
 -- we have a piece of evidence that A holds, and need to show ¬ A. 
