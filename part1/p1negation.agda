@@ -84,8 +84,6 @@ postulate
 assimilation : ∀ {A : Set} (¬x ¬x' : ¬ A) -> ¬x ≡ ¬x'
 assimilation {A} ¬x ¬x' = extensionality λ (x : A) -> ⊥-elim (¬x' x)
 
-
-
 infix 4 _<'_
 
 data _<'_ : ℕ -> ℕ -> Set where
@@ -108,11 +106,14 @@ data _<'_ : ℕ -> ℕ -> Set where
 
 <-irreflexive : ∀ (n : ℕ) -> ¬ (n <' n) 
 <-irreflexive zero = λ ()
--- <-irreflexive x h1 = {!    !}
-<-irreflexive (suc x) h1 = {!   !}
+-- someone is asserting that for any x ∈ ℕ, ¬ (suc x <' suc x), so 
+-- we do an inductive proof and construct an 'assumption' term of the 
+-- shape x <' x, we'll use this to show (by way of contradiction) that 
+-- the successor cannot hold; base case 'zero' matches absurd
+--                                          ¬ (x <' x)       x <' x
+                                          ---------------   --------
+<-irreflexive (suc x) (s<s  h1) = ¬-elim (<-irreflexive x)    h1      -- h1 : x <' x here
 
--- ⊥-elim 
-
--- (s<s {x} {x} .. )
-
--- ⊥-elim (<-irreflexive x) h1 
+-- ¬-elim ¬A A 
+-- so an application of ¬-elim, given witnesses/evidence of both ¬A and A, produces 
+-- bottom: ⊥
