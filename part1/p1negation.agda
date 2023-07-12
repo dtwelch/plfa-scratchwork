@@ -1,7 +1,7 @@
 module p1negation where 
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
-open import Data.Nat using (ℕ; zero; suc)
+open import Data.Nat using (ℕ; zero; suc; _<_)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Data.Product using (_×_)
@@ -52,14 +52,42 @@ infix 3 ¬_
 ¬¬¬-elim {A} h1 a = h1 (¬¬-intro a) 
 
 -- contraposition
-
 contraposition : ∀ {A B : Set } 
-    -> (A -> B) -- parentheses here very important 
-                -- (otherwise f pattern below would just be A -- not A -> B)
+    -> (A -> B) -- parentheses very important here
+                -- (otherwise f pattern below would match on A -- not A -> B)
     ---------
-    -> (¬ B -> ¬ A)
-contraposition f notB x = notB (f x)
+    -> ( ¬ B -> ¬ A )
+    -- f  : A -> B
+    -- ¬B : ¬ B
+    -- a  : A
+contraposition f ¬B a = (¬-elim ¬B (f a))
 
+-- inequality
 _≢_ : ∀ {A : Set} -> A -> A -> Set 
 _≢_ x y = ¬ (x ≡ y)
 
+something : 1 ≢ 2
+something = λ ()
+
+-- zero is not the successor of any number
+peano : ∀ { m : ℕ } -> zero ≢ (suc m)
+peano = λ ()
+
+{-
+postulate 
+  extensionality : ∀ {A B : Set} (f g : A -> B)
+    -> (∀ (x : A) -> f x ≡ g x)
+    ----------------------------
+    -> f ≡ g
+
+-}
+assimilation : ∀ {A : Set} (¬x ¬x' : ¬ A) -> ¬x ≡ ¬x'
+assimilation {A} ¬x ¬x' = extensionality λ (x : A) -> ⊥-elim (¬x' x)
+
+<-irreflexive : ∀ (n : ℕ) -> ¬ (n < n) 
+<-irreflexive zero = λ ()
+<-irreflexive (suc x) ih = {!   !}  
+-- h1: ¬ (suc n < suc n)
+-- h2:  (suc n < suc n) 
+
+-- ⊥-elim h1 h2  to produce ⊥ ?
