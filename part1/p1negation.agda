@@ -1,7 +1,7 @@
 module p1negation where 
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
-open import Data.Nat using (ℕ; zero; suc; _<_)
+open import Data.Nat using (ℕ; zero; suc)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Data.Product using (_×_)
@@ -84,10 +84,35 @@ postulate
 assimilation : ∀ {A : Set} (¬x ¬x' : ¬ A) -> ¬x ≡ ¬x'
 assimilation {A} ¬x ¬x' = extensionality λ (x : A) -> ⊥-elim (¬x' x)
 
-<-irreflexive : ∀ (n : ℕ) -> ¬ (n < n) 
-<-irreflexive zero = λ ()
-<-irreflexive (suc x) ih = {!   !}  
--- h1: ¬ (suc n < suc n)
--- h2:  (suc n < suc n) 
 
--- ⊥-elim h1 h2  to produce ⊥ ?
+
+infix 4 _<'_
+
+data _<'_ : ℕ -> ℕ -> Set where
+
+  z<s : ∀ {n : ℕ}
+    ---------------
+    -> zero <' suc n
+
+  s<s : ∀ {m n : ℕ}
+    -> m <' n
+    ----------------
+    -> suc m <' suc n
+
+{- ¬-elim : ∀ {A : Set} 
+        -> ¬ A 
+        -> A 
+        -------
+        -> ⊥
+-}
+
+<-irreflexive : ∀ (n : ℕ) -> ¬ (n <' n) 
+<-irreflexive zero = λ ()
+-- <-irreflexive x h1 = {!    !}
+<-irreflexive (suc x) h1 = {!   !}
+
+-- ⊥-elim 
+
+-- (s<s {x} {x} .. )
+
+-- ⊥-elim (<-irreflexive x) h1 
