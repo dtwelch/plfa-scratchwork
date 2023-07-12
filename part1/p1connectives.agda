@@ -526,3 +526,12 @@ elim-intro-⊥ {A} (inj₂ x) = refl
         from∘to = λ (x : A ⊎ ⊥) -> {!   !} 
     }
 -}
+
+currying : ∀ {A B C : Set} -> (A -> B -> C) ≃ (A × B -> C) 
+currying = 
+    record {
+        to      = {!   !} ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !}
+    }
