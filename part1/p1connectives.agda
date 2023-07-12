@@ -553,17 +553,17 @@ currying {A} {B} {C} =
     --?1 : (λ (x : A) (y : B) → (λ (f : A × B) -> f (proj₁ f) (proj₂ f) ) (⟨_,_⟩ x y) ) ≡ f 
 
 -- reproducing compose for ref. (from top of this module)
-{-
-_∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
-g ∘ f  =  λ x -> g (f x)
--}
+-- _∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
+-- g ∘ f  =  λ x -> g (f x)
 
 ->-distrib-⊎ : ∀ {A B C : Set} -> (A ⊎ B -> C) ≃ ((A -> C) × (B -> C))
 ->-distrib-⊎ {A} {B} {C} = 
     record {
-        -- (A ⊎ B → C) → (A → C) × (B → C)
+        -- (A ⊎ B → C) -> (A -> C) × (B -> C)
         to      = λ (f : (A ⊎ B) -> C) -> ⟨ f ∘ inj₁ , f ∘ inj₂ ⟩ ;
-        from    = {!   !} ;
+
+        -- (A → C) × (B → C) → A ⊎ B → C
+        from    = {! λ{ ⟨ f , g ⟩ -> ? }   !} ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
