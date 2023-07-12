@@ -118,4 +118,4 @@ data _<'_ : ℕ -> ℕ -> Set where
 -- bottom: ⊥
 
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
-⊎-dual-× 
+⊎-dual-× {A} {B} = ?

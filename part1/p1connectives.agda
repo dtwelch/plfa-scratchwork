@@ -517,7 +517,7 @@ elim-intro-⊥ {A} (inj₂ x) = refl
 {-
 -- this approach tries to be a bit clever w/ commutativity of sum (⊎)
 -- but got bogged down in the from∘to part (if figured out, would allow deletion
--- of lemmas: ⊥-to∘from , ⊥-in2, ⊥-el2 , ⊥-from∘to
+-- of lemmas: ⊥-to∘from , ⊥-in2, ⊥-el2 , ⊥-from∘to)
     record {
         to      = λ (x : A ⊎ ⊥) -> ⊥-el (helper-comm {A} {⊥} x) ;
         from    = λ (x : A)     -> helper-comm {⊥} {A} (⊥-in x)  ;
@@ -527,11 +527,43 @@ elim-intro-⊥ {A} (inj₂ x) = refl
     }
 -}
 
+-- elimination of a function
+η--> : ∀ {A B : Set} (f : A -> B) -> ( λ (x : A) -> f x ) ≡ f
+η--> {A} {B} f = refl
+
 currying : ∀ {A B C : Set} -> (A -> B -> C) ≃ (A × B -> C) 
-currying = 
+currying {A} {B} {C} = 
     record {
-        to      = {!   !} ;
+        -- A -> (B -> C) -> (A × B) -> C
+        -- version of to w/o pattern matching (uses the record proj functions instead)
+        -- to      = λ (f: (A -> (B -> C)) -> λ (dom : A × B) -> f (proj₁ dom) (proj₂ dom) 
+        to      = λ (f : (A -> (B -> C))) -> λ { ⟨ x , y ⟩ -> f x y } ;
+        from    = λ (f : (A × B) -> C)    -> λ (x : A) -> λ (y : B) -> f ⟨ x , y ⟩    ;
+
+        -- ?1: (y: A × B → C) -> (λ { ⟨ x , y ⟩  y₁ ⟨ x , y ⟩ }) ≡ y
+        to∘from = λ (f : (A × B) -> C) -> extensionality λ{ ⟨ x , y ⟩ -> refl }    ; -- η-→ {A × B} {C} f   ;
+        from∘to = λ (f : (A -> (B -> C))) -> refl  
+    }
+
+    -- ?0 : (λ { ⟨ x , y ⟩ → f ⟨ x , y ⟩ }) ≡ f
+
+    --
+    -- ?1 : (λ x y → (λ { ⟨ x , y ⟩ → f x y }) ⟨ x , y ⟩) ≡ f
+    -- discarding the pattern deconstruction λ:
+    --?1 : (λ (x : A) (y : B) → (λ (f : A × B) -> f (proj₁ f) (proj₂ f) ) (⟨_,_⟩ x y) ) ≡ f 
+
+-- reproducing compose for ref. (from top of this module)
+{-
+_∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
+g ∘ f  =  λ x -> g (f x)
+-}
+
+->-distrib-⊎ : ∀ {A B C : Set} -> (A ⊎ B -> C) ≃ ((A -> C) × (B -> C))
+->-distrib-⊎ {A} {B} {C} = 
+    record {
+        -- (A ⊎ B → C) → (A → C) × (B → C)
+        to      = λ (f : (A ⊎ B) -> C) -> ⟨ f ∘ inj₁ , f ∘ inj₂ ⟩ ;
         from    = {!   !} ;
         to∘from = {!   !} ;
-        from∘to = {!   !}
+        from∘to = {!   !} 
     }
