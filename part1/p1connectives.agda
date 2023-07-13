@@ -541,6 +541,12 @@ currying {A} {B} {C} =
         from    = λ (f : (A × B) -> C)    -> λ (x : A) -> λ (y : B) -> f ⟨ x , y ⟩    ;
 
         -- ?1: (y: A × B → C) -> (λ { ⟨ x , y ⟩  y₁ ⟨ x , y ⟩ }) ≡ y
+        {-
+        extensionality : ∀ {A B : Set} (f g : A -> B)
+            -> (∀ (x : A) -> f x ≡ g x)
+            ----------------------------
+            -> f ≡ g
+        -}
         to∘from = λ (f : (A × B) -> C) -> extensionality λ{ ⟨ x , y ⟩ -> refl }    ; -- η-→ {A × B} {C} f   ;
         from∘to = λ (f : (A -> (B -> C))) -> refl  
     }
@@ -563,7 +569,33 @@ currying {A} {B} {C} =
         to      = λ (f : (A ⊎ B) -> C) -> ⟨ f ∘ inj₁ , f ∘ inj₂ ⟩ ;
 
         -- (A → C) × (B → C) → A ⊎ B → C
-        from    = {! λ{ ⟨ f , g ⟩ -> ? }   !} ;
-        to∘from = {!   !} ;
+        --      note - from agda docs: λ { p11 .. p1n -> e1 ; … ; pm1 .. pmn -> em }
+        -- which gets translated into the longer form:
+        --      .extlam p11 .. p1n = e1  
+        --          …
+        --      .extlam pm1 .. pmn = em
+                {-
+        extensionality : ∀ {A B : Set} (f g : A -> B)
+            -> (∀ (x : A) -> f x ≡ g x)
+            ----------------------------
+            -> f ≡ g
+        -}
+
+        -- deconstructing A ⊎ B via inj₁ a, then ';' separates 
+        -- another pattern: inj₂ b 
+        -- allows you to take apart the sum/disjunction
+        from    = λ{ ⟨ f , g ⟩ -> λ { (inj₁ a) -> f a ; (inj₂ b) -> g b} } ;
+        from∘to = λ (f : (A ⊎ B) -> C) -> extensionality λ{ (inj₁ x) -> refl ; (inj₂ y) -> refl } ;
+        to∘from = λ{ ⟨ f , g ⟩ -> refl }
+    }
+
+->-distrib-× : ∀ {A B C : Set} -> (A -> B × C) ≃ (A -> B) × (A -> C)
+->-distrib-× {A} {B} {C} =
+    record {
+        -- goal for to: (A -> B × C) -> (A -> B) × (A -> C)
+        to      =  λ (f : (A -> (B × C))) ->  
+                ⟨ (λ (a : A) -> proj₁ (f a)) , (λ (a' : A) -> proj₂ (f a')) ⟩  ;
+        from    = {!   !} ;
+        to∘from = {!   !} ; -- hint: extensionality , η-× ...
         from∘to = {!   !} 
     }
