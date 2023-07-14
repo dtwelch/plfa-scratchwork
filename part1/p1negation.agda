@@ -120,8 +120,9 @@ data _<'_ : ℕ -> ℕ -> Set where
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
 ⊎-dual-× {A} {B} = 
     record {
-        to      = {!   !} ;
-        from    = {!   !} ;
+        --  (inj₁ x) : (A ⊎ B → ⊥) ⊎ _B_61
+        to      = λ (x : ¬ (A ⊎ B)) -> {!   !}  ;
+        from    = {!   !}  ;
         to∘from = {!   !} ; 
         from∘to = {!   !}
     }
