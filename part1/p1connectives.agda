@@ -662,3 +662,9 @@ inj₁ :
 ⊎-weak-times : ∀ {A B C : Set} -> (A ⊎ B) × C -> A ⊎ (B × C)
 ⊎-weak-times {A} {B} {C} ⟨ (inj₁ a) , c ⟩ = inj₁ {A} {B × C} a
 ⊎-weak-times {A} {B} {C} ⟨ (inj₂ b) , c ⟩ = inj₂ {A} {B × C} ⟨ b , c ⟩
+
+-- "show that a disjunct of conjuncts implies a conjunct of disjuncts:"
+
+⊎×-implies-×⊎ : ∀ {A B C D : Set} -> (A × B) ⊎ (C × D) -> (A ⊎ C) × (B ⊎ D)
+⊎×-implies-×⊎ {A} {B} {C} {D} (inj₁ ab) = ⟨ inj₁ {A} {C} (proj₁ ab) , inj₁ {B} {D} (proj₂ ab) ⟩     -- (A ⊎ C) × (B ⊎ D)
+⊎×-implies-×⊎ {A} {B} {C} {D} (inj₂ cd) = ⟨ inj₂ {A} {C} (proj₁ cd) , inj₂ {B} {D} (proj₂ cd) ⟩     -- (A ⊎ C) × (B ⊎ D)
