@@ -595,11 +595,12 @@ currying {A} {B} {C} =
         -- goal for 'to': (A -> B × C) -> (A -> B) × (A -> C)
         to      =  λ (f : (A -> (B × C))) -> ⟨ (proj₁ ∘ f) , proj₂ ∘ f ⟩ ;
         -- longer way of doing the above
-        --        ⟨ (λ (a : A) -> proj₁ (f a)) , (λ (a' : A) -> proj₂ (f a')) ⟩  ;
+        --        ⟨ (λ (a: A) -> proj₁ (f a)) , (λ (a' : A) -> proj₂ (f a')) ⟩  ;
 
         -- goal for 'from': (A -> B) × (A -> C) -> A -> B × C
         from    =  λ{ ⟨ f , g ⟩ -> λ (x : A) -> ⟨ (f x) , (g x) ⟩ } ;
 
-        to∘from = {!   !} ; -- hint: extensionality , η-× ...
-        from∘to = {!   !} 
+-- hint: extensionality , η-× ...
+        to∘from = λ{ ⟨ f , g ⟩ -> refl }  ; 
+        from∘to = {!   !}
     }
