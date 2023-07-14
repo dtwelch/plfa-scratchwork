@@ -593,14 +593,72 @@ currying {A} {B} {C} =
 ->-distrib-× {A} {B} {C} =
     record {
         -- goal for 'to': (A -> B × C) -> (A -> B) × (A -> C)
-        to      =  λ (f : (A -> (B × C))) -> ⟨ (proj₁ ∘ f) , proj₂ ∘ f ⟩ ;
+        to      =  λ (f : (A -> (B × C))) -> ⟨ (proj₁ ∘ f) , (proj₂ ∘ f) ⟩ ;
         -- longer way of doing the above
         --        ⟨ (λ (a: A) -> proj₁ (f a)) , (λ (a' : A) -> proj₂ (f a')) ⟩  ;
 
-        -- goal for 'from': (A -> B) × (A -> C) -> A -> B × C
+        -- goal for 'from': (A -> B) × (A -> C) -> A -> B × A -> C
         from    =  λ{ ⟨ f , g ⟩ -> λ (x : A) -> ⟨ (f x) , (g x) ⟩ } ;
 
--- hint: extensionality , η-× ...
         to∘from = λ{ ⟨ f , g ⟩ -> refl }  ; 
-        from∘to = {!   !}
+
+        -- projection fns provide identity over products
+        --    η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
+        --    η-× {A} {B} (⟨_,_⟩ x y) = refl
+
+        --    extensionality : ∀ {A B : Set} (f g : A -> B)
+        --        -> (∀ (x : A) -> f x ≡ g x)
+        --        ----------------------------
+        --        -> f ≡ g
+        
+        --(λ { ⟨ f , g ⟩ → λ x → ⟨ f x , g x ⟩ })
+        --    ⟨ (λ x → proj₁ (f x)) , (λ x → proj₂ (f x)) ⟩
+        --≡ f
+   
+         -- hint: extensionality , η-× ...
+
+         -- I'm not sure how f is getting into the extensionality application below...
+         -- thought it'd be: extensionality f (λ (x : A) -> ...)
+         -- tried: extensionality {f} (λ (x : A) -> ...)
+         -- perhaps you can't fill in implicit args
+        from∘to = λ (f : A -> (B × C))  -> 
+            extensionality {A} λ (x : A) -> η-× (f x) 
     }
+
+-- distribution
+
+{-
+inj₁ : 
+        A 
+        --------
+        -> A ⊎ B 
+
+    inj₂ : 
+        B 
+        --------
+        -> A ⊎ B
+-}
+
+×-distrib-⊎ : ∀ {A B C : Set} -> (A ⊎ B) × C ≃ (A × C) ⊎ (B × C)
+×-distrib-⊎ {A} {B} {C} = 
+    record {
+        -- ?0: (A ⊎ B) × C → A × C ⊎ B × C
+
+        -- λ{ ⟨ ab , c ⟩ -> type is (A ⊎ B) × C -> ...
+        -- the body (after the first ->) forms: A × C ⊎ B × C
+        to      = λ{ ⟨ (inj₁ a) , c ⟩ -> inj₁ {A × C} {B × C} ⟨ a , c ⟩  ; -- ?0: A × C ⊎ B × C
+                     ⟨ (inj₂ b) , c ⟩ -> inj₂ {A × C} {B × C} ⟨ b , c ⟩ } ;-- ?1:
+        from    = λ{ (inj₁ ⟨ x , z ⟩) -> ⟨ inj₁ x , z ⟩ ; 
+                     (inj₂ ⟨ y , z ⟩) -> ⟨ inj₂ y , z ⟩
+                 } ;
+        from∘to = λ{ ⟨ inj₁ x , z ⟩ → refl ; 
+                     ⟨ inj₂ y , z ⟩ → refl
+                 } ; 
+        to∘from = λ{ (inj₁ ⟨ x , z ⟩) → refl ; 
+                     (inj₂ ⟨ y , z ⟩) → refl
+                 }
+    }
+ 
+⊎-weak-times : ∀ {A B C : Set} -> (A ⊎ B) × C -> A ⊎ (B × C)
+⊎-weak-times {A} {B} {C} ⟨ (inj₁ a) , c ⟩ = inj₁ {A} {B × C} a
+⊎-weak-times {A} {B} {C} ⟨ (inj₂ b) , c ⟩ = inj₂ {A} {B × C} ⟨ b , c ⟩
