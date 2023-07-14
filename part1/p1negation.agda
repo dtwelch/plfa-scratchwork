@@ -121,6 +121,7 @@ data _<'_ : ℕ -> ℕ -> Set where
 ⊎-dual-× {A} {B} = 
     record {
         --  (inj₁ x) : (A ⊎ B → ⊥) ⊎ _B_61
+        -- https://serokell.io/blog/playing-with-negation
         to      = λ (x : ¬ (A ⊎ B)) -> {!   !}  ;
         from    = {!   !}  ;
         to∘from = {!   !} ; 
