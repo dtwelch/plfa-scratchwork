@@ -118,4 +118,10 @@ data _<'_ : ℕ -> ℕ -> Set where
 -- bottom: ⊥
 
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
-⊎-dual-× {A} {B} = ?
+⊎-dual-× {A} {B} = 
+    record {
+        to      = {!   !} ;
+        from    = {!   !} ;
+        to∘from = {!   !} ; 
+        from∘to = {!   !}
+    }
