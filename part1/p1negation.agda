@@ -4,7 +4,7 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
-open import Data.Product using (_×_)
+open import Data.Product using (_×_; _,_)
 open import plfa.part1.Isomorphism using (_≃_; extensionality)
 
 -- given a proposition A, the negation ¬ A holds if A cannot hold... 
@@ -117,13 +117,27 @@ data _<'_ : ℕ -> ℕ -> Set where
 -- so an application of ¬-elim, given witnesses/evidence of both ¬A and A, produces 
 -- bottom: ⊥
 
+--  ¬a⊎b (inj₁ a) : ⊥
+⊎-dual-×-to : ∀ {A B : Set} → ¬ (A ⊎ B) -> (¬ A) × (¬ B)
+⊎-dual-×-to {A} {B} ¬a⊎b = (λ (a : A) -> ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b))
+
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
 ⊎-dual-× {A} {B} = 
     record {
-        --  (inj₁ x) : (A ⊎ B → ⊥) ⊎ _B_61
-        -- https://serokell.io/blog/playing-with-negation
-        to      = λ (x : ¬ (A ⊎ B)) -> {!   !}  ;
-        from    = {!   !}  ;
+        to      = ⊎-dual-×-to  ;
+        from    = {!   !} ;
         to∘from = {!   !} ; 
         from∘to = {!   !}
     }
+
+-- from https://serokell.io/blog/playing-with-negation
+postulate  
+    ¬¬-elim : ∀ {A : Set} -> ¬ ¬ A -> A
+
+-- relates fn application to 
+functionToDisj : ∀ {A B : Set} -> (A -> B) -> ¬ A ⊎ B
+functionToDisj {A} {B} f = 
+    -- works!:
+    ¬¬-elim λ (x : ¬ ((A -> ⊥) ⊎ B)) -> x ( inj₁ λ (y : A) -> x ( inj₂ (f y)))
+
+-- x : ¬ (((y₁ : A) → ⊥) ⊎ B)
