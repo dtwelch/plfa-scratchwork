@@ -117,6 +117,8 @@ data _<'_ : ℕ -> ℕ -> Set where
 -- so an application of ¬-elim, given witnesses/evidence of both ¬A and A, produces 
 -- bottom: ⊥
 
+-- note: reproduced from previous ch. 
+-- todo: maybe replace w/ std. library version?
 case-⊎ : ∀ {A B C : Set}
   -> (A -> C)
   -> (B -> C)
@@ -137,30 +139,22 @@ case-⊎ f g (inj₂ y) = g y
 -- (λ (a : A) -> ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b))
 
 -- 'from' helper:
-
 ⊎-dual-×-from : ∀ {A B : Set} -> (¬ A) × (¬ B) -> ¬ (A ⊎ B)
 ⊎-dual-×-from {A} {B} ¬A×¬B A⊎B = case-⊎ (proj₁ ¬A×¬B) (proj₂ ¬A×¬B) A⊎B  
--- case-⊎ (proj₁ ¬A×¬B) (proj₂ ¬A×¬B) A⊎B -- allows us to conclude: ⊥...?
+-- case-⊎ (proj₁ ¬A×¬B) (proj₂ ¬A×¬B) A⊎B -- allows us to conclude: ⊥ ? (update: yes)
 -- (proj₁ ¬A×¬B) : ¬ A
 -- (proj₂ ¬A×¬B) : ¬ B
+
+⊎-dual-×-from∘to : ∀ {A B : Set} -> (y : ¬ (A ⊎ B)) -> ⊎-dual-×-from (⊎-dual-×-to y) ≡ y
+⊎-dual-×-from∘to {A} {B} y = {!   !}
 
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
 ⊎-dual-× {A} {B} = 
     record {
-        to      = ⊎-dual-×-to  ;
+        to      = ⊎-dual-×-to ;
         from    = ⊎-dual-×-from ; -- ⊎-dual-×-from
-        to∘from = {!   !} ; 
-        from∘to = {!   !}
+
+        -- (y : ¬ A × ¬ B) -> ⊎-dual-×-to (⊎-dual-×-from y) ≡ y
+        to∘from = λ (y : (¬ A × ¬ B)) -> refl ; 
+        from∘to = ⊎-dual-×-from∘to
     }
-
--- from https://serokell.io/blog/playing-with-negation
-postulate  
-    ¬¬-elim : ∀ {A : Set} -> ¬ ¬ A -> A
-
--- relates fn application to 
-functionToDisj : ∀ {A B : Set} -> (A -> B) -> ¬ A ⊎ B
-functionToDisj {A} {B} f = 
-    -- works!:
-    ¬¬-elim λ (x : ¬ ((A -> ⊥) ⊎ B)) -> x ( inj₁ λ (y : A) -> x ( inj₂ (f y)))
-
--- x : ¬ (((y₁ : A) → ⊥) ⊎ B)
