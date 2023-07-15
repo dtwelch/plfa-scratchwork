@@ -117,27 +117,38 @@ data _<'_ : ℕ -> ℕ -> Set where
 -- so an application of ¬-elim, given witnesses/evidence of both ¬A and A, produces 
 -- bottom: ⊥
 
+case-⊎ : ∀ {A B C : Set}
+  -> (A -> C)
+  -> (B -> C)
+  -> A ⊎ B
+  -------------
+  -> C
+case-⊎ f g (inj₁ x) = f x
+case-⊎ f g (inj₂ y) = g y
+
 --  'to' helper:
 ⊎-dual-×-to : ∀ {A B : Set} -> ¬ (A ⊎ B) -> (¬ A) × (¬ B)
 ⊎-dual-×-to {A} {B} ¬a⊎b = (λ (a : A) -> ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b)) 
 
 -- (λ (a : A) -> ¬a⊎b (inj₁ a)) forms type: (a : A) -> ⊥
 -- (λ (b : B) -> ¬a⊎b (inj₂ b)) forms type: (b : B) -> ⊥
+
 -- the a product is formed out of the top two lines using _,_
 -- (λ (a : A) -> ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b))
 
 -- 'from' helper:
 
 ⊎-dual-×-from : ∀ {A B : Set} -> (¬ A) × (¬ B) -> ¬ (A ⊎ B)
-⊎-dual-×-from {A} {B} ¬A×¬B = {!   !}
-
+⊎-dual-×-from {A} {B} ¬A×¬B A⊎B = case-⊎ (proj₁ ¬A×¬B) (proj₂ ¬A×¬B) A⊎B  
+-- case-⊎ (proj₁ ¬A×¬B) (proj₂ ¬A×¬B) A⊎B -- allows us to conclude: ⊥...?
 -- (proj₁ ¬A×¬B) : ¬ A
+-- (proj₂ ¬A×¬B) : ¬ B
 
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
 ⊎-dual-× {A} {B} = 
     record {
         to      = ⊎-dual-×-to  ;
-        from    = {!   !} ; -- ⊎-dual-×-from
+        from    = ⊎-dual-×-from ; -- ⊎-dual-×-from
         to∘from = {!   !} ; 
         from∘to = {!   !}
     }
