@@ -6,6 +6,7 @@ open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Data.Product using (_×_; _,_; proj₁; proj₂ )
 open import plfa.part1.Isomorphism using (_≃_; extensionality)
+open import Function using (_∘_)
 
 -- given a proposition A, the negation ¬ A holds if A cannot hold... 
 -- idea: make negation to be the same thing as implication of false..
@@ -145,8 +146,13 @@ case-⊎ f g (inj₂ y) = g y
 -- (proj₁ ¬A×¬B) : ¬ A
 -- (proj₂ ¬A×¬B) : ¬ B
 
+casehelper : ∀ {A B : Set} -> (f : (A ⊎ B) -> ⊥) -> (x : A ⊎ B) ->
+     case-⊎ (f ∘ inj₁) (f ∘ inj₂) x ≡ f x
+casehelper {A} {B} f (inj₁ x) = refl
+casehelper {A} {B} f (inj₂ x) = refl
+
 ⊎-dual-×-from∘to : ∀ {A B : Set} -> (y : ¬ (A ⊎ B)) -> ⊎-dual-×-from (⊎-dual-×-to y) ≡ y
-⊎-dual-×-from∘to {A} {B} y = {!   !}
+⊎-dual-×-from∘to {A} {B} y = (extensionality ∘ casehelper) y   
 
 ⊎-dual-× : ∀ {A B : Set} -> ¬ (A ⊎ B) ≃ (¬ A) × (¬ B) 
 ⊎-dual-× {A} {B} = 
