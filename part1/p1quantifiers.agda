@@ -19,7 +19,7 @@ open import Function using (_∘_)
     -> (M : A)
     -------------------------
     -> B M 
-∀-elim {A} {B} ∀A->Bx m = ∀A->Bx m
+∀-elim {A} {B} ∀x:A,Bx m = ∀x:A,Bx m
 
 {-
 When a function is viewed as evidence of implication, both its argument 
@@ -31,3 +31,18 @@ depends on the argument.
 This difference is largely a matter of interpretation, since in Agda a 
 value of a type and evidence of a proposition are indistinguishable.
 -}
+
+-- universals distribute over conjunction
+∀-distrib-× : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
+    (∀ (a : A) -> B a × C a) ≃ (∀ (a : A) -> C a)
+∀-distrib-× {A} {B} {C} = 
+    record {
+
+        -- to: ((a : A) -> B a × C a) -> (a : A) -> C a
+        to      = λ (p : ((a : A) -> B a × C a)) -> λ (a : A) -> proj₂ (p a) ;
+
+        -- from: ((a : A) -> C a) -> (a : A) -> B a × C a
+        from    = λ (p : ((a : A) -> C a)) -> λ (a : A) -> _,_ (B a) (C a) ;
+        to∘from = {!   !} ;
+        from∘to = {!   !} 
+    }
