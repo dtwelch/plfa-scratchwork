@@ -34,15 +34,15 @@ value of a type and evidence of a proposition are indistinguishable.
 
 -- universals distribute over conjunction
 ∀-distrib-× : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
-    (∀ (a : A) -> B a × C a) ≃ (∀ (a : A) -> C a)
+    ( ∀ (a : A) -> B a × C a ) ≃ (∀ (a : A) -> B a) × (∀ (a : A) -> C a)
+
 ∀-distrib-× {A} {B} {C} = 
     record {
 
-        -- to: ((a : A) -> B a × C a) -> (a : A) -> C a
-        to      = λ (p : ((a : A) -> B a × C a)) -> λ (a : A) -> proj₂ (p a) ;
+        -- to: ((a : A) → B a × C a) → ((a : A) → B a) × ((a : A) → C a)
+        to      = λ (f : ((a : A) -> B a × C a)) -> ⟨ (λ (a : A) -> proj₁ (f a)) , (λ (a : A) -> proj₂ (f a)) ⟩ ;
 
-        -- from: ((a : A) -> C a) -> (a : A) -> B a × C a
-        from    = λ (p : ((a : A) -> C a)) -> λ (a : A) -> ⟨_,_⟩ (B a) (C a) ;
+        from    = λ{ ⟨ lq , rq ⟩ -> λ (a : A) -> ⟨ (lq a) , (rq a) ⟩ }   ; -- λ (a : A) -> ⟨_,_⟩ ((λ x -> B x) a) (p a)  ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
