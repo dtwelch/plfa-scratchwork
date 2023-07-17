@@ -39,10 +39,10 @@ value of a type and evidence of a proposition are indistinguishable.
 ∀-distrib-× {A} {B} {C} = 
     record {
 
-        -- to: ((a : A) → B a × C a) → ((a : A) → B a) × ((a : A) → C a)
+        -- to: ((a : A) -> B a × C a) -> ((a : A) -> B a) × ((a : A) -> C a)
         to      = λ (f : ((a : A) -> B a × C a)) -> ⟨ (λ (a : A) -> proj₁ (f a)) , (λ (a : A) -> proj₂ (f a)) ⟩ ;
 
-        from    = λ{ ⟨ lq , rq ⟩ -> λ (a : A) -> ⟨ (lq a) , (rq a) ⟩ }   ; -- λ (a : A) -> ⟨_,_⟩ ((λ x -> B x) a) (p a)  ;
-        to∘from = {!   !} ;
-        from∘to = {!   !} 
+        from    = λ{ ⟨ lq , rq ⟩ -> λ (a : A) -> ⟨ (lq a) , (rq a) ⟩ }  ; 
+        to∘from = λ{ ⟨ lq , rq ⟩ -> refl }  ;
+        from∘to = λ (f : (a : A) -> B a × C a) -> refl 
     }
