@@ -4,7 +4,7 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Sum using (_⊎_; inj₁; inj₂)
-open import Data.Product using (_×_; _,_; proj₁; proj₂ )
+open import Data.Product using (_×_; proj₁; proj₂ ) renaming (_,_ to ⟨_,_⟩)
 open import plfa.part1.Isomorphism using (_≃_; extensionality)
 open import Function using (_∘_)
 
@@ -131,7 +131,7 @@ case-⊎ f g (inj₂ y) = g y
 
 --  'to' helper:
 ⊎-dual-×-to : ∀ {A B : Set} -> ¬ (A ⊎ B) -> (¬ A) × (¬ B)
-⊎-dual-×-to {A} {B} ¬a⊎b = (λ (a : A) -> ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b)) 
+⊎-dual-×-to {A} {B} ¬a⊎b = ⟨ (λ (a : A) ->  ¬a⊎b (inj₁ a)) , (λ (b : B) -> ¬a⊎b (inj₂ b)) ⟩ 
 
 -- (λ (a : A) -> ¬a⊎b (inj₁ a)) forms type: (a : A) -> ⊥
 -- (λ (b : B) -> ¬a⊎b (inj₂ b)) forms type: (b : B) -> ⊥

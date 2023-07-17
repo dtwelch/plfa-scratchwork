@@ -42,7 +42,7 @@ value of a type and evidence of a proposition are indistinguishable.
         to      = λ (p : ((a : A) -> B a × C a)) -> λ (a : A) -> proj₂ (p a) ;
 
         -- from: ((a : A) -> C a) -> (a : A) -> B a × C a
-        from    = λ (p : ((a : A) -> C a)) -> λ (a : A) -> _,_ (B a) (C a) ;
+        from    = λ (p : ((a : A) -> C a)) -> λ (a : A) -> ⟨_,_⟩ (B a) (C a) ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
     }
