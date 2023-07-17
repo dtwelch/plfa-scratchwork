@@ -1,0 +1,33 @@
+import Relation.Binary.PropositionalEquality as Eq
+open Eq using (_≡_; refl)
+open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
+open import Relation.Nullary using (¬_)
+open import Data.Product using (_×_; proj₁; proj₂) renaming (_,_ to ⟨_,_⟩)
+open import Data.Sum using (_⊎_; inj₁; inj₂)
+open import plfa.part1.Isomorphism using (_≃_; extensionality)
+open import Function using (_∘_)
+
+-- universals 
+
+-- "given a variable x : A and a proposition B x containing x as a free var,
+-- proposition ∀ (x : A) -> B x holds if for each term M of type A, B M holds.
+-- where B M stands for proposition B x with each free occurrence of x replaced
+-- M."
+
+∀-elim : ∀ {A : Set} -> {B : A -> Set}
+    -> (L : ∀ (x : A) -> B x)
+    -> (M : A)
+    -------------------------
+    -> B M 
+∀-elim {A} {B} ∀A->Bx m = ∀A->Bx m
+
+{-
+When a function is viewed as evidence of implication, both its argument 
+and result are viewed as evidence, whereas when a dependent function is 
+viewed as evidence of a universal, its argument is viewed as an element 
+of a data type and its result is viewed as evidence of a proposition that 
+depends on the argument. 
+
+This difference is largely a matter of interpretation, since in Agda a 
+value of a type and evidence of a proposition are indistinguishable.
+-}
