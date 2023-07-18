@@ -33,12 +33,13 @@ value of a type and evidence of a proposition are indistinguishable.
 -}
 
 -- universals distribute over conjunction
-∀-distrib-× : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
-    ( ∀ (a : A) -> B a × C a ) ≃ (∀ (a : A) -> B a) × (∀ (a : A) -> C a)
+∀-distrib-× : 
+    ∀ {A : Set} -> 
+    ∀ {B C : A -> Set} -> 
+        ( ∀ (a : A) -> B a × C a ) ≃ (∀ (a : A) -> B a) × (∀ (a : A) -> C a)
 
 ∀-distrib-× {A} {B} {C} = 
     record {
-
         -- to: ((a : A) -> B a × C a) -> ((a : A) -> B a) × ((a : A) -> C a)
         to      = λ (f : ((a : A) -> B a × C a)) -> ⟨ (λ (a : A) -> proj₁ (f a)) , (λ (a : A) -> proj₂ (f a)) ⟩ ;
 
@@ -46,3 +47,13 @@ value of a type and evidence of a proposition are indistinguishable.
         to∘from = λ{ ⟨ lq , rq ⟩ -> refl }  ;
         from∘to = λ (f : (a : A) -> B a × C a) -> refl 
     }
+
+⊎∀-implies-∀⊎ : 
+    ∀ {A : Set} -> 
+    ∀ {B C : A -> Set} ->
+        (∀ (a : A) -> B a) ⊎ (∀ (a : A) -> C a) -> ∀ (a : A) -> (B a) ⊎ (C a)
+-- goal (construct this): (a : A) -> B a ⊎ C a
+
+-- q1⊎q2 : ((a : A) → B a) ⊎ ((a : A) → C a)
+-- h1 : A
+⊎∀-implies-∀⊎ {A} {B} {C} = λ{ (inj₁ ba) (inj₂ ca) -> λ (x : A) -> {!   !}  }
