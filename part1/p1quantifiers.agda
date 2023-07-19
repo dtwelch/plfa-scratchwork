@@ -36,7 +36,8 @@ value of a type and evidence of a proposition are indistinguishable.
 ∀-distrib-× : 
     ∀ {A : Set} -> 
     ∀ {B C : A -> Set} -> 
-        ( ∀ (a : A) -> B a × C a ) ≃ (∀ (a : A) -> B a) × (∀ (a : A) -> C a)
+        ( ∀ (a : A) -> B a × C a ) ≃ 
+            (∀ (a : A) -> B a) × (∀ (a : A) -> C a)
 
 ∀-distrib-× {A} {B} {C} = 
     record {
@@ -48,12 +49,49 @@ value of a type and evidence of a proposition are indistinguishable.
         from∘to = λ (f : (a : A) -> B a × C a) -> refl 
     }
 
+-- reproduced from connectives chapter:
+case-⊎ : ∀ {A B C : Set}
+    -> (A -> C)
+    -> (B -> C)
+    -> A ⊎ B
+    -----------
+    -> C
+case-⊎ f g (inj₁ x) = f x
+case-⊎ f g (inj₂ y) = g y
+
+-- goal (construct this): (a : A) -> B a ⊎ C a
+
 ⊎∀-implies-∀⊎ : 
     ∀ {A : Set} -> 
     ∀ {B C : A -> Set} ->
-        (∀ (a : A) -> B a) ⊎ (∀ (a : A) -> C a) -> ∀ (a : A) -> (B a) ⊎ (C a)
--- goal (construct this): (a : A) -> B a ⊎ C a
+        (∀ (a : A) -> B a) ⊎ (∀ (a : A) -> C a) -> 
+        (∀ (a : A) -> B a ⊎ C a)
+-- more on patterns here: https://agda.readthedocs.io/en/v2.6.1/language/with-abstraction.html
+⊎∀-implies-∀⊎ {A} {B} {C} h1 with h1 
+...  | (inj₁ ba) = λ (a : A) -> (inj₁ {-B a-}{-C a-} (ba a))    
+...  | (inj₂ ca) = λ (a : A) -> (inj₂ {-B a-}{-C a-}(ca a)) 
 
--- q1⊎q2 : ((a : A) → B a) ⊎ ((a : A) → C a)
--- h1 : A
-⊎∀-implies-∀⊎ {A} {B} {C} = λ{ (inj₁ ba) (inj₂ ca) -> λ (x : A) -> {!   !}  }
+-- note, in each case above (matching either left (inj₁) or right (inj₂)),
+-- we just need to construct the term B a and C a in each respective case...
+-- Agda it seems implicitly constructs a type of the term for the opposite 
+-- side of the disjunction being matched on..
+
+-- consider the following type:
+data Tri : Set where 
+    aa : Tri 
+    bb : Tri 
+    cc : Tri 
+
+-- let B be a type indexed by Tri, that is: B : Tri -> Set. Show that
+-- ∀ (x : Tri) -> B x is isomorphic to B aa × B bb × B cc. Hint: you
+-- will need to postulate a version of extensionality that works for 
+-- dependent fns.
+
+∀×-iso : ∀ {B : Tri -> Set} -> 
+    (∀ (x : Tri) -> B x) ≃ B aa × B bb × B cc 
+∀×-iso {B} = record {
+        to      = {!   !} ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !}
+    }
