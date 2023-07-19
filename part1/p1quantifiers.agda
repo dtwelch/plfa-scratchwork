@@ -115,6 +115,9 @@ postulate
         ∀×-iso-from (∀×-iso-to f) ≡ f
 ∀×-iso-from∘to {B} f = {!   !}
 
+-- dep-extensionality (f) (∀×-iso-from (∀×-iso-to f)) ?
+-- partially applied above gives goal below
+
 -- goal:
 --  ((x : Tri) -> f x ≡ ∀×-iso-from (∀×-iso-to f) x) ->
 --  f ≡ ∀×-iso-from (∀×-iso-to f)
