@@ -651,11 +651,11 @@ inj₁ :
         from    = λ{ (inj₁ ⟨ x , z ⟩) -> ⟨ inj₁ x , z ⟩ ; 
                      (inj₂ ⟨ y , z ⟩) -> ⟨ inj₂ y , z ⟩
                  } ;
-        from∘to = λ{ ⟨ inj₁ x , z ⟩ → refl ; 
-                     ⟨ inj₂ y , z ⟩ → refl
+        from∘to = λ{ ⟨ inj₁ x , z ⟩ -> refl ; 
+                     ⟨ inj₂ y , z ⟩ -> refl
                  } ; 
-        to∘from = λ{ (inj₁ ⟨ x , z ⟩) → refl ; 
-                     (inj₂ ⟨ y , z ⟩) → refl
+        to∘from = λ{ (inj₁ ⟨ x , z ⟩) -> refl ; 
+                     (inj₂ ⟨ y , z ⟩) -> refl
                  }
     }
  

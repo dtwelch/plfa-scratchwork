@@ -94,12 +94,6 @@ data Tri : Set where
 ∀×-iso-from {B} ⟨ Baa , ⟨ Bbb , Bcc ⟩ ⟩ = 
     λ{ aa -> Baa ; bb -> Bbb ; cc -> Bcc }
 
-∀×-iso-from∘to : 
-    ∀ {B : Tri -> Set} ->
-    ∀ (f : (x : Tri) -> B x) -> 
-        ∀×-iso-from (∀×-iso-to f) ≡ f
-∀×-iso-from∘to {B} f = {!   !}
-
 -- a pseudocode-ish more explicit form of defining eq for ∀×-iso-from:
 -- ∀×-iso-from {B} ⟨ Baa , ⟨ Bbb , Bcc ⟩ ⟩ = 
 --    λ (x : Tri) -> match x with
@@ -108,12 +102,22 @@ data Tri : Set where
 --                        |  cc -> Ccc 
 
 postulate
-    --dependent extensionality
-    depextensionality : ∀ {A : Set} {B : A -> Set} 
+    -- dependent extensionality
+    dep-extensionality : ∀ {A : Set} {B : A -> Set} 
             -> ∀ (f g : (x : A) -> (B x))
                 -> (∀ (x : A) -> f x ≡ g x)
             ----------------------------
             -> f ≡ g
+
+∀×-iso-from∘to : 
+    ∀ {B : Tri -> Set} ->
+    ∀ (f : (x : Tri) -> B x) -> 
+        ∀×-iso-from (∀×-iso-to f) ≡ f
+∀×-iso-from∘to {B} f = {!   !}
+
+-- goal:
+--  ((x : Tri) -> f x ≡ ∀×-iso-from (∀×-iso-to f) x) ->
+--  f ≡ ∀×-iso-from (∀×-iso-to f)
 
 ∀×-iso : ∀ {B : Tri -> Set} -> 
     (∀ (x : Tri) -> B x) ≃ B aa × B bb × B cc 
