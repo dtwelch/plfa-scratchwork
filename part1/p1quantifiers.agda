@@ -94,7 +94,7 @@ data Tri : Set where
 ∀×-iso-from : ∀ {B : Tri -> Set} -> 
     (B aa × (B bb × B cc)) -> ((x : Tri) -> B x)
 ∀×-iso-from {B} ⟨ Baa , ⟨ Bbb , Bcc ⟩ ⟩ = 
-    λ{ aa -> Baa ; bb -> Bbb ; cc -> Bcc }
+    λ{ aa -> Baa ; bb -> Bbb ; cc -> Bcc } -- : (x : Tri) -> B x
 
 -- a pseudocode-ish more explicit form of defining eq for ∀×-iso-from:
 -- ∀×-iso-from {B} ⟨ Baa , ⟨ Bbb , Bcc ⟩ ⟩ = 
@@ -115,13 +115,25 @@ postulate
 η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
 η-× {A} {B} (⟨_,_⟩ x y) = refl
 
+{-
 ∀×-iso-from∘to : 
     ∀ {B : Tri -> Set} ->
     ∀ (f : (x : Tri) -> B x) -> 
         ∀×-iso-from (∀×-iso-to f) ≡ f
-∀×-iso-from∘to {B} f = -- {! dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f)    !} 
-    {!   !}
+∀×-iso-from∘to {B} f =
+    dep-extensionality  (∀×-iso-from (∀×-iso-to f)) (f)
+    (λ (x : Tri) -> ( (λ (x : Tri) -> (λ { aa → refl ; bb -> refl ; cc -> refl  }) x) )) 
+-}
+
+∀×-iso-from∘to : {B : Tri → Set} → (f : ∀ (x : Tri) → B x)
+  → (∀×-iso-from ∘ ∀×-iso-to) f ≡ f
+∀×-iso-from∘to {B} f = dep-extensionality {Tri} {B} (∀×-iso-from (∀×-iso-to f)) (f) 
+       λ{ aa -> refl; bb -> refl; cc -> refl} 
     
+    -- ((λ { aa -> refl ; bb -> refl ;  }) x)
+
+    -- need: (x : Tri) → ∀×-iso-from (∀×-iso-to f) x ≡ f x
+
 -- λ (x : Tri) -> η-× ∀×-iso-from (∀×-iso-to f) 
 -- λ (x : Tri) -> η-× (∀×-iso-to f)       : (x : Tri) -> ∀×-iso-to f ≡ ∀×-iso-to f
 
@@ -131,9 +143,11 @@ postulate
     
 -- ∀×-iso-to   : ((x : Tri) -> B x)     -> B aa × (B bb × B cc)
 -- ∀×-iso-from : (B aa × (B bb × B cc)) -> ((x : Tri) -> B x)
--- goal:
+
+--      dep-extensionality (∀×-iso-from (∀×-iso-to f))  f
+-- type is:
 --  ((x : Tri) -> ∀×-iso-from (∀×-iso-to f) x ≡ f x) ->
---  ∀×-iso-from (∀×-iso-to f) ≡ f
+--    ∀×-iso-from (∀×-iso-to f) ≡ f
 
 ∀×-iso : ∀ {B : Tri -> Set} -> 
     (∀ (x : Tri) -> B x) ≃ B aa × B bb × B cc 
