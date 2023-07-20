@@ -163,5 +163,34 @@ postulate
 
 -- existential quantification is encoded by the following inductive type:
 
-data Σ (A : Set) (B : A -> Set) : Set 
-    ⟨_,_⟩
+data Σ (A : Set) (B : A -> Set) : Set where
+    ⟨_,_⟩ : (x : A) -> B x -> Σ A B
+
+Σ-syntax = Σ
+infix 2 Σ-syntax
+syntax Σ-syntax A (λ x -> Bx) = Σ[ x ∈ A ] Bx
+
+-- "evidence that Σ[ x ∈ A ] B x holds is of the form 
+--  ⟨ M , N ⟩ where M is a term of type A, and N is evidence 
+--  that B M holds."
+
+-- "product apps _×_ are a special case of existentials in 
+--  which the second component does not depend on the variable drawn
+--  from the first component"
+
+-- "A common notation for existentials is ∃ (analogous to ∀ for universals). 
+-- We follow the convention of the Agda standard library, and reserve this 
+-- notation for the case where the domain of the bound variable is left implicit:"
+
+∃ : ∀ {A : Set} (B : A -> Set) -> Set 
+∃ {A} B = Σ A B 
+
+∃-syntax = ∃
+syntax ∃-syntax (λ x -> B) = ∃[ x ] B 
+
+-- "the special syntax is available only when the identifier 
+--  ∃-syntax is imported. We will tend to use this syntax, since
+--  it is shorter and more familiar"
+
+
+
