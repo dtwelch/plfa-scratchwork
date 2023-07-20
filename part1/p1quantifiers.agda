@@ -160,3 +160,8 @@ postulate
         -- ?1 : (x : (x₁ : Tri) -> B x₁) -> ∀×-iso-from (∀×-iso-to x) ≡ x
         from∘to = ∀×-iso-from∘to
     }
+
+-- existential quantification is encoded by the following inductive type:
+
+data Σ (A : Set) (B : A -> Set) : Set 
+    ⟨_,_⟩
