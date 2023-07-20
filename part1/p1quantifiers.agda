@@ -1,5 +1,6 @@
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl)
+open Eq.≡-Reasoning
 
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
 open import Relation.Nullary using (¬_)
@@ -110,18 +111,24 @@ postulate
             ----------------------------
             -> f ≡ g
 
+-- from prior ch on connectives:
+η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
+η-× {A} {B} (⟨_,_⟩ x y) = refl
+
 ∀×-iso-from∘to : 
     ∀ {B : Tri -> Set} ->
     ∀ (f : (x : Tri) -> B x) -> 
         ∀×-iso-from (∀×-iso-to f) ≡ f
-∀×-iso-from∘to {B} f = -- {! dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f)    !}
-     
-     {!   !}
-
+∀×-iso-from∘to {B} f = -- {! dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f)    !} 
+    {!   !}
     
--- dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f) 
--- partially applied app above gives goal below..
+-- λ (x : Tri) -> η-× ∀×-iso-from (∀×-iso-to f) 
+-- λ (x : Tri) -> η-× (∀×-iso-to f)       : (x : Tri) -> ∀×-iso-to f ≡ ∀×-iso-to f
 
+     --  λ (x : Tri) -> ∀×-iso-from (η-× (∀×-iso-to f) )  !}
+-- need to construct:
+-- ((x : Tri) -> ∀×-iso-from (∀×-iso-to f) x ≡ f x)
+    
 -- ∀×-iso-to   : ((x : Tri) -> B x)     -> B aa × (B bb × B cc)
 -- ∀×-iso-from : (B aa × (B bb × B cc)) -> ((x : Tri) -> B x)
 -- goal:
