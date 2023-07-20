@@ -1,5 +1,6 @@
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl)
+
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
 open import Relation.Nullary using (¬_)
 open import Data.Product using (_×_; proj₁; proj₂) renaming (_,_ to ⟨_,_⟩)
@@ -113,14 +114,19 @@ postulate
     ∀ {B : Tri -> Set} ->
     ∀ (f : (x : Tri) -> B x) -> 
         ∀×-iso-from (∀×-iso-to f) ≡ f
-∀×-iso-from∘to {B} f = {!   !}
+∀×-iso-from∘to {B} f = -- {! dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f)    !}
+     
+     {!   !}
 
--- dep-extensionality (f) (∀×-iso-from (∀×-iso-to f)) ?
--- partially applied above gives goal below
+    
+-- dep-extensionality (∀×-iso-from (∀×-iso-to f)) (f) 
+-- partially applied app above gives goal below..
 
+-- ∀×-iso-to   : ((x : Tri) -> B x)     -> B aa × (B bb × B cc)
+-- ∀×-iso-from : (B aa × (B bb × B cc)) -> ((x : Tri) -> B x)
 -- goal:
---  ((x : Tri) -> f x ≡ ∀×-iso-from (∀×-iso-to f) x) ->
---  f ≡ ∀×-iso-from (∀×-iso-to f)
+--  ((x : Tri) -> ∀×-iso-from (∀×-iso-to f) x ≡ f x) ->
+--  ∀×-iso-from (∀×-iso-to f) ≡ f
 
 ∀×-iso : ∀ {B : Tri -> Set} -> 
     (∀ (x : Tri) -> B x) ≃ B aa × B bb × B cc 
