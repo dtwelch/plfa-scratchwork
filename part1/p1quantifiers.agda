@@ -202,18 +202,20 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 -- (f x) y  : C         
 -- ( y -- of type: B x -- comes from the existential being pattern matched on)
 
-∀∃-currying-to : {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
+-- some helper lemmas/corollaries
+∀∃-cur-to : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
     -> (∀ (x : A) -> B x -> C) -> ( ∃[ x ] B x -> C )
-∀∃-currying-to {A} {B} {C} f ⟨ x , body ⟩ = (f body) -- goal: C
+∀∃-cur-to {A} {B} {C} f ⟨ x , body ⟩ = (f x) body -- goal: C
 
--- ∀∃-cur-to : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
---    -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C) 
---goal: ((x : A) → B x → C) → ∃-syntax B → C
+∀∃-cur-from : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
+    -> ( ∃[ x ] (B x -> C) ) -> (∀ (x : A) -> B x -> C)
+∀∃-cur-from {A} {B} {C} ⟨ x , body ⟩ = {!   !}
+
 ∀∃-currying : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
     -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C )
 ∀∃-currying {A} {B} {C} = 
     record {
-        to      = {!   !} ;
+        to      = ∀∃-cur-to ;
         from    = {!   !} ;
         to∘from = {!   !} ;
         from∘to = {!   !} 
