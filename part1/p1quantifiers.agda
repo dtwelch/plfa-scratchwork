@@ -186,11 +186,35 @@ syntax Σ-syntax A (λ x -> Bx) = Σ[ x ∈ A ] Bx
 ∃ {A} B = Σ A B 
 
 ∃-syntax = ∃
-syntax ∃-syntax (λ x -> B) = ∃[ x ] B 
+syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B 
 
 -- "the special syntax is available only when the identifier 
 --  ∃-syntax is imported. We will tend to use this syntax, since
 --  it is shorter and more familiar"
 
+∃-elim : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
+    -> (∀ (x : A) -> (B x) -> C)
+    -> ∃[ x ] B x 
+    ----------------------------
+    -> C 
+∃-elim {A} {B} {C} f ⟨ x , y ⟩ =  (f x) y
+-- (f x)    : B x -> C
+-- (f x) y  : C         
+-- ( y -- of type: B x -- comes from the existential being pattern matched on)
 
+∀∃-currying-to : {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
+    -> (∀ (x : A) -> B x -> C) -> ( ∃[ x ] B x -> C )
+∀∃-currying-to {A} {B} {C} f ⟨ x , body ⟩ = (f body) -- goal: C
 
+-- ∀∃-cur-to : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
+--    -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C) 
+--goal: ((x : A) → B x → C) → ∃-syntax B → C
+∀∃-currying : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
+    -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C )
+∀∃-currying {A} {B} {C} = 
+    record {
+        to      = {!   !} ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !} 
+    }
