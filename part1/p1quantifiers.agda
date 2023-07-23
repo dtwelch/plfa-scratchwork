@@ -214,17 +214,26 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 
 ∀∃-cur-to∘from : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
     -> ∀ (y : ∃-syntax B -> C) -> ∀∃-cur-to (∀∃-cur-from y) ≡ y
-∀∃-cur-to∘from {A} {B} {C} f = {!    !}
-
---  (dep-extensionality f) : (g : (x : ∃-syntax B) -> C) -> ((x : ∃-syntax B) -> f x ≡ g x) -> f ≡ g
+∀∃-cur-to∘from {A} {B} {C} f = extensionality λ{ ⟨ x , body ⟩ -> refl  }
+-- ?0 : (x : ∃-syntax B) → ∀∃-cur-to (∀∃-cur-from f) x ≡ f x
 
 ∀∃-currying : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
     -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C )
 ∀∃-currying {A} {B} {C} = 
     record {
-        to      = ∀∃-cur-to         ;
-        from    = ∀∃-cur-from       ;
-        to∘from = ∀∃-cur-to∘from    ;
-        from∘to = λ (y : (x : A) -> B x -> C) -> refl 
+        to          = ∀∃-cur-to         ;
+        from        = ∀∃-cur-from       ;
+        to∘from     = ∀∃-cur-to∘from    ;
+        from∘to     = λ{ f -> refl }    
     }
- 
+
+-- "show that existentials distribute over disjunction"
+∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
+    ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
+∃-distrib-⊎ {A} {B} {C} = 
+    record {
+        to      = ? ;
+        from    = ? ;
+        to∘from = ? ;
+        from∘to = ?
+    }
