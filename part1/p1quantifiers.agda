@@ -207,16 +207,24 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
     -> (∀ (x : A) -> B x -> C) -> ( ∃[ x ] B x -> C )
 ∀∃-cur-to {A} {B} {C} f ⟨ x , body ⟩ = (f x) body -- goal: C
 
+-- goal: (x : A) -> B x -> C
 ∀∃-cur-from : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
-    -> ( ∃[ x ] (B x -> C) ) -> (∀ (x : A) -> B x -> C)
-∀∃-cur-from {A} {B} {C} ⟨ x , body ⟩ = {!   !}
+    -> ( ∃[ x ] B x -> C ) -> (∀ (x : A) -> B x -> C)
+∀∃-cur-from {A} {B} {C} g x body = g ⟨ x , body ⟩
+
+∀∃-cur-to∘from : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set} 
+    -> ∀ (y : ∃-syntax B -> C) -> ∀∃-cur-to (∀∃-cur-from y) ≡ y
+∀∃-cur-to∘from {A} {B} {C} f = {!    !}
+
+--  (dep-extensionality f) : (g : (x : ∃-syntax B) -> C) -> ((x : ∃-syntax B) -> f x ≡ g x) -> f ≡ g
 
 ∀∃-currying : ∀ {A : Set} -> ∀ {B : A -> Set} -> ∀ {C : Set}
     -> (∀ (x : A) -> B x -> C) ≃ ( ∃[ x ] B x -> C )
 ∀∃-currying {A} {B} {C} = 
     record {
-        to      = ∀∃-cur-to ;
-        from    = {!   !} ;
-        to∘from = {!   !} ;
-        from∘to = {!   !} 
+        to      = ∀∃-cur-to         ;
+        from    = ∀∃-cur-from       ;
+        to∘from = ∀∃-cur-to∘from    ;
+        from∘to = λ (y : (x : A) -> B x -> C) -> refl 
     }
+ 
