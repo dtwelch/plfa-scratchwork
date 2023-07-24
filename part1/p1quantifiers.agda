@@ -234,15 +234,14 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ... | (inj₁ ⟨ x , body ⟩) = ⟨ x , (inj₁ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)   ⟨ x , body ⟩ on lhs is a ∃ expr of type: Σ A B
 ... | (inj₂ ⟨ x , body ⟩) = ⟨ x , (inj₂ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)    ⟨ x , body ⟩ constructs an ∃ of type: Σ A C
 
--- see if nested 'with' works in above (would be nice to pattern match on the u)
-
-
 ∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
     ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
 ∃-distrib-⊎ {A} {B} {C} = 
     record {
         to      = ∃-dist-⊎-to   ;
         from    = ∃-dist-⊎-from ;
-        to∘from = {!   !} ;
+
+        -- (y: ∃-syntax B ⊎ ∃-syntax C) -> ∃-dist-⊎-to (∃-dist-⊎-from y) ≡ y
+        to∘from = λ { (inj₁ b) -> {!   !} ; (inj₂ c) -> {!   !} }  ;
         from∘to = {!   !}
     }
