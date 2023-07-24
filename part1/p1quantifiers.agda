@@ -243,5 +243,7 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 
         -- (y: ∃-syntax B ⊎ ∃-syntax C) -> ∃-dist-⊎-to (∃-dist-⊎-from y) ≡ y
         to∘from = λ { (inj₁ b) -> {!   !} ; (inj₂ c) -> {!   !} }  ;
-        from∘to = {!   !}
+
+        -- (x: ∃-syntax (λ x₁ -> B x₁ ⊎ C x₁)) -> ∃-dist-⊎-from (∃-dist-⊎-to x) ≡ x
+        from∘to = λ { ⟨ x , (inj₁ b) ⟩ -> refl ; ⟨ x , (inj₂ b) ⟩ -> refl } 
     }
