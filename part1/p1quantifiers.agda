@@ -115,18 +115,9 @@ postulate
 η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
 η-× {A} {B} (⟨_,_⟩ x y) = refl
 
-{-
-∀×-iso-from∘to : 
-    ∀ {B : Tri -> Set} ->
-    ∀ (f : (x : Tri) -> B x) -> 
-        ∀×-iso-from (∀×-iso-to f) ≡ f
-∀×-iso-from∘to {B} f =
-    dep-extensionality  (∀×-iso-from (∀×-iso-to f)) (f)
-    (λ (x : Tri) -> ( (λ (x : Tri) -> (λ { aa → refl ; bb -> refl ; cc -> refl  }) x) )) 
--}
 
-∀×-iso-from∘to : {B : Tri → Set} → (f : ∀ (x : Tri) → B x)
-  → (∀×-iso-from ∘ ∀×-iso-to) f ≡ f
+∀×-iso-from∘to : {B : Tri -> Set} -> (f : ∀ (x : Tri) -> B x)
+  -> (∀×-iso-from ∘ ∀×-iso-to) f ≡ f
 ∀×-iso-from∘to {B} f = dep-extensionality {Tri} {B} (∀×-iso-from (∀×-iso-to f)) (f) 
        λ{ aa -> refl; bb -> refl; cc -> refl} 
     
@@ -228,12 +219,20 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
     }
 
 -- "show that existentials distribute over disjunction"
+
+-- ?1 : ∃-syntax (λ x → B x ⊎ C x) → ∃-syntax B ⊎ ∃-syntax C
+∃-dist-⊎-to : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
+    ∃-syntax (λ x -> B x ⊎ C x) -> (∃-syntax B) ⊎ (∃-syntax C)
+∃-dist-⊎-to {A} {B} {C} ex with ex 
+... | ⟨ x , (inj₁ bodyL) ⟩ = inj₁ ⟨ x , bodyL ⟩ -- Σ A B ⊎ Σ A C
+... | ⟨ x , (inj₂ bodyR) ⟩ = inj₂ ⟨ x , bodyR ⟩ -- Σ A B ⊎ Σ A C
+
 ∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
     ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
 ∃-distrib-⊎ {A} {B} {C} = 
     record {
-        to      = ? ;
-        from    = ? ;
-        to∘from = ? ;
-        from∘to = ?
+        to      = ∃-dist-⊎-to  ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !}
     }
