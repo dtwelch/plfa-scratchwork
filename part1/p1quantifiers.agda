@@ -234,8 +234,6 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ... | (inj₁ ⟨ x , body ⟩) = ⟨ x , (inj₁ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)   ⟨ x , body ⟩ on lhs is a ∃ expr of type: Σ A B
 ... | (inj₂ ⟨ x , body ⟩) = ⟨ x , (inj₂ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)    ⟨ x , body ⟩ constructs an ∃ of type: Σ A C
 
--- ∃-dist-⊎-helper : ∃-syntax B -> 
-
 ∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
     ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
 ∃-distrib-⊎ {A} {B} {C} = 
@@ -258,3 +256,8 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
         from∘to = λ { ⟨ x , (inj₁ b) ⟩ -> refl ; ⟨ x , (inj₂ b) ⟩ -> refl } 
     }
 
+-- "Show that an existential of conjunctions implies a 
+--  conjunction of existentials:"
+∃×-implies-×∃ : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
+    ∃[ m ] (B m × C m) -> (∃[ m ] B m) × (∃[ m ] C m)
+∃×-implies-×∃ {A} {B} {C} = {!   !}
