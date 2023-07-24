@@ -234,6 +234,8 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ... | (inj₁ ⟨ x , body ⟩) = ⟨ x , (inj₁ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)   ⟨ x , body ⟩ on lhs is a ∃ expr of type: Σ A B
 ... | (inj₂ ⟨ x , body ⟩) = ⟨ x , (inj₂ body) ⟩  -- Σ A (λ x -> B x ⊎ C x)    ⟨ x , body ⟩ constructs an ∃ of type: Σ A C
 
+-- ∃-dist-⊎-helper : ∃-syntax B -> 
+
 ∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
     ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
 ∃-distrib-⊎ {A} {B} {C} = 
@@ -241,9 +243,18 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
         to      = ∃-dist-⊎-to   ;
         from    = ∃-dist-⊎-from ;
 
-        -- (y: ∃-syntax B ⊎ ∃-syntax C) -> ∃-dist-⊎-to (∃-dist-⊎-from y) ≡ y
-        to∘from = λ { (inj₁ b) -> {!   !} ; (inj₂ c) -> {!   !} }  ;
+        -- goal: (y: ∃-syntax B ⊎ ∃-syntax C) → ∃-dist-⊎-to (∃-dist-⊎-from y) ≡ y
+        -- extensionality {A} : 
+        --      {B = B₁: Set} {f g : A -> B₁} → ((x : A) → f x ≡ g x) → f ≡ g
+
+        -- (inj₁ b) : ∃-syntax B
+        -- b above can be matched with ⟨ x , y ⟩ (for example)
+
+        -- to∘from = λ { (inj₁ ⟨ x , y ⟩ ) -> refl ; (inj₂ ⟨ x , y ⟩ ) -> ? } gives: 
+        -- ?0: ∃-dist-⊎-to (∃-dist-⊎-from (inj₂ ⟨ x , y ⟩)) ≡ inj₂ ⟨ x , y ⟩
+        to∘from = λ { (inj₁ ⟨ x , y ⟩ ) -> refl ; (inj₂ ⟨ x , y ⟩ ) -> refl }  ;
 
         -- (x: ∃-syntax (λ x₁ -> B x₁ ⊎ C x₁)) -> ∃-dist-⊎-from (∃-dist-⊎-to x) ≡ x
         from∘to = λ { ⟨ x , (inj₁ b) ⟩ -> refl ; ⟨ x , (inj₂ b) ⟩ -> refl } 
     }
+
