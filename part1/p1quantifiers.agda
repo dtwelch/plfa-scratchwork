@@ -227,6 +227,12 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ... | ⟨ x , (inj₁ bodyL) ⟩ = inj₁ ⟨ x , bodyL ⟩ -- Σ A B ⊎ Σ A C
 ... | ⟨ x , (inj₂ bodyR) ⟩ = inj₂ ⟨ x , bodyR ⟩ -- Σ A B ⊎ Σ A C
 
+∃-dist-⊎-from : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
+    ∃-syntax B ⊎ ∃-syntax C -> ∃-syntax (λ x -> B x ⊎ C x)
+∃-dist-⊎-from {A} {B} {C} u with u 
+... | (inj₁ u) = {!   !}
+... | (inj₂ u) = {!   !}
+
 ∃-distrib-⊎ : ∀ {A : Set} -> ∀ {B C : A -> Set} ->
     ∃[ x ] (B x ⊎ C x) ≃ ( ∃[ x ] B x) ⊎ (∃[ x ] C x )
 ∃-distrib-⊎ {A} {B} {C} = 
