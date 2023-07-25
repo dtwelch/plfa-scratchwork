@@ -260,4 +260,19 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 --  conjunction of existentials:"
 ∃×-implies-×∃ : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
     ∃[ m ] (B m × C m) -> (∃[ m ] B m) × (∃[ m ] C m)
-∃×-implies-×∃ {A} {B} {C} = {!   !}
+--                       ∃  m -- B m -- × -- B m
+∃×-implies-×∃ {A} {B} {C} ⟨ m , ⟨ bm     ,    cm ⟩ ⟩ = 
+    ⟨ ⟨ m , bm ⟩ , ⟨ m , cm ⟩ ⟩ -- goal: ∃-syntax B × ∃-syntax C
+
+-- does the existential quantifier ∃ distribute over conjunction (×)?
+-- ans: no, the converse gives us the hypothesis:
+-- 'there exists some value m₁ : A such that B m₁ holds, AND
+--  there exists some other value m₂ : A such that C m holds..'
+-- but it is not necessarily the case that there exists a value m₃ : A
+-- such that B m₃ and C m₃ both hold
+
+-- ×∃-implies-∃× : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
+--    (∃[ m ] B m) × (∃[ m ] C m) -> ∃[ m ] (B m × C m)
+-- ×∃-implies-∃× {A} {B} {C} ⟨ ⟨ m₁ , bm ⟩ , ⟨ m₂ , cm ⟩ ⟩ = ...
+
+
