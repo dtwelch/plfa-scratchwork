@@ -88,7 +88,7 @@ data Tri : Set where
 -- dependent fns.
 
 ∀×-iso-to : ∀ {B : Tri -> Set} ->
-    ((x : Tri) -> B x) -> B aa × (B bb × B cc)
+    (∀ (x : Tri) -> B x) -> B aa × (B bb × B cc)
 ∀×-iso-to {B} g = ⟨ (g aa) , ⟨ (g bb) , (g cc) ⟩ ⟩
 
 ∀×-iso-from : ∀ {B : Tri -> Set} -> 
@@ -114,7 +114,6 @@ postulate
 -- from prior ch on connectives:
 η-× : ∀ {A B : Set} (w : A × B) -> ⟨ proj₁ w , proj₂ w ⟩ ≡ w 
 η-× {A} {B} (⟨_,_⟩ x y) = refl
-
 
 ∀×-iso-from∘to : {B : Tri -> Set} -> (f : ∀ (x : Tri) -> B x)
   -> (∀×-iso-from ∘ ∀×-iso-to) f ≡ f
@@ -264,15 +263,39 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ∃×-implies-×∃ {A} {B} {C} ⟨ m , ⟨ bm     ,    cm ⟩ ⟩ = 
     ⟨ ⟨ m , bm ⟩ , ⟨ m , cm ⟩ ⟩ -- goal: ∃-syntax B × ∃-syntax C
 
--- does the existential quantifier ∃ distribute over conjunction (×)?
+-- does the existential quantifier ∃ distribute over the 
+-- conjunction (_×_) operator?
+--
 -- ans: no, the converse gives us the hypothesis:
 -- 'there exists some value m₁ : A such that B m₁ holds, AND
 --  there exists some other value m₂ : A such that C m holds..'
+--
 -- but it is not necessarily the case that there exists a value m₃ : A
--- such that B m₃ and C m₃ both hold
+-- such that B m₃ and C m₃ both hold.. the hypothesis doesn't give enough 
+-- to construct the term we need since the bound vars m₁ and m₂ for 
+-- each ∃ term are different. This precludes building a term of the shape:
+--   ∃[ m₃ ] (B m₃ × C m₃) 
+-- (we only have (B m₁) and  (C m₂) to work with)
 
 -- ×∃-implies-∃× : ∀ {A : Set} -> ∀ {B C : A -> Set} -> 
---    (∃[ m ] B m) × (∃[ m ] C m) -> ∃[ m ] (B m × C m)
--- ×∃-implies-∃× {A} {B} {C} ⟨ ⟨ m₁ , bm ⟩ , ⟨ m₂ , cm ⟩ ⟩ = ...
+--    (∃[ m ] B m) × (∃[ m ] C m) -> ∃[ m ] (B m × C m) <-- bogus 
 
+-- "Let Tri and B be as in Exercise ∀-×. Show that ∃[ x ] B x is isomorphic
+--  to B aa ⊎ B bb ⊎ B cc."
 
+∃⊎-iso-to : {B : Tri -> Set} -> 
+    (∃[ x ] B x) -> (B aa ⊎ B bb ⊎ B cc)
+∃⊎-iso-to {B} ⟨ aa , body ⟩ = inj₁ {-B aa-}{-B bb ⊎ B cc-} body 
+∃⊎-iso-to {B} ⟨ bb , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₁ body)
+∃⊎-iso-to {B} ⟨ cc , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₂ body)
+
+∃⊎-iso : ∀ {B : Tri -> Set} -> 
+    (∃[ x ] B x) ≃ (B aa ⊎ B bb ⊎ B cc)
+∃⊎-iso {B} = 
+    record {
+
+        to      = ∃⊎-iso-to ;
+        from    = {!   !} ;
+        to∘from = {!   !} ;
+        from∘to = {!   !}
+    }
