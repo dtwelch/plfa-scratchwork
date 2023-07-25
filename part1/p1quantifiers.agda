@@ -285,9 +285,10 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 
 ∃⊎-iso-to : {B : Tri -> Set} -> 
     (∃[ x ] B x) -> (B aa ⊎ B bb ⊎ B cc)
-∃⊎-iso-to {B} ⟨ aa , body ⟩ = inj₁ {-B aa-}{-B bb ⊎ B cc-} body 
-∃⊎-iso-to {B} ⟨ bb , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₁ body)
-∃⊎-iso-to {B} ⟨ cc , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₂ body)
+∃⊎-iso-to {B} t with t 
+... | ⟨ aa , body ⟩ = inj₁ {-B aa-}{-B bb ⊎ B cc-} body 
+... | ⟨ bb , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₁ body)
+... | ⟨ cc , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₂ body)
 
 ∃⊎-iso : ∀ {B : Tri -> Set} -> 
     (∃[ x ] B x) ≃ (B aa ⊎ B bb ⊎ B cc)
