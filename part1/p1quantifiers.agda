@@ -298,6 +298,14 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 ... | (inj₂ (inj₁ Bbb)) = ⟨ bb , Bbb ⟩
 ... | (inj₂ (inj₂ Bcc)) = ⟨ cc , Bcc ⟩
 
+-- ?0: (y: B aa ⊎ B bb ⊎ B cc) -> ∃⊎-iso-to (∃⊎-iso-from y) ≡ y
+∃⊎-iso-to∘from : ∀ {B : Tri -> Set} -> 
+    ∀ (y : B aa ⊎ B bb ⊎ B cc) -> ∃⊎-iso-to (∃⊎-iso-from {B} y) ≡ y
+∃⊎-iso-to∘from {B} t with t 
+... | (inj₁ Baa)        = refl 
+... | (inj₂ (inj₁ Bbb)) = refl
+... | (inj₂ (inj₂ Bcc)) = refl
+
 ∃⊎-iso : ∀ {B : Tri -> Set} -> 
     (∃[ x ] B x) ≃ (B aa ⊎ B bb ⊎ B cc)
 ∃⊎-iso {B} = 
@@ -305,9 +313,8 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
         to      = ∃⊎-iso-to   ;
         from    = ∃⊎-iso-from ;
 
-        -- ?0: (y: B aa ⊎ B bb ⊎ B cc) -> ∃⊎-iso-to (∃⊎-iso-from y) ≡ y
-        to∘from = {!   !} ;
+        to∘from = ∃⊎-iso-to∘from ;
 
         -- ?1: (x: ∃-syntax B) -> ∃⊎-iso-from (∃⊎-iso-to x) ≡ x
         from∘to = {!   !}
-    }
+    } 
