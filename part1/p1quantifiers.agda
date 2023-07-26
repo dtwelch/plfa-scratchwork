@@ -283,20 +283,31 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
 -- "Let Tri and B be as in Exercise ∀-×. Show that ∃[ x ] B x is isomorphic
 --  to B aa ⊎ B bb ⊎ B cc."
 
-∃⊎-iso-to : {B : Tri -> Set} -> 
+∃⊎-iso-to : ∀ {B : Tri -> Set} -> 
     (∃[ x ] B x) -> (B aa ⊎ B bb ⊎ B cc)
 ∃⊎-iso-to {B} t with t 
 ... | ⟨ aa , body ⟩ = inj₁ {-B aa-}{-B bb ⊎ B cc-} body 
 ... | ⟨ bb , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₁ body)
 ... | ⟨ cc , body ⟩ = inj₂ {-B aa-}{-B bb ⊎ B cc-} (inj₂ body)
 
+-- B aa ⊎ B bb ⊎ B cc -> ∃-syntax B
+∃⊎-iso-from : ∀ {B : Tri -> Set} -> 
+    (B aa ⊎ B bb ⊎ B cc) -> (∃[ x ] B x)
+∃⊎-iso-from {B} t with t 
+... | (inj₁ Baa) = ⟨ aa , Baa ⟩
+... | (inj₂ (inj₁ Bbb)) = ⟨ bb , Bbb ⟩
+... | (inj₂ (inj₂ Bcc)) = ⟨ cc , Bcc ⟩
+
 ∃⊎-iso : ∀ {B : Tri -> Set} -> 
     (∃[ x ] B x) ≃ (B aa ⊎ B bb ⊎ B cc)
 ∃⊎-iso {B} = 
     record {
+        to      = ∃⊎-iso-to   ;
+        from    = ∃⊎-iso-from ;
 
-        to      = ∃⊎-iso-to ;
-        from    = {!   !} ;
+        -- ?0: (y: B aa ⊎ B bb ⊎ B cc) -> ∃⊎-iso-to (∃⊎-iso-from y) ≡ y
         to∘from = {!   !} ;
+
+        -- ?1: (x: ∃-syntax B) -> ∃⊎-iso-from (∃⊎-iso-to x) ≡ x
         from∘to = {!   !}
     }
