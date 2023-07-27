@@ -333,3 +333,23 @@ syntax ∃-syntax (λ x {-: A-} -> B) = ∃[ x ] B
         -- ?1: (x: ∃-syntax B) -> ∃⊎-iso-from (∃⊎-iso-to x) ≡ x
         from∘to = ∃⊎-iso-from∘to
     } 
+
+data even : ℕ → Set
+data odd  : ℕ → Set
+
+data even where
+
+    even-zero : even zero
+
+    even-suc : ∀ {n : ℕ}
+        -> odd n
+        ---------------
+        -> even (suc n)
+
+data odd where
+    odd-suc : ∀ {n : ℕ}
+        -> even n
+        --------------
+        -> odd (suc n)
+
+
