@@ -112,14 +112,14 @@ _ =
   ∎
 
 ++-identity-l : ∀ {A : Set} -> ∀ (xs : List A) -> [] ++ xs ≡ xs
-++-identity-l xs = 
--- [] ++ x :: xs ≡ x :: xs
+++-identity-l xs =  -- [] ++ x :: xs ≡ x :: xs
   begin 
     [] ++ xs
   ≡⟨⟩
     xs
-  ∎
+  ∎ 
 
+-- concatenation identity right
 ++-identity-r : ∀ {A : Set} -> ∀ (xs : List A) -> xs ++ [] ≡ xs
 ++-identity-r []      = 
   begin 
@@ -171,5 +171,45 @@ length-++ {A} [] ys =
   ≡⟨⟩
     length ys
   ∎
-length-++ {A} (x :: xs) ys = {!   !}
+length-++ {A} (x :: xs) ys = 
   -- ?0 : length ((x :: xs) ++ ys) ≡ length (x :: xs) + length ys
+  begin 
+    length ((x :: xs) ++ ys)
+  ≡⟨⟩
+    length (x :: (xs ++ ys))
+  ≡⟨ cong suc (length-++ xs ys ) ⟩ -- apply inductive hypothesis to xs and ys: 
+                                   -- (length-++ xs ys), tack suc onto each side of congruence eq (≡)
+    suc (length xs + length ys) 
+    {- _+_ : ℕ → ℕ → ℕ
+      zero + n = n
+      (suc m) + n = suc (m + n) -}
+  ≡⟨⟩ 
+    (suc (length xs)) + length ys
+  ∎
+
+-- reversal
+
+-- "using append, it is easy to formulate a function to reverse a list:"
+
+reverse : ∀ {A : Set} -> List A -> List A 
+reverse []        = [] 
+reverse (x :: xs) = (reverse xs) ++ [ x ]
+
+-- ∀ s, t : SStr, rev(s ++ t) ≡ rev(t) ++ rev(s)
+-- "show that the reverse of one list appended to another is the reverse of the second 
+--  appended to the reverse of the first:"
+reverse-++-distrib : ∀ {A : Set} -> ∀ (xs ys : List A) 
+  -> reverse (xs ++ ys) ≡ (reverse ys) ++ (reverse xs)
+reverse-++-distrib {A} [] ys = --  reverse ([] ++ ys) ≡ reverse ys ++ reverse []
+  begin 
+    reverse ([] ++ ys)
+  ≡⟨⟩
+    (reverse []) ++ (reverse ys)
+  ≡⟨⟩
+    [] ++ (reverse ys)
+  ≡⟨⟩
+    (reverse ys)
+  ≡⟨ sym (++-identity-r  (reverse ys)) ⟩
+    (reverse ys) ++ []
+  ∎
+reverse-++-distrib {A} (x :: xs) ys = {!   !}
