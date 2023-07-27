@@ -1,3 +1,5 @@
+module p1lists where
+
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
@@ -134,3 +136,40 @@ _ =
   ≡⟨ cong (x ::_) (++-identity-r xs) ⟩
     x :: xs 
   ∎  
+
+-- length
+
+length : ∀ {A : Set} -> List A -> ℕ 
+length []     = zero
+length (_ :: xs) = suc (length xs)
+
+_ : length [ 0 , 1 , 2 ] ≡ 3 
+_ = 
+  begin 
+    length (0 :: 1 :: 2 :: [])
+  ≡⟨⟩
+    suc (length (1 :: 2 :: []))
+  ≡⟨⟩
+    suc (suc (length ( 2 :: [])))
+  ≡⟨⟩
+    suc (suc (suc (length {ℕ} ( [] ) ) ) )
+  ≡⟨⟩
+    suc (suc (suc (0) ) )
+  ∎
+
+-- reasoning about length
+
+length-++ : ∀ {A : Set} -> ∀ (xs ys : List A) 
+  -> length (xs ++ ys) ≡ (length xs) + (length ys)
+length-++ {A} [] ys =
+  begin 
+    length ([] ++ ys)
+  ≡⟨⟩
+    (length{A} []) + (length ys)
+  ≡⟨⟩
+    zero + (length ys)
+  ≡⟨⟩
+    length ys
+  ∎
+length-++ {A} (x :: xs) ys = {!   !}
+  -- ?0 : length ((x :: xs) ++ ys) ≡ length (x :: xs) + length ys
