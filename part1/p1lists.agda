@@ -195,6 +195,21 @@ reverse : ∀ {A : Set} -> List A -> List A
 reverse []        = [] 
 reverse (x :: xs) = (reverse xs) ++ [ x ]
 
+_ : reverse [ 0 , 1 , 2 ] ≡ [ 2 , 1 , 0 ]
+_ =
+  begin 
+    reverse (0 :: 1 :: 2 :: [])
+  ≡⟨⟩
+    reverse (1 :: 2 :: []) ++ [ 0 ]
+  ≡⟨⟩
+    (reverse (2 :: []) ++ [ 1 ]) ++ [ 0 ]
+  ≡⟨⟩
+    ((reverse ([]) ++ [ 2 ]) ++ [ 1 ]) ++ [ 0 ]
+  ≡⟨⟩
+    (([] ++ [ 2 ]) ++ [ 1 ]) ++ [ 0 ]
+  ≡⟨⟩
+    ([ 2 ] ++ [ 1 ]) ++ [ 0 ]
+  ∎
 -- ∀ s, t : SStr, rev(s ++ t) ≡ rev(t) ++ rev(s)
 -- "show that the reverse of one list appended to another is the reverse of the second 
 --  appended to the reverse of the first:"
@@ -209,7 +224,25 @@ reverse-++-distrib {A} [] ys = --  reverse ([] ++ ys) ≡ reverse ys ++ reverse 
     [] ++ (reverse ys)
   ≡⟨⟩
     (reverse ys)
-  ≡⟨ sym (++-identity-r  (reverse ys)) ⟩
+  ≡⟨ sym (++-identity-r (reverse ys)) ⟩ -- sym necessary to flip  [] ++ (reverse ys) ≡ (reverse ys) 
+                                        -- to: (reverse ys) ≡ [] ++ (reverse ys)
     (reverse ys) ++ []
   ∎
-reverse-++-distrib {A} (x :: xs) ys = {!   !}
+reverse-++-distrib {A} (x :: xs) ys = 
+  -- ?0 : reverse ((x :: xs) ++ ys) ≡ reverse ys ++ reverse (x :: xs)
+  begin 
+    reverse ((x :: xs) ++ ys) 
+  ≡⟨⟩
+    reverse (x :: (xs ++ ys)) -- (x :: xs) = (reverse xs) ++ [ x ]
+  ≡⟨⟩
+    reverse (xs ++ ys) ++ [ x ]
+  ≡⟨ {!  (reverse-++-distrib xs ys)  !} ⟩ -- ?1 : reverse (xs ++ ys) ++ [ x ] ≡ reverse ys ++ reverse (x :: xs)
+    {!   !}
+  ∎
+{-
+_++_ : ∀ {A : Set} -> List A -> List A -> List A 
+  [] ++ ys        = ys 
+  (x :: xs) ++ ys = x :: ( xs ++ ys )
+-}
+-- reverse (xs ++ ys) ++ [ x ] ~>  reverse (xs ++ ys)
+-- cong (x ::_) (reverse-++-distrib xs ys)
