@@ -236,13 +236,50 @@ reverse-++-distrib {A} (x :: xs) ys =
     reverse (x :: (xs ++ ys)) -- (x :: xs) = (reverse xs) ++ [ x ]
   ≡⟨⟩
     reverse (xs ++ ys) ++ [ x ]
-  ≡⟨ {!  (reverse-++-distrib xs ys)  !} ⟩ -- ?1 : reverse (xs ++ ys) ++ [ x ] ≡ reverse ys ++ reverse (x :: xs)
-    {!   !}
+   -- ?1 : reverse (xs ++ ys) ++ [ x ] ≡ reverse ys ++ reverse (x :: xs)
+  ≡⟨ cong ( _++ [ x ]) (reverse-++-distrib xs ys) ⟩ -- ?1 : reverse (xs ++ ys) ++ [ x ] ≡ reverse ys ++ reverse (x :: xs)
+    (reverse ys ++ reverse xs) ++ [ x ] 
+  ≡⟨⟩ 
+    (reverse ys ++ reverse xs) ++ [ x ] 
+  ≡⟨ ++-assoc (reverse ys) (reverse xs) [ x ] ⟩
+    reverse ys ++ (reverse xs ++ [ x ]) 
+  ≡⟨⟩ -- recall ind. case of defining eq for reverse(_) op:
+      --    reverse (x :: xs) = (reverse xs) ++ [ x ]
+      -- .. so the above automatically gets rewritten to:
+    reverse ys ++ (reverse (x :: xs))
+      -- which matches exactly the shape of the goal 
   ∎
-{-
-_++_ : ∀ {A : Set} -> List A -> List A -> List A 
+{- _++_ : ∀ {A : Set} -> List A -> List A -> List A 
   [] ++ ys        = ys 
   (x :: xs) ++ ys = x :: ( xs ++ ys )
 -}
--- reverse (xs ++ ys) ++ [ x ] ~>  reverse (xs ++ ys)
--- cong (x ::_) (reverse-++-distrib xs ys)
+
+-- reverse involutive
+
+-- "a function is an involution if when applied twice it acts as the identity
+--  function. Show that reverse is an involution:"
+
+reverse-involutive : ∀ {A : Set} -> ∀ (alist : List A) 
+  -> reverse (reverse alist) ≡ alist
+
+-- ?0 : reverse (reverse []) ≡ []
+reverse-involutive {A} [] = 
+  begin 
+    reverse (reverse [])
+  ≡⟨⟩
+    reverse ([])
+  ≡⟨⟩
+    []
+  ∎
+-- ?1 : reverse (reverse (x :: xs)) ≡ x :: xs
+reverse-involutive {A} (x :: xs) = 
+  begin 
+    reverse (reverse (x :: xs))
+  ≡⟨⟩
+    reverse ((reverse xs) ++ [ x ] )
+  ≡⟨ {!   !} ⟩
+      (reverse (reverse xs)) ++ [ x ] 
+  ≡⟨ {!   !} ⟩ -- everse (reverse xs ++ [ x ])
+      {!   !}
+  ∎
+  -- reverse-++-distrib {A} (reverse xs) [ x ]

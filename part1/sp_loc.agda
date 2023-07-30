@@ -74,3 +74,5 @@ sod k (ss k p) = {!   !}
 sod k (rs k p) =  {!   !} 
 -- will need for computing properties
 -- Corollary 3: ∀ k: N≥2, ∀ p: Sp_Loc(k), RP(k)(p) = SS(k)(SCD(k)(p)∸1)÷k (Cen(k));
+
+
