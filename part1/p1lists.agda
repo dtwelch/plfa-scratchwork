@@ -277,9 +277,21 @@ reverse-involutive {A} (x :: xs) =
     reverse (reverse (x :: xs))
   ≡⟨⟩
     reverse ((reverse xs) ++ [ x ] )
-  ≡⟨ {!   !} ⟩
-      (reverse (reverse xs)) ++ [ x ] 
-  ≡⟨ {!   !} ⟩ -- everse (reverse xs ++ [ x ])
-      {!   !}
-  ∎
+  ≡⟨ reverse-++-distrib {A} (reverse xs) [ x ] ⟩
+    (reverse [ x ]) ++ (reverse (reverse xs))
+  ≡⟨⟩ -- reverse (reverse xs ++ [ x ])
+    ((reverse []) ++ [ x ]) ++ (reverse (reverse xs))
+  ≡⟨⟩
+    ([] ++ [ x ]) ++ (reverse (reverse xs))
+  ≡⟨⟩
+    [ x ] ++ (reverse (reverse xs))
+  ≡⟨ cong (x ::_) (reverse-involutive {A} xs) ⟩ 
+    --  x :: reverse (reverse xs) ≡ x :: xs
+    -- (reverse-involutive {A} xs) gives: reverse (reverse xs) ≡ xs
+    -- so: cong (x ::_) (reverse-involutive {A} xs) ⟩ tacks an [ x ] on the lhs and rhs
+    -- of the above ≡
+    x :: xs
+  ≡⟨⟩ -- definitionally eq to:
+    [ x ] ++ xs
+  ∎ 
   -- reverse-++-distrib {A} (reverse xs) [ x ]
