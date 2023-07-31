@@ -294,4 +294,29 @@ reverse-involutive {A} (x :: xs) =
   ≡⟨⟩ -- definitionally eq to:
     [ x ] ++ xs
   ∎ 
-  -- reverse-++-distrib {A} (reverse xs) [ x ]
+
+-- map 
+
+-- "map applies a function to every element of a list to generate a corresponding list.
+-- Map is an example of a higher order fn, one which takes a fn as an argument and 
+-- returns a function as a result"
+
+map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
+map {A} {B} f [] = []{B} -- (this also works: [] )
+map f (x :: xs)  = (f x) :: (map f xs)
+
+_ : map (suc) [ 0 , 1 , 2 ] ≡ [ 1 , 2 , 3 ]
+_ =  -- ?0 : map suc [ 0 , 1 , 2 ] ≡ [ 1 , 2 , 3 ]
+  begin
+    map (suc) (0 :: 1 :: 2 :: [])
+  ≡⟨⟩ 
+    (suc 0) :: map suc (1 :: 2 :: [])
+  ≡⟨⟩ 
+    (suc 0) :: (suc 1) :: map suc (2 :: [])
+  ≡⟨⟩ 
+    (suc 0) :: (suc 1) :: (suc 2) :: map suc ([])
+  ≡⟨⟩ 
+    (suc 0) :: (suc 1) :: (suc 2) :: []
+  ≡⟨⟩ 
+    (suc 0) :: (suc 1) :: (suc 2) :: []    
+  ∎
