@@ -5,6 +5,7 @@ open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
 open import Data.Bool using (Bool; true; false; T; _∧_; _∨_; not)
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _≤_; s≤s; z≤n)
+
 open import Data.Nat.Properties using
   (+-assoc; +-identityˡ; +-identityʳ; *-assoc; *-identityˡ; *-identityʳ; *-distribʳ-+)
 open import Relation.Nullary using (¬_; Dec; yes; no)
@@ -285,11 +286,12 @@ reverse-involutive {A} (x :: xs) =
     ([] ++ [ x ]) ++ (reverse (reverse xs))
   ≡⟨⟩
     [ x ] ++ (reverse (reverse xs))
-  ≡⟨ cong (x ::_) (reverse-involutive {A} xs) ⟩ 
+  ≡⟨ cong (x ::_) (reverse-involutive {A} xs) ⟩ -- rewrites immediate prior term via ind. hypothesis on xs 
+                                                -- (tacks a [ x ] on front of each side of resulting ≡ )
     --  x :: reverse (reverse xs) ≡ x :: xs
     -- (reverse-involutive {A} xs) gives: reverse (reverse xs) ≡ xs
-    -- so: cong (x ::_) (reverse-involutive {A} xs) ⟩ tacks an [ x ] on the lhs and rhs
-    -- of the above ≡
+    -- so: cong (x ::_) (reverse-involutive {A} xs) ⟩ tacks an [ x ] onto 
+    -- the front of the lhs and rhs of the above ≡ 
     x :: xs
   ≡⟨⟩ -- definitionally eq to:
     [ x ] ++ xs
@@ -318,5 +320,87 @@ _ =  -- ?0 : map suc [ 0 , 1 , 2 ] ≡ [ 1 , 2 , 3 ]
   ≡⟨⟩ 
     (suc 0) :: (suc 1) :: (suc 2) :: []
   ≡⟨⟩ 
-    (suc 0) :: (suc 1) :: (suc 2) :: []    
+    1 :: 2 :: 3 :: []  
+  ≡⟨⟩ 
+    [ 1 , 2 , 3 ]
   ∎
+
+-- "map requires time linear in the length of the list"
+
+-- map compose
+
+-- "prove that the map of a composition is equal to the composition of two maps:"
+-- composition
+--_∘_ : ∀ {A B C : Set} -> (B -> C) -> (A -> B) -> (A -> C)
+-- (g ∘ f) x  = g (f x)
+
+postulate 
+  extensionality : ∀ {A B : Set} (f g : A -> B)
+    -> (∀ (x : A) -> f x ≡ g x)
+    ----------------------------
+    -> f ≡ g
+
+all-points-same-helper : ∀ {A B C : Set} 
+  -> ∀ (list : List A) 
+  -> ∀ (g : B -> C) -> ∀ (f : A -> B)
+  -> map g (map f list) ≡ map (λ x → g (f x)) list 
+all-points-same-helper {A} {B} {C} [] g f = 
+-- goal: map g (map f []) ≡ map (λ x → g (f x)) []
+  begin 
+    map g (map f [])
+  ≡⟨⟩
+    map (λ x -> g x) ([])
+  ≡⟨⟩
+    []
+  ≡⟨⟩ -- the other side of the ≡ reduces to [] too:
+    map (λ x → g (f x)) []
+  ≡⟨⟩
+    []
+  ∎
+all-points-same-helper {A} {B} {C} xs@(x :: xs₁) g f =
+  -- map g (map f (x :: xs₁)) ≡ map (λ x₁ → g (f x₁)) (x :: xs₁) 
+  begin 
+    map g (map f (x :: xs₁))
+  ≡⟨⟩
+    map g ( (f x) :: (map f xs₁) )
+  ≡⟨ {!   !} ⟩ 
+    {!   !}
+  ∎
+
+{- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
+    map {A} {B} f [] = []{B} -- (this also works: [] )
+    map f (x :: xs)  = (f x) :: (map f xs)
+-}
+
+map-compose : {A B C : Set} -> ∀ (g : B -> C) -> ∀ (f : A -> B) 
+  -> map (g ∘ f) ≡ (map g) ∘ (map f)
+-- (g : B → C) (f : A → B) → map (g ∘ f) ≡ map g ∘ map f
+map-compose {A} {B} {C} g f = 
+  begin
+    map (g ∘ f)
+  ≡⟨⟩
+    map ( λ (x : A) -> g (f x) )
+    -- need to show that fn resulting from: 
+    --     ≡ .. to fn resulting from:
+    --    map ( λ (x : B) -> (g x) ) ∘ map ( λ (x : A) -> (f x) ) 
+    --
+    -- required evidence term (middle) for below extensionality:
+    --
+    -- ((x : List A) → map (λ x₁ → g (f x₁)) x ≡ map g (map f x)) →
+    --            map (λ x → g (f x)) ≡ (λ x → map g (map f x))
+  ≡⟨ {!  !} ⟩ -- 
+     {!   !}
+  ∎ 
+ -- f ∘ (map f)
+-- λ (x : A) -> g (f x)
+{- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
+    map {A} {B} f [] = []{B} -- (this also works: [] )
+    map f (x :: xs)  = (f x) :: (map f xs)
+-}
+-- map f        : List A -> List B
+--    > map ( λ (x : A) -> (f x) )
+
+-- map g        : List B -> List C
+--    > map ( λ (x : B) -> (g x) )
+
+-- map (g ∘ f)  : List A -> List C
