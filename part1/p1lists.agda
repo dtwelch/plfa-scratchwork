@@ -391,7 +391,7 @@ map-compose {A} {B} {C} g f =
     --            map (λ x → g (f x)) ≡ (λ x → map g (map f x))
   ≡⟨ extensionality 
         -- first stating which two functions we're asserting are extensionally eq, 
-        -- that is: (map g ∘ f) and (map f) ∘ (map g)
+        -- that is: (map g ∘ f) and ( (map f) ∘ (map g) )
         (map (g ∘ f))  ((map g) ∘ (map f))  
         -- then supplying evidence that they are equal on all points (for all x : List A)
         (λ (xs : List A) -> sym (all-points-same-helper xs g f) )  
