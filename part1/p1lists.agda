@@ -349,11 +349,11 @@ all-points-same-helper {A} {B} {C} [] g f =
   begin 
     map g (map f [])
   ≡⟨⟩
-    map (λ x -> g x) ([])
+    map (λ (x : B) -> g x) ([])
   ≡⟨⟩
     []
   ≡⟨⟩ -- the other side of the ≡ reduces to [] too:
-    map (λ x → g (f x)) []
+    map (λ (x : A) -> g (f x)) []
   ≡⟨⟩
     []
   ∎
@@ -363,7 +363,11 @@ all-points-same-helper {A} {B} {C} xs@(x :: xs₁) g f =
     map g (map f (x :: xs₁))
   ≡⟨⟩
     map g ( (f x) :: (map f xs₁) )
-  ≡⟨ {!   !} ⟩ 
+  -- ?1 : map g (f x :: map f xs₁) ≡ map (λ x₁ → g (f x₁)) (x :: xs₁)
+  --≡⟨⟩ 
+  --  g (f x) :: ( (f x) :: (map f xs₁) )
+  -- ( (f x) :: (map f xs₁) ) : List B
+  ≡⟨ {!  !} ⟩ 
     {!   !}
   ∎
 
@@ -404,3 +408,4 @@ map-compose {A} {B} {C} g f =
 --    > map ( λ (x : B) -> (g x) )
 
 -- map (g ∘ f)  : List A -> List C
+ 
