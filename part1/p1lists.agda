@@ -343,7 +343,7 @@ postulate
 all-points-same-helper : ∀ {A B C : Set} 
   -> ∀ (list : List A) 
   -> ∀ (g : B -> C) -> ∀ (f : A -> B)
-  -> map g (map f list) ≡ map (λ x → g (f x)) list 
+  -> map g (map f list) ≡ map (λ x -> g (f x)) list 
 all-points-same-helper {A} {B} {C} [] g f = 
 -- goal: map g (map f []) ≡ map (λ x → g (f x)) []
   begin 
@@ -362,13 +362,14 @@ all-points-same-helper {A} {B} {C} xs@(x :: xs₁) g f =
   begin 
     map g (map f (x :: xs₁))
   ≡⟨⟩
+    -- by second defining eq of 'map' defn
     map g ( (f x) :: (map f xs₁) )
   -- ?1 : map g (f x :: map f xs₁) ≡ map (λ x₁ → g (f x₁)) (x :: xs₁)
-  --≡⟨⟩ 
-  --  g (f x) :: ( (f x) :: (map f xs₁) )
+  ≡⟨⟩     -- another application of map's second eq
+    (g (f x)) :: ( map (g) (map f xs₁) ) 
   -- ( (f x) :: (map f xs₁) ) : List B
-  ≡⟨ {!  !} ⟩ 
-    {!   !}
+  ≡⟨ cong ( g (f x) ::_ ) (all-points-same-helper xs₁ g f) ⟩ 
+    g (f x) :: map (λ x₁ -> g (f x₁)) xs₁
   ∎
 
 {- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
@@ -378,23 +379,27 @@ all-points-same-helper {A} {B} {C} xs@(x :: xs₁) g f =
 
 map-compose : {A B C : Set} -> ∀ (g : B -> C) -> ∀ (f : A -> B) 
   -> map (g ∘ f) ≡ (map g) ∘ (map f)
--- (g : B → C) (f : A → B) → map (g ∘ f) ≡ map g ∘ map f
+-- (g : B -> C) (f : A -> B) → map (g ∘ f) ≡ map g ∘ map f
 map-compose {A} {B} {C} g f = 
   begin
     map (g ∘ f)
   ≡⟨⟩
     map ( λ (x : A) -> g (f x) )
-    -- need to show that fn resulting from: 
-    --     ≡ .. to fn resulting from:
-    --    map ( λ (x : B) -> (g x) ) ∘ map ( λ (x : A) -> (f x) ) 
-    --
     -- required evidence term (middle) for below extensionality:
     --
     -- ((x : List A) → map (λ x₁ → g (f x₁)) x ≡ map g (map f x)) →
     --            map (λ x → g (f x)) ≡ (λ x → map g (map f x))
-  ≡⟨ {!  !} ⟩ -- 
-     {!   !}
-  ∎ 
+  ≡⟨ extensionality 
+        -- first stating which two functions we're asserting are extensionally eq, 
+        -- that is: (map g ∘ f) and (map f) ∘ (map g)
+        (map (g ∘ f))  ((map g) ∘ (map f))  
+        -- then supplying evidence that they are equal on all points (for all x : List A)
+        (λ (xs : List A) -> sym (all-points-same-helper xs g f) )  
+    ⟩
+    (λ (xs : List A) -> map g (map f xs))
+  ≡⟨⟩
+    (map g) ∘ (map f)
+  ∎
  -- f ∘ (map f)
 -- λ (x : A) -> g (f x)
 {- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
@@ -405,7 +410,4 @@ map-compose {A} {B} {C} g f =
 --    > map ( λ (x : A) -> (f x) )
 
 -- map g        : List B -> List C
---    > map ( λ (x : B) -> (g x) )
-
--- map (g ∘ f)  : List A -> List C
- 
+--    > map ( λ (x : B) -> (g x) ) 
