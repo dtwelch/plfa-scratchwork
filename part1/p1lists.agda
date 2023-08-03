@@ -457,11 +457,8 @@ map-++-dist {A} {B} f (x :: xs) ys =
     (f x) :: (map f (xs ++ ys))
     -- map-++-dist : .. map f (xs ++ ys) ≡ map f xs ++ map f ys 
   ≡⟨ cong ((f x) ::_ ) (map-++-dist f xs ys) ⟩ -- apply ind. hypothesis for (xs ++ ys)
-  -- map f (x :: xs ++ ys) ≡ map f (x :: xs) ++ map f ys
-  -- cong ((f x) ::_ ) (map-++-dist f xs ys)
-  -- f x :: map f (xs ++ ys) ≡ f x :: map f xs ++ map f ys
-    f x :: map f xs ++ map f ys
-  ≡⟨⟩ -- 2nd defining eq of 'map' operator
+    (f x) :: (map f xs) ++ (map f ys)  -- looking closer to the goal now..
+  ≡⟨⟩ -- via 2nd defining eq of 'map' operator
     (map f (x :: xs)) ++ map f ys
   ∎
 {- _++_ : ∀ {A : Set} -> List A -> List A -> List A 
@@ -472,3 +469,4 @@ map-++-dist {A} {B} f (x :: xs) ys =
     map {A} {B} f [] = []{B} -- (this also works: [] )
     map f (x :: xs)  = (f x) :: (map f xs)
 -}
+
