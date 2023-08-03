@@ -357,6 +357,7 @@ all-points-same-helper {A} {B} {C} [] g f =
   ≡⟨⟩
     []
   ∎
+  --  nb: xs@ gives the entire pattern (x :: xs₁) the name/handle: xs
 all-points-same-helper {A} {B} {C} xs@(x :: xs₁) g f =
   -- map g (map f (x :: xs₁)) ≡ map (λ x₁ → g (f x₁)) (x :: xs₁) 
   begin 
@@ -411,3 +412,63 @@ map-compose {A} {B} {C} g f =
 
 -- map g        : List B -> List C
 --    > map ( λ (x : B) -> (g x) ) 
+
+-- "prove the following relationship between map and append:" 
+
+map-++-dist : ∀ {A B : Set} -> ∀ (f : A -> B) -> ∀ (xs ys : List A) 
+  -> map f (xs ++ ys) ≡ map f xs ++ map f ys 
+map-++-dist {A} {B} f [] ys = refl 
+  {- -- longhand ver.
+  begin 
+    map f ([] ++ ys)
+  ≡⟨⟩
+    map f ys 
+  ≡⟨⟩
+    map f [] ++ map f ys
+  ≡⟨⟩
+    [] ++ map f ys 
+  ∎-}
+-- ?0 : map f (xs ++ []) ≡ map f xs ++ map f []
+map-++-dist {A} {B} f xs [] =
+  begin
+    map f (xs ++ [])
+  ≡⟨ cong (map f) (++-identity-r xs) ⟩
+    map f xs
+  ≡⟨ sym (++-identity-r (map f xs)) ⟩ -- allows us to go from (map f xs) to (map f xs) ++ (map f [])
+  --  above: (map f xs ++ [] ≡ map f xs) ~> ( map f xs ≡ map f xs ++ [] )
+    (map f xs) ++ (map f [])
+  ≡⟨⟩ 
+    (map f xs) ++ ([])
+  ≡⟨ (++-identity-r (map f xs)) ⟩ 
+    (map f xs)
+    -- ++-identity-r : ∀ {A : Set} -> ∀ (xs : List A) -> xs ++ [] ≡ xs
+  ≡⟨ sym (++-identity-r (map f xs)) ⟩
+    map f xs ++ []
+  ≡⟨⟩
+    map f xs ++ map f []
+  ∎
+map-++-dist {A} {B} f (x :: xs) ys = 
+  -- ?0 : map f ((x :: xs) ++ ys) ≡ map f (x :: xs) ++ map f ys
+  begin
+    map f ((x :: xs) ++ ys)
+  ≡⟨⟩
+    map f (x :: (xs ++ ys))
+  ≡⟨⟩
+    (f x) :: (map f (xs ++ ys))
+    -- map-++-dist : .. map f (xs ++ ys) ≡ map f xs ++ map f ys 
+  ≡⟨ cong ((f x) ::_ ) (map-++-dist f xs ys) ⟩ -- apply ind. hypothesis for (xs ++ ys)
+  -- map f (x :: xs ++ ys) ≡ map f (x :: xs) ++ map f ys
+  -- cong ((f x) ::_ ) (map-++-dist f xs ys)
+  -- f x :: map f (xs ++ ys) ≡ f x :: map f xs ++ map f ys
+    f x :: map f xs ++ map f ys
+  ≡⟨⟩ -- 2nd defining eq of 'map' operator
+    (map f (x :: xs)) ++ map f ys
+  ∎
+{- _++_ : ∀ {A : Set} -> List A -> List A -> List A 
+  [] ++ ys        = ys 
+  (x :: xs) ++ ys = x :: ( xs ++ ys )
+-}
+{- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
+    map {A} {B} f [] = []{B} -- (this also works: [] )
+    map f (x :: xs)  = (f x) :: (map f xs)
+-}
