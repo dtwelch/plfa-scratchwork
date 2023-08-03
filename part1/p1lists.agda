@@ -470,3 +470,23 @@ map-++-dist {A} {B} f (x :: xs) ys =
     map f (x :: xs)  = (f x) :: (map f xs)
 -}
 
+-- map-tree 
+
+-- "Define a type of trees with leaves of type A and internal nodes 
+-- of type B:"
+
+data Tree (A B : Set) : Set where 
+  leaf : A -> Tree A B 
+  node : Tree A B -> B -> Tree A B -> Tree A B 
+
+-- "define a suitable map operator over trees:"
+
+map-tree : ∀ {A B C D : Set} 
+  -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
+map-tree f g (leaf x)         = leaf (f x)
+map-tree f g (node l item r)  = (map-tree f g l) 
+
+-- l : Tree A B 
+-- r : Tree A B 
+-- (map-tree f g l) : Tree C D
+-- (map-tree f g r) : Tree C D
