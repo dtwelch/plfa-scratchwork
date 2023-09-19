@@ -484,9 +484,116 @@ data Tree (A B : Set) : Set where
 map-tree : ∀ {A B C D : Set} 
   -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
 map-tree f g (leaf x)         = leaf (f x)
-map-tree f g (node l item r)  = (map-tree f g l) 
+map-tree f g (node l item r)  = node (map-tree f g l) (g item) (map-tree f g r) 
 
 -- l : Tree A B 
 -- r : Tree A B 
 -- (map-tree f g l) : Tree C D
 -- (map-tree f g r) : Tree C D
+
+-- fold
+
+-- "Fold takes a binary operator and uses the operator to combine each 
+-- of the elements of the list, taking the given value as the result for 
+-- the empty list"
+
+foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
+foldr _⊗_ e [] = e 
+foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
+
+_ : foldr _+_ 0 [ 1 , 2 , 3 , 4 ] ≡ 10
+_ = 
+  begin 
+    foldr _+_ 0 ( 1 :: 2 :: 3 :: 4 :: [] )
+  ≡⟨⟩
+    1 + (foldr _+_ 0 ( 2 :: 3 :: 4 :: []))
+  ≡⟨⟩
+    1 + ( 2 + foldr _+_ 0 ( 3 :: 4 :: []) )
+  ≡⟨⟩
+    1 + 2 + ( 3 + (foldr _+_ 0 ( 4 :: []) ) )
+  ≡⟨⟩
+    1 + 2 + 3 + ( 4 + (foldr _+_ 0 []) )
+  ≡⟨⟩
+    1 + 2 + 3 + ( 4 + 0 )
+  ≡⟨⟩
+    10
+  ∎
+
+-- foldr requires time linear in the length of the list being folded
+-- O(n)
+
+-- use fold to define a function to find the product of a list of 
+-- numbers. For example:
+
+-- product [ 1 , 2 , 3 , 4 ] ≡ 24
+
+product : List ℕ -> ℕ 
+product lst with lst 
+... | []            = foldr _*_ 0 []
+... | xs@(_ :: xs₁) = foldr _*_ 1 xs
+-- note: not sure why agda is giving me a weird yellow highlight
+-- if the final case is just..:
+-- ... | xs = foldr _*_ 1 xs
+
+_ : product [ 2 , 3 , 2 ] ≡ 12
+_ = 
+  begin 
+    product ( 2 :: 3 :: 2 :: [])
+  ≡⟨⟩ 
+    foldr (_*_) 1 ( 2 :: 3 :: 2 :: [])
+  ≡⟨⟩ 
+    (2 * foldr (_*_) 1 ( 3 :: 2 :: []))
+  ≡⟨⟩ 
+    2 * (3 * foldr (_*_) 1 ( 2 :: []) )
+  ≡⟨⟩ 
+    2 * (3 * (2 * foldr (_*_) 1 ([]) ) )
+  ≡⟨⟩ 
+    2 * (3 * (2 * 1 ) )
+  ≡⟨⟩
+    12
+  ∎  
+
+_ : product [] ≡ 0
+_ = 
+  begin 
+    product []
+  ≡⟨⟩
+    foldr (_*_) 0 []
+  ≡⟨⟩
+    foldr (_*_) 0 []
+  ∎ 
+
+-- show that fold and append are related as follows:
+
+{-
+foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
+foldr _⊗_ e [] = e 
+foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
+-}
+{- _++_ : ∀ {A : Set} -> List A -> List A -> List A 
+  [] ++ ys        = ys 
+  (x :: xs) ++ ys = x :: ( xs ++ ys )
+-}
+
+-- ++-identity-r : ∀ {A : Set} -> ∀ (xs : List A) -> xs ++ [] ≡ xs
+foldr-++ : ∀ {A B : Set} -> ∀ (_⊗_ : A -> B -> B) -> ∀ (e : B)
+  -> ∀ (xs ys : List A) 
+  -> (foldr _⊗_ e (xs ++ ys)) ≡ foldr _⊗_ (foldr _⊗_ e ys) xs 
+foldr-++ {A} {B} _⊗_ e [] ys = refl
+foldr-++ {A} {B} _⊗_ e xs [] = 
+  -- ?0 : foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
+  begin 
+    foldr _⊗_ e (xs ++ [])
+    -- cong (foldr _⊗_ e) (++-identity-r xs) --> (constructs term of shape:)-> foldr _⊗_ e (xs ++ []) 
+  ≡⟨ cong (foldr _⊗_ e) (++-identity-r xs) ⟩ -- putting ? in the ⟨..⟩ gives equality: 
+      --foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
+      -- but this term 
+      -- cong (foldr _⊗_ e) (++-identity-r xs)
+      -- constructs this equality (recall cong tacks the (foldr (_⊗_ e)) on the front of each
+      -- side of the raw term produced by:  xs ++ [] ≡ xs
+      -- (foldr (_⊗_ e)) (xs ++ []) ≡ (foldr (_⊗_ e)) xs 
+      -- which matches the state under the 'begin' block allowing us to rewrite to the goal shape
+    foldr _⊗_ (foldr _⊗_ e []) xs  
+  ∎
+  ---  cong (foldr _⊗_ e) ++-identity-r xs c
+foldr-++ {A} {B} _⊗_ e (x :: xs) ys = {!   !} 
