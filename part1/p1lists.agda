@@ -586,14 +586,14 @@ foldr-++ {A} {B} _⊗_ e xs [] =
     foldr _⊗_ e (xs ++ [])
     -- cong (foldr _⊗_ e) (++-identity-r xs) --> (constructs term of shape:)-> foldr _⊗_ e (xs ++ []) 
   ≡⟨ cong (foldr _⊗_ e) (++-identity-r xs) ⟩ -- putting ? in the ⟨..⟩ gives equality: 
-      --foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
+    foldr _⊗_ (foldr _⊗_ e []) xs  
+  ∎
+--foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
       -- but this term 
       -- cong (foldr _⊗_ e) (++-identity-r xs)
       -- constructs this equality (recall cong tacks the (foldr (_⊗_ e)) on the front of each
       -- side of the raw term produced by:  xs ++ [] ≡ xs
       -- (foldr (_⊗_ e)) (xs ++ []) ≡ (foldr (_⊗_ e)) xs 
       -- which matches the state under the 'begin' block allowing us to rewrite to the goal shape
-    foldr _⊗_ (foldr _⊗_ e []) xs  
-  ∎
   ---  cong (foldr _⊗_ e) ++-identity-r xs c
 foldr-++ {A} {B} _⊗_ e (x :: xs) ys = {!   !} 
