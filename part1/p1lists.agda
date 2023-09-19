@@ -592,7 +592,7 @@ foldr-++ {A} {B} _⊗_ e xs [] =
       -- but this term 
       -- cong (foldr _⊗_ e) (++-identity-r xs)
       -- constructs this equality (recall cong tacks the (foldr (_⊗_ e)) on the front of each
-      -- side of the raw term produced by:  xs ++ [] ≡ xs
+      -- side of the raw term:  xs ++ [] ≡ xs produced by the (++-identity-r xs) app
       -- (foldr (_⊗_ e)) (xs ++ []) ≡ (foldr (_⊗_ e)) xs 
       -- which matches the state under the 'begin' block allowing us to rewrite to the goal shape
   ---  cong (foldr _⊗_ e) ++-identity-r xs c
