@@ -584,8 +584,7 @@ foldr-++ {A} {B} _⊗_ e xs [] =
   -- ?0 : foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
   begin 
     foldr _⊗_ e (xs ++ [])
-    -- cong (foldr _⊗_ e) (++-identity-r xs) --> (constructs term of shape:)-> foldr _⊗_ e (xs ++ []) 
-  ≡⟨ cong (foldr _⊗_ e) (++-identity-r xs) ⟩ -- putting ? in the ⟨..⟩ gives equality: 
+  ≡⟨ cong (foldr _⊗_ e) (++-identity-r xs) ⟩ 
     foldr _⊗_ (foldr _⊗_ e []) xs  
   ∎
   -- foldr _⊗_ e (xs ++ []) ≡ foldr _⊗_ (foldr _⊗_ e []) xs
@@ -597,4 +596,28 @@ foldr-++ {A} {B} _⊗_ e xs [] =
   -- note the rhs of the above is definitionally equal to: 
   --  foldr _⊗_ (foldr _⊗_ e []) xs  
   -- so we're done
-foldr-++ {A} {B} _⊗_ e (x :: xs) ys = {!   !} 
+foldr-++ {A} {B} _⊗_ e (x :: xs) ys =  
+-- goal: foldr _⊗_ e ((x :: xs) ++ ys) ≡
+--         foldr _⊗_ (foldr _⊗_ e ys) (x :: xs)
+  begin 
+    foldr _⊗_ e ((x :: xs) ++ ys) 
+  ≡⟨⟩
+    foldr _⊗_ e (x :: (xs ++ ys))
+  ≡⟨⟩ -- definitional rewrite via 2nd defining eq of foldr 
+    x ⊗ (foldr _⊗_ e (xs ++ ys))
+  ≡⟨ cong (x ⊗_) (foldr-++ _⊗_ e xs ys) ⟩ --  cong (x ⊗_) (foldr-++ _⊗_ e xs ys) : (x ⊗ foldr _⊗_ e (xs ++ ys)) ≡ (x ⊗ foldr _⊗_ (foldr _⊗_ e ys) xs)
+    x ⊗ (foldr _⊗_ (foldr _⊗_ e ys) xs)
+  ≡⟨⟩ -- by definitional rewrite via 2nd defining eq of foldr
+    (foldr _⊗_ (foldr _⊗_ e ys) (x :: xs))  
+  ∎
+
+-- next up:
+-- "show:
+--    foldr _::_ [] xs ≡ xs
+--  show as a consequence of foldr-++ above that
+--    xs ++ ys ≡ foldr _::_ ys xs 
+--  
+foldr-emp : ∀ {A : Set} -> ∀ (xs : List A) -> 
+  foldr _::_ [] xs ≡ xs 
+foldr-emp {A} xs = {!   !}
+
