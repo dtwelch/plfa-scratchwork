@@ -618,6 +618,22 @@ foldr-++ {A} {B} _⊗_ e (x :: xs) ys =
 --    xs ++ ys ≡ foldr _::_ ys xs 
 --  
 foldr-emp : ∀ {A : Set} -> ∀ (xs : List A) -> 
-  foldr _::_ [] xs ≡ xs 
-foldr-emp {A} xs = {!   !}
+  foldr _::_ [] xs ≡ xs
+  -- ?0 : foldr _::_ [] [] ≡ [] 
+foldr-emp {A} [] =   
+  begin
+    foldr _::_ [] []
+  ≡⟨⟩ -- direct consequence of first (base case) defining ctor of foldr def
+    [] 
+  ∎ 
+
+ -- ?1 : foldr _::_ [] (x :: xs) ≡ x :: xs
+foldr-emp {A} (x :: xs) = 
+  begin 
+    foldr _::_ [] (x :: xs)
+  ≡⟨⟩ -- via inductive definiting eq of foldr def 
+   x :: (foldr _::_ [] xs) 
+  ≡⟨ cong (x ::_) (foldr-emp xs) ⟩  -- apply ind hypothesis on xs (without x con'sed)
+    x :: xs  
+  ∎   
 
