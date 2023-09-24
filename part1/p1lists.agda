@@ -645,9 +645,9 @@ cons-foldr-++ {A} [] ys =
     [] ++ ys 
   ≡⟨⟩ -- by first defining eq of concat (_++_) def.
     ys 
-  ≡⟨⟩
+  ≡⟨⟩ -- by first defining eq of foldr def. (one dir)
     foldr _::_ ys []
-  ≡⟨⟩ -- by first defining eq of foldr def.
+  ≡⟨⟩ -- by first defining eq of foldr def. (other dir)
     ys 
   ∎   
    
