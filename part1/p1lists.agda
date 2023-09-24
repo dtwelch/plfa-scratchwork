@@ -637,3 +637,9 @@ foldr-emp {A} (x :: xs) =
     x :: xs  
   ∎   
 
+-- part 2 of above exercise (follows from foldr-++ I guess)
+cons-foldr-++ : ∀ {A : Set} -> ∀ (xs ys : List A) -> 
+  xs ++ ys ≡ foldr _::_ ys xs 
+cons-foldr-++ {A} [] ys = {!   !} 
+cons-foldr-++ {A} xs [] = {!   !} 
+cons-foldr-++ {A} (x :: xs) ys = {!   !}
