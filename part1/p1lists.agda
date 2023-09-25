@@ -645,11 +645,22 @@ cons-foldr-++ {A} [] ys =
     [] ++ ys 
   ≡⟨⟩ -- by first defining eq of concat (_++_) def.
     ys 
-  ≡⟨⟩ -- by first defining eq of foldr def. (one dir)
+  ≡⟨⟩ -- by first defining eq of foldr-emp def. 
     foldr _::_ ys []
-  ≡⟨⟩ -- by first defining eq of foldr def. (other dir)
+  ≡⟨⟩ -- by first defining eq of foldr def. 
     ys 
   ∎   
 -- ?0 : xs ++ [] ≡ foldr _::_ [] xs 
-cons-foldr-++ {A} xs [] = {!   !} 
+cons-foldr-++ {A} xs [] =     
+  begin
+    xs ++ []   
+  ≡⟨ (++-identity-r xs) ⟩
+    xs 
+  ≡⟨ sym (foldr-emp xs) ⟩ -- nb: application (foldr-emp xs) gives term: foldr _::_ [] xs ≡ xs 
+                          --      so doing sym (foldr-emp xs) reverse the equality to this:
+                          --       xs ≡ foldr _::_ [] xs 
+                          --  now the l.h.s matches the curr state
+    foldr _::_ [] xs
+  ∎   
+-- ?1 : (x :: xs) ++ ys ≡ foldr _::_ ys (x :: xs)
 cons-foldr-++ {A} (x :: xs) ys = {!   !}
