@@ -670,7 +670,7 @@ cons-foldr-++ {A} (x :: xs) ys =
     x :: (xs ++ ys)
   ≡⟨ cong (x ::_) (cons-foldr-++ xs ys) ⟩ -- (cons-foldr-++ xs ys) : xs ++ ys ≡ foldr _::_ ys xs 
     x :: (foldr _::_ ys xs)
-  ≡⟨⟩ -- by second def
+  ≡⟨⟩ -- second defining eq of foldr def.
     foldr _::_ ys (x :: xs) 
   ∎  
 
