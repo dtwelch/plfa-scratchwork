@@ -674,4 +674,18 @@ cons-foldr-++ {A} (x :: xs) ys =
     foldr _::_ ys (x :: xs) 
   ∎  
 
--- cong (x ::_) (cons-foldr-++ xs ys)
+-- exercise: map-is-foldr (practice)
+
+-- "Show that map can be defined using fold:
+--    map f ≡ foldr (λ x xs -> f x :: xs) [] 
+--  the proof requires extensionality."
+
+map-is-foldr : ∀ {A B : Set} -> ∀ (f : A -> B) -> 
+  map f ≡ foldr (λ x xs -> f x :: xs) [] 
+map-is-foldr {A} {B} f =
+  -- map f ≡ foldr (λ x → _::_ (f x)) []
+  begin 
+    map f 
+  ≡⟨ {!   !} ⟩
+    {!   !}
+  ∎  
