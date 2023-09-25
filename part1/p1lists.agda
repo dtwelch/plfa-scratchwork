@@ -663,4 +663,15 @@ cons-foldr-++ {A} xs [] =
     foldr _::_ [] xs
   ∎   
 -- ?1 : (x :: xs) ++ ys ≡ foldr _::_ ys (x :: xs)
-cons-foldr-++ {A} (x :: xs) ys = {!   !}
+cons-foldr-++ {A} (x :: xs) ys =
+  begin 
+    (x :: xs) ++ ys 
+  ≡⟨⟩
+    x :: (xs ++ ys)
+  ≡⟨ cong (x ::_) (cons-foldr-++ xs ys) ⟩ -- (cons-foldr-++ xs ys) : xs ++ ys ≡ foldr _::_ ys xs 
+    x :: (foldr _::_ ys xs)
+  ≡⟨⟩ -- by second def
+    foldr _::_ ys (x :: xs) 
+  ∎  
+
+-- cong (x ::_) (cons-foldr-++ xs ys)
