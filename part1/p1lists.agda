@@ -650,6 +650,6 @@ cons-foldr-++ {A} [] ys =
   ≡⟨⟩ -- by first defining eq of foldr def. (other dir)
     ys 
   ∎   
-   
+-- ?0 : xs ++ [] ≡ foldr _::_ [] xs 
 cons-foldr-++ {A} xs [] = {!   !} 
 cons-foldr-++ {A} (x :: xs) ys = {!   !}
