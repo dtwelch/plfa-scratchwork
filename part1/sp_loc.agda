@@ -42,7 +42,7 @@ data SpLoc (A : Set) : ℕ² -> Set where
     ss  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- spiral successor
     rs  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- radial successor
 
-iterated : ∀ {A}  -> (f : A -> A) -> ℕ -> A -> A
+iterated : ∀ {A : Set}  -> (f : A -> A) -> ℕ -> A -> A
 iterated f zero x = x
 iterated f (suc n) x = f (iterated f n x)
 -- postulates
