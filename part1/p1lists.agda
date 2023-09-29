@@ -681,8 +681,13 @@ map-foldr-each-point : ∀ {A B : Set} -> ∀ (f : A -> B) ->
 map-foldr-each-point {A} {B} f []       =
   begin 
     map f [] 
-  ≡⟨ {!   !} ⟩ 
-    {!   !} 
+    -- ?1 : map f [] ≡ foldr (λ x -> _::_ (f x)) [] []
+  ≡⟨⟩ -- by first defining eq of map (..) def.
+    [] 
+  ≡⟨⟩ -- by first defining eq of foldr def.
+    (foldr (λ x xs -> f x :: xs) []) []  
+  ≡⟨⟩ -- first defining eq of foldr (foldr applied on the empty list, no matter the neutral element e, gives back [])
+    [] 
   ∎  
 map-foldr-each-point {A} {B} f (x :: l) = 
   begin 
