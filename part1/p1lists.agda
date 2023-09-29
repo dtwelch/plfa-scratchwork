@@ -679,13 +679,32 @@ cons-foldr-++ {A} (x :: xs) ys =
 -- "Show that map can be defined using fold:
 --    map f ≡ foldr (λ x xs -> f x :: xs) [] 
 --  the proof requires extensionality."
-
+-- postulate 
+  -- extensionality : ∀ {A B : Set} (f g : A -> B)
+  --    -> (∀ (x : A) -> f x ≡ g x)
+  --  ----------------------------
+  --    -> f ≡ g
 map-is-foldr : ∀ {A B : Set} -> ∀ (f : A -> B) -> 
-  map f ≡ foldr (λ x xs -> f x :: xs) [] 
+  map f ≡ (foldr (λ x xs -> f x :: xs) [])  -- map f is really just application of foldr on a binary function that applies 
+                                            -- f to each item x of a list xs
+                                            -- this is why the type of the body in the λ combination fn passed in is: List A . 
+                                            -- (it's an application of the list cons operator: _::_) 
 map-is-foldr {A} {B} f =
-  -- map f ≡ foldr (λ x → _::_ (f x)) []
+  -- map f ≡ foldr (λ x xs -> _::_ (f x)) []
+  -- note: ( foldr (λ x xs -> _::_ (f x)) [] ) : List A -> List B
+  -- while: (map f) : List A -> List B  
+  -- so we're equating two partially applied fns (map f) and foldr (λ x xs -> _::_ (f x) [] 
   begin 
     map f 
   ≡⟨ {!   !} ⟩
     {!   !}
-  ∎  
+  ∎
+
+-- here's map's definition for ref: 
+-- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
+-- map {A} {B} f [] = []{B} -- (this also works: [] )
+-- map f (x :: xs)  = (f x) :: (map f xs)
+
+-- foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
+-- foldr _⊗_ e [] = e 
+-- foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
