@@ -676,6 +676,15 @@ cons-foldr-++ {A} (x :: xs) ys =
 
 -- exercise: map-is-foldr (practice)
 
+map-foldr-each-point : ∀ {A B : Set} -> ∀ (f : A -> B) ->
+    ∀ (l : List A) -> map f l ≡ foldr (λ x xs -> f x :: xs) [] l 
+map-foldr-each-point {A} {B} f l = 
+  begin 
+    map f l 
+  ≡⟨ {!   !} ⟩
+    {!   !}
+  ∎  
+    -- map f x ≡ foldr 
 -- "Show that map can be defined using fold:
 --    map f ≡ foldr (λ x xs -> f x :: xs) [] 
 --  the proof requires extensionality."
@@ -699,6 +708,10 @@ map-is-foldr {A} {B} f =
   ≡⟨ {!   !} ⟩
     {!   !}
   ∎
+-- extensionality (map f) (foldr (λ x xs -> f x :: xs) []) 
+-- yields this type:
+-- ((x : List A) -> map f x ≡ foldr (λ x₁ xs -> f x₁ :: xs) [] x) -> 
+--   map f ≡ foldr (λ x xs -> f x :: xs) [] 
 
 -- here's map's definition for ref: 
 -- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
