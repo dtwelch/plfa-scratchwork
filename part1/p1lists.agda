@@ -678,10 +678,18 @@ cons-foldr-++ {A} (x :: xs) ys =
 
 map-foldr-each-point : ∀ {A B : Set} -> ∀ (f : A -> B) ->
     ∀ (l : List A) -> map f l ≡ foldr (λ x xs -> f x :: xs) [] l 
-map-foldr-each-point {A} {B} f l = 
+map-foldr-each-point {A} {B} f []       =
   begin 
-    map f l 
-  ≡⟨ {!   !} ⟩
+    map f [] 
+  ≡⟨ {!   !} ⟩ 
+    {!   !} 
+  ∎  
+map-foldr-each-point {A} {B} f (x :: l) = 
+  begin 
+    map f (x :: l) 
+  ≡⟨⟩
+    (f x) :: (map f l)
+  ≡⟨ {!   !} ⟩ 
     {!   !}
   ∎  
     -- map f x ≡ foldr 
