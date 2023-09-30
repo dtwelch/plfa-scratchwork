@@ -690,11 +690,14 @@ map-foldr-each-point {A} {B} f []       =
     [] 
   ∎  
 map-foldr-each-point {A} {B} f (x :: l) = 
-  begin 
+  begin
+  -- goal: f x :: map f l ≡ foldr (λ x₁ -> _::_ (f x₁)) [] (x :: l) 
     map f (x :: l) 
   ≡⟨⟩
     (f x) :: (map f l)
-  ≡⟨ {!   !} ⟩ 
+  ≡⟨ cong ((f x) ::_) (map-foldr-each-point f l) ⟩  -- (map-foldr-each-point f l) : map f l ≡ foldr (λ x₁ -> _::_ (f x₁)) [] l
+    f x :: foldr (λ x₁ -> _::_ (f x₁)) [] l         -- cong ((f x) ::_) (map-foldr-each-point f l)
+  ≡⟨ {!   !} ⟩
     {!   !}
   ∎  
     -- map f x ≡ foldr 
@@ -718,8 +721,10 @@ map-is-foldr {A} {B} f =
   -- so we're equating two partially applied fns (map f) and foldr (λ x xs -> _::_ (f x) [] 
   begin 
     map f 
-  ≡⟨ {!   !} ⟩
-    {!   !}
+  ≡⟨ extensionality (map f) 
+                    (foldr (λ x xs -> f x :: xs) []) 
+                    (λ (lst : List A) -> map-foldr-each-point f lst) ⟩
+    (foldr (λ x xs -> f x :: xs) []) 
   ∎
 -- extensionality (map f) (foldr (λ x xs -> f x :: xs) []) 
 -- yields this type:
@@ -734,3 +739,8 @@ map-is-foldr {A} {B} f =
 -- foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
 -- foldr _⊗_ e [] = e 
 -- foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
+{-
+extensionality (map f) 
+        (foldr (λ x xs -> f x :: xs) []) 
+        (λ (lst : List A) -> map-foldr-each-point f lst)
+        -}
