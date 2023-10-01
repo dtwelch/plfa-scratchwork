@@ -735,12 +735,23 @@ map-is-foldr {A} {B} f =
 -- so f below is a function that maps over leaves of type A of the tree;
 -- g is a fn that maps internal nodes of type B 
 
---map-tree : ∀ {A B C D : Set} 
---  -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
--- map-tree f g (leaf x)         = leaf (f x)
--- map-tree f g (node l item r)  = node (map-tree f g l) (g item) (map-tree f g r) 
 
 fold-tree : ∀ {A B C : Set} -> (A -> C) -> (C -> B -> C -> C) -> Tree A B -> C 
 fold-tree {A} {B} {C} f acc (leaf x)        = (f x)
 fold-tree {A} {B} {C} f acc (node l item r) = acc (fold-tree f acc l) item (fold-tree f acc r)
 
+-- exercise: map-is-fold-tree (practice)
+--
+-- "demonstrate an analogue of map-is-foldr for the type of trees."
+
+map-is-fold-tree : 
+  ∀ {A B C D : Set} -> ∀ (f : A -> C) -> ∀ (g : B -> D) ->
+  map-tree f g ≡ fold-tree f (λ ltr item rtr -> acc 
+
+-- map-is-foldr : ∀ {A B : Set} -> ∀ (f : A -> B) -> 
+--  map f ≡ (foldr (λ x xs -> f x :: xs) []) 
+
+--map-tree : ∀ {A B C D : Set} 
+--  -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
+-- map-tree f g (leaf x)         = leaf (f x)
+-- map-tree f g (node l item r)  = node (map-tree f g l) (g item) (map-tree f g r) 
