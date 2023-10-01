@@ -721,3 +721,20 @@ map-is-foldr {A} {B} f =
     (foldr (λ x xs -> f x :: xs) []) 
   ∎
 
+-- exercise: fold tree (practice) 
+
+-- "define a suitable fold function for the type of trees given earlier:"
+
+-- here's the definition of the Tree type again for ref.:
+-- 
+-- data Tree (A B : Set) : Set where 
+--  leaf : A -> Tree A B 
+--  node : Tree A B -> B -> Tree A B -> Tree A B 
+
+--map-tree : ∀ {A B C D : Set} 
+--  -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
+-- map-tree f g (leaf x)         = leaf (f x)
+-- map-tree f g (node l item r)  = node (map-tree f g l) (g item) (map-tree f g r) 
+
+fold-tree : ∀ {A B C : Set} -> (A -> C) -> (C -> B -> C -> C) -> Tree A B -> C 
+fold-tree {A} {B} {C} f = {!   !} 
