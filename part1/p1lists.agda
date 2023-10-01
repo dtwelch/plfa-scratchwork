@@ -697,18 +697,12 @@ map-foldr-each-point {A} {B} f (x :: l) =
     (f x) :: (map f l)
   ≡⟨ cong ((f x) ::_) (map-foldr-each-point f l) ⟩  -- (map-foldr-each-point f l) : map f l ≡ foldr (λ x₁ -> _::_ (f x₁)) [] l
     f x :: foldr (λ x₁ -> _::_ (f x₁)) [] l         -- cong ((f x) ::_) (map-foldr-each-point f l)
-  ≡⟨ {!   !} ⟩
-    {!   !}
-  ∎  
-    -- map f x ≡ foldr 
--- "Show that map can be defined using fold:
---    map f ≡ foldr (λ x xs -> f x :: xs) [] 
---  the proof requires extensionality."
--- postulate 
-  -- extensionality : ∀ {A B : Set} (f g : A -> B)
-  --    -> (∀ (x : A) -> f x ≡ g x)
-  --  ----------------------------
-  --    -> f ≡ g
+  ≡⟨⟩ 
+    f x :: foldr (λ x₁ xs -> (f x₁) :: xs) [] l
+  ≡⟨⟩  -- by first defining eq of foldr 
+    foldr (λ x₁ xs -> (f x₁) :: xs) [] (x :: l)
+  ∎ 
+
 map-is-foldr : ∀ {A B : Set} -> ∀ (f : A -> B) -> 
   map f ≡ (foldr (λ x xs -> f x :: xs) [])  -- map f is really just application of foldr on a binary function that applies 
                                             -- f to each item x of a list xs
@@ -726,21 +720,4 @@ map-is-foldr {A} {B} f =
                     (λ (lst : List A) -> map-foldr-each-point f lst) ⟩
     (foldr (λ x xs -> f x :: xs) []) 
   ∎
--- extensionality (map f) (foldr (λ x xs -> f x :: xs) []) 
--- yields this type:
--- ((x : List A) -> map f x ≡ foldr (λ x₁ xs -> f x₁ :: xs) [] x) -> 
---   map f ≡ foldr (λ x xs -> f x :: xs) [] 
 
--- here's map's definition for ref: 
--- map : ∀ {A B : Set} -> (A -> B) -> List A -> List B 
--- map {A} {B} f [] = []{B} -- (this also works: [] )
--- map f (x :: xs)  = (f x) :: (map f xs)
-
--- foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
--- foldr _⊗_ e [] = e 
--- foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
-{-
-extensionality (map f) 
-        (foldr (λ x xs -> f x :: xs) []) 
-        (λ (lst : List A) -> map-foldr-each-point f lst)
-        -}
