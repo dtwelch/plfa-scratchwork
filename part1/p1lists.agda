@@ -727,9 +727,13 @@ map-is-foldr {A} {B} f =
 
 -- here's the definition of the Tree type again for ref.:
 -- 
+-- (Trees with leaves of type A and internal nodes of type B)
 -- data Tree (A B : Set) : Set where 
 --  leaf : A -> Tree A B 
 --  node : Tree A B -> B -> Tree A B -> Tree A B 
+
+-- so f below is a function that maps over leaves of type A of the tree;
+-- g is a fn that maps internal nodes of type B 
 
 --map-tree : ∀ {A B C D : Set} 
 --  -> (f : A -> C) -> (g : B -> D) -> Tree A B -> Tree C D 
@@ -737,4 +741,9 @@ map-is-foldr {A} {B} f =
 -- map-tree f g (node l item r)  = node (map-tree f g l) (g item) (map-tree f g r) 
 
 fold-tree : ∀ {A B C : Set} -> (A -> C) -> (C -> B -> C -> C) -> Tree A B -> C 
-fold-tree {A} {B} {C} f = {!   !} 
+fold-tree {A} {B} {C} f acc (leaf x)        = (f x)
+fold-tree {A} {B} {C} f acc (node l item r) = acc (fold-tree f acc l) item (fold-tree f acc r)  
+
+--foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
+--foldr _⊗_ e [] = e 
+--foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
