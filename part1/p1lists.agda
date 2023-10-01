@@ -742,8 +742,5 @@ map-is-foldr {A} {B} f =
 
 fold-tree : ∀ {A B C : Set} -> (A -> C) -> (C -> B -> C -> C) -> Tree A B -> C 
 fold-tree {A} {B} {C} f acc (leaf x)        = (f x)
-fold-tree {A} {B} {C} f acc (node l item r) = acc (fold-tree f acc l) item (fold-tree f acc r)  
+fold-tree {A} {B} {C} f acc (node l item r) = acc (fold-tree f acc l) item (fold-tree f acc r)
 
---foldr : ∀ {A B : Set} -> (A -> B -> B) -> B -> List A -> B 
---foldr _⊗_ e [] = e 
---foldr _⊗_ e (x :: xs) = x ⊗ (foldr _⊗_ e xs)
