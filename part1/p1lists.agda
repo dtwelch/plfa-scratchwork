@@ -762,7 +762,7 @@ map-is-fold-tree {A} {B} {C} {D} f g =
     map-tree f g 
   ≡⟨ {!   !} ⟩ -- todo: extensionality helper lemma 
     fold-tree (λ (x : A) -> leaf (f x)) 
-              (λ (left : Tree C D) (b : B) (right : Tree C D) -> node left (g b)) right
+              (λ (left : Tree C D) (b : B) (right : Tree C D) -> (node left (g b) right))
    ∎ 
 
 -- ?0 : map-tree f g ≡
