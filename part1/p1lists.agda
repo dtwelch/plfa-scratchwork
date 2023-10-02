@@ -748,14 +748,22 @@ fold-tree {A} {B} {C} f acc (node l item r) = acc (fold-tree f acc l) item (fold
 -- exercise: map-is-fold-tree (practice)
 --
 -- "demonstrate an analogue of map-is-foldr for the type of trees."
---(λ a -> leaf (f a) )
+
+-- map-is-fold-tree-helper : 
+
 map-is-fold-tree : 
   ∀ {A B C D : Set} -> ∀ (f : A -> C) -> ∀ (g : B -> D) ->
   map-tree f g ≡ fold-tree 
       (λ (x : A) -> leaf (f x)) 
       (λ (left : Tree C D) (b : B) (right : Tree C D) -> (node left (g b) right) )
   
-map-is-fold-tree {A} {B} {C} f g = {!   !}
+map-is-fold-tree {A} {B} {C} {D} f g = 
+  begin 
+    map-tree f g 
+  ≡⟨ {!   !} ⟩ -- todo: extensionality helper lemma 
+    fold-tree (λ (x : A) -> leaf (f x)) 
+              (λ (left : Tree C D) (b : B) (right : Tree C D) -> node left (g b)) right
+   ∎ 
 
--- (λ a -> leaf (f a) ) (for fold-tree first arg)
--- (λ left b right -> node left (g b) right for fold-tree second arg
+-- ?0 : map-tree f g ≡
+--    fold-tree (λ x → leaf (f x)) (λ left b → node left (g b))
