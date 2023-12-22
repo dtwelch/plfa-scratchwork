@@ -1,6 +1,7 @@
 module denotational where 
 
-open import Data.Bool using (Bool; true; false; T; not)
+
+open import Data.Bool using (Bool; true; false; if_then_else_; T; not)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List using (List; _∷_; [])
 open import Data.Nat using (ℕ; zero; suc)
@@ -20,8 +21,13 @@ Id = String
 State : Set
 State = Id -> ℕ
 
+-- note; look at the definition above ^^
+-- any term of the form λ (x : Id) -> 0 (any lambda with type Id -> ℕ really) 
+-- is shorthand for a State (it's a type synonym)
+
 st_update : Id -> ℕ -> State -> State
-st_update name val s = {!   !} -- λ (name' : Id) -> if name ≡ name' then val else (s name')
+st_update name val s = 
+    λ (name' : Id) -> if name ≡ name' then val else (s name')
 
 
 
