@@ -767,7 +767,7 @@ map-is-fold-tree {A} {B} {C} {D} f g =
 
 -- extensionality (map-tree f g) (fold-tree (λ (x : A) -> leaf (f x)))
 
---((x : Tree A B) -> 
+-- (x : Tree A B) -> 
 -- map-tree f g x ≡
 -- fold-tree (λ x₁ -> leaf (f x₁))
 -- (λ left b right -> node left (g b) right) x) -> 

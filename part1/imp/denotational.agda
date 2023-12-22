@@ -1,5 +1,8 @@
 module denotational where 
 
+import Relation.Binary.PropositionalEquality as Eq
+open Eq using (_≡_; refl; sym; trans; cong)
+open Eq.≡-Reasoning
 
 open import Data.Bool using (Bool; true; false; if_then_else_; T; not)
 open import Data.Empty using (⊥; ⊥-elim)
@@ -11,7 +14,6 @@ open import Data.Unit using (tt)
 open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
 open import Relation.Nullary.Negation using (¬?)
-open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
 
 -- variable Identifiers
 Id : Set 
@@ -28,14 +30,28 @@ State = Id -> ℕ
 
 -- state update fn
 
-
-_[_->>_] : Id -> ℕ -> State -> State
-_[_->>_] name val s = 
+_[_->>_] : State -> Id -> ℕ -> State
+_[_->>_] s name val = 
     λ (name' : Id) -> if name == name' then val else (s name')
 
 infixr 9 _[_->>_] 
 
-
+update_app : 
+    ∀ (id : Id) -> 
+    ∀ (val : ℕ) -> 
+    ∀ (s : State) -> 
+        ( s [ id ->> val ] ) id ≡ val  
+-- goal: (s [ id ->> val ]) id ≡ val 
+-- expl: updating a state s w/ value val at name and then 
+--       retrieving name will yield val
+update_app id val s = 
+    begin
+        (s [ id ->> val ]) id 
+    ≡⟨⟩
+        ( if id == id then val else (s id) )
+    ≡⟨ {!   !} ⟩
+        {!   !}
+    ∎
 -- in our sample language, we deliberately leave the 
 -- syntax of arithmetic and boolean expressions unspecified.
 -- You technically have two choices:
@@ -51,4 +67,4 @@ infixr 9 _[_->>_]
 --    a sematics for these trees -- e.g., an 'eval(..)' fn) 
 
 -- data Stmt : Set where 
---    assign : Id -> ( 
+--    assign : Id -> (  
