@@ -6,7 +6,7 @@ open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List using (List; _∷_; [])
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Product using (∃-syntax; _×_)
-open import Data.String using (String; _≟_)
+open import Data.String using (String; _==_; _≟_)
 open import Data.Unit using (tt)
 open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
@@ -21,14 +21,19 @@ Id = String
 State : Set
 State = Id -> ℕ
 
--- note; look at the definition above ^^
--- any term of the form λ (x : Id) -> 0 (any lambda with type Id -> ℕ really) 
+-- note; look at the definition above ^^ and in the way the st_update
+-- fn works below 
+--  any term of the form λ (x : Id) -> 0 (any lambda with type Id -> ℕ really) 
 -- is shorthand for a State (it's a type synonym)
 
-st_update : Id -> ℕ -> State -> State
-st_update name val s = 
-    λ (name' : Id) -> if name ≡ name' then val else (s name')
+-- state update fn
 
+
+_[_->>_] : Id -> ℕ -> State -> State
+_[_->>_] name val s = 
+    λ (name' : Id) -> if name == name' then val else (s name')
+
+infixr 9 _[_->>_] 
 
 
 -- in our sample language, we deliberately leave the 
