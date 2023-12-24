@@ -12,15 +12,22 @@ open import Data.Product using (∃-syntax; _×_)
 open import Data.String using (String; _==_; _≟_)
 open import Agda.Builtin.String
 open import Agda.Builtin.String.Properties
+open import Agda.Builtin.Char
+
 
 open import Data.Unit using (tt)
 open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
 open import Relation.Nullary.Negation using (¬?)
 
-vname : Set
+-- variable and procedure names are strings
+vname : Set -- variable names
 vname = String
 
-is-global : String -> Bool 
-is-global = {!   !} 
+pname : Set -- procedure names 
+pname = String 
 
+is-global : vname -> Bool 
+is-global name with (primStringToList name)
+...    | []       = true 
+...    | (x ∷ xs) = primCharEquality x 'G' 
