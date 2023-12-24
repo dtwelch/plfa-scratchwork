@@ -36,6 +36,9 @@ _[_->>_] s name val =
 
 infixr 9 _[_->>_] 
 
+idIsEqual : (id : Id) -> (id == id) ≡ true
+idIsEqual id = refl 
+
 update_app : 
     ∀ (id : Id) -> 
     ∀ (val : ℕ) -> 
@@ -44,14 +47,15 @@ update_app :
 -- goal: (s [ id ->> val ]) id ≡ val 
 -- expl: updating a state s w/ value val at name and then 
 --       retrieving name will yield val
-update_app id val s = 
+{-update_app id val s = 
     begin
         (s [ id ->> val ]) id 
     ≡⟨⟩
         ( if id == id then val else (s id) )
-    ≡⟨ {!   !} ⟩
-        {!   !}
+    ≡⟨⟩ 
+        ?
     ∎
+ -}   
 -- in our sample language, we deliberately leave the 
 -- syntax of arithmetic and boolean expressions unspecified.
 -- You technically have two choices:

@@ -777,3 +777,5 @@ map-is-fold-tree {A} {B} {C} {D} f g =
 -- ?0 : map-tree f g ≡
 --    fold-tree (λ x -> leaf (f x)) (λ left b -> node left (g b))
 
+-- monoids
+
