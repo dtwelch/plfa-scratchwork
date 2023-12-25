@@ -14,7 +14,6 @@ open import Agda.Builtin.String
 open import Agda.Builtin.String.Properties
 open import Agda.Builtin.Char
 
-
 open import Data.Unit using (tt)
 open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
@@ -31,3 +30,15 @@ is-global : vname -> Bool
 is-global name with (primStringToList name)
 ...    | []       = true 
 ...    | (x ∷ xs) = primCharEquality x 'G' 
+
+is-local : vname -> Bool 
+is-local name = not (is-global name)
+
+-- values and primitive values are usually part of the semantics, however, as they
+-- occur as literals in the abstract syntax, we already define them here.
+
+pval : Set 
+pval = ℕ 
+
+val : Set 
+val = ℕ -> pval
