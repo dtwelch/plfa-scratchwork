@@ -4,7 +4,7 @@ import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
 
-open import Data.Bool using (Bool; true; false; if_then_else_; T; not)
+open import Data.Bool using (Bool; 𝔹; true; false; if_then_else_; T; not)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List using (List; _∷_; [])
 open import Data.Nat using (ℕ; zero; suc)
@@ -64,9 +64,35 @@ data AExp : Set where
 -- binary function intended to be any of: and, or, xor, etc followed by
 -- a left and right argument (boolean) exp.
 
-data BExp where 
-    bconst_exp : Boolean -> BExp
+data BExp : Set where 
+    bconst_exp : Bool -> BExp
     bnot_exp   : BExp -> BExp  -- nb: explicitly modeled (no higher order fn needed for this node)
-    binop_exp  : (𝔹 -> 𝔹 -> 𝔹) -> BExp -> BExp -> BExp
+    binop_exp  : (Bool -> Bool -> Bool) -> BExp -> BExp -> BExp
+    cmpop_exp  : (ℕ -> ℕ -> Bool) -> AExp -> AExp -> BExp
 
+-- commands can roughly be put into five categories:
+--
+-- skip                - the no-op command
+--
+-- assignment commands - commands to assign the value of an AExp, copy or clear arrays
+--                       and a command to simultaneously assign all local variables, 
+--                       which will only be used internally to simplify the definition a 
+--                       small step sematics
+-- 
+-- block commands      - standard sequential composition commands, if-then-else, and while 
+--                       commands + a scope command which executes a command with a fresh 
+--                       set of local variables
+-- 
+-- procedure commands  - procedure call, and a procedure scope command which executes a 
+--                       command in a specified procedure environment. Similar to the 
+--                       scope command, which introduces new local variables limiting the 
+--                       effects of variable manipulations to the content of the command.
+--                       The procedure scope command introduces new procedures, and limits
+--                       the validity of their names to the content of the command. 
 
+data Command : Set where
+    skip_cmd            : Command 
+    assignidx_cmd       : vname -> AExp -> AExp -> Command  -- arr[i] := x;
+    arraycopy_cmd       : vname -> vname -> Command         -- arr[] = someOtherArray;
+    arrayclear_cmd      : vname -> Command                  -- clear(arr[]);
+    assign_locals_cmd   : (vname -> val) -> Command         -- assign to all local vars
