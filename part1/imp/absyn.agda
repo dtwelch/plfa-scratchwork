@@ -42,3 +42,31 @@ pval = ℕ
 
 val : Set 
 val = ℕ -> pval
+
+-- arithmetic expressions consist of constants, indexed array vars, and unary and binary
+-- operator applications. The underlying operator type (binary or unary function) is stored 
+-- in the corresponding abstract syntax node -- so a BinOpExp(op, l, r) should be thought of 
+-- as the application of some binary operator o to expression (arguments) l and r (i.e.: l op r)
+
+data AExp : Set where 
+    num_exp   : ℕ -> AExp
+    varid_exp : vname -> AExp
+    unop_exp  : (ℕ -> ℕ) -> AExp -> AExp 
+    binop_exp : (ℕ -> ℕ -> ℕ) -> AExp -> AExp -> AExp
+
+-- boolean expressions consist of constants, not operator applications,
+-- as well as binary connective and comparison operator applications 
+-- (the underlying functions, as with arithmetic expressions, for such 
+-- application expressions are stored in the node's themselves as higher
+-- order unary or binary functions)
+
+-- so in the type definition below, the binop_exp constructor takes a 
+-- binary function intended to be any of: and, or, xor, etc followed by
+-- a left and right argument (boolean) exp.
+
+data BExp where 
+    bconst_exp : Boolean -> BExp
+    bnot_exp   : BExp -> BExp  -- nb: explicitly modeled (no higher order fn needed for this node)
+    binop_exp  : (𝔹 -> 𝔹 -> 𝔹) -> BExp -> BExp -> BExp
+
+
