@@ -4,7 +4,7 @@ import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
 
-open import Data.Bool using (Bool; 𝔹; true; false; if_then_else_; T; not)
+open import Data.Bool using (Bool; true; false; if_then_else_; T; not)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List using (List; _∷_; [])
 open import Data.Nat using (ℕ; zero; suc)
@@ -18,9 +18,10 @@ open import Data.Unit using (tt)
 open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
 open import Relation.Nullary.Negation using (¬?)
+open import Data.Maybe
 
 -- variable and procedure names are strings
-vname : Set -- variable names
+vname : Set
 vname = String
 
 pname : Set -- procedure names 
@@ -28,13 +29,12 @@ pname = String
 
 is-global : vname -> Bool 
 is-global name with (primStringToList name)
-...    | []       = true 
+...    | []       = true
 ...    | (x ∷ xs) = primCharEquality x 'G' 
 
 is-local : vname -> Bool 
 is-local name = not (is-global name)
 
--- values and primitive values are usually part of the semantics, however, as they
 -- occur as literals in the abstract syntax, we already define them here.
 
 pval : Set 
@@ -54,7 +54,6 @@ data AExp : Set where
     unop_exp  : (ℕ -> ℕ) -> AExp -> AExp 
     binop_exp : (ℕ -> ℕ -> ℕ) -> AExp -> AExp -> AExp
 
--- boolean expressions consist of constants, not operator applications,
 -- as well as binary connective and comparison operator applications 
 -- (the underlying functions, as with arithmetic expressions, for such 
 -- application expressions are stored in the node's themselves as higher
@@ -91,8 +90,32 @@ data BExp : Set where
 --                       the validity of their names to the content of the command. 
 
 data Command : Set where
-    skip_cmd            : Command 
-    assignidx_cmd       : vname -> AExp -> AExp -> Command  -- arr[i] := x;
-    arraycopy_cmd       : vname -> vname -> Command         -- arr[] = someOtherArray;
-    arrayclear_cmd      : vname -> Command                  -- clear(arr[]);
-    assign_locals_cmd   : (vname -> val) -> Command         -- assign to all local vars
+    -- no-op
+    skip                : Command 
+
+    -- assignment
+    _[_]:=_             : vname -> AExp -> AExp -> Command  
+    _[]:=_              : vname -> vname -> Command         
+    clear_           : vname -> Command                  
+    assign_locals_cmd   : (vname -> val) -> Command         -- assign to all local vars simultaneously
+
+    _`_                 : Command -> Command -> Command
+    scope_cmd           : Command -> Command 
+    -- proc
+    procscope_cmd       : pname -> Maybe (Command × Command) -> Command
+
+-- the state maps variable names to values 
+State : Set 
+State = vname -> val
+
+-- some syntax for the null state and a state where only certain variables 
+-- are set
+
+-- the null state
+<> : State 
+<> = λ vname -> λ y -> 0  -- so is our default initial value
+
+infixr 4 _[_->>_]
+
+_[_->>_] : State -> vname -> val -> State
+_[_->>_] = {!   !} 
