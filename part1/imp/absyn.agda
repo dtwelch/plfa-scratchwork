@@ -96,7 +96,7 @@ data Command : Set where
     -- assignment
     _[_]:=_             : vname -> AExp -> AExp -> Command  
     _[]:=_              : vname -> vname -> Command         
-    clear_           : vname -> Command                  
+    clear_              : vname -> Command                  
     assign_locals_cmd   : (vname -> val) -> Command         -- assign to all local vars simultaneously
 
     _`_                 : Command -> Command -> Command
@@ -115,7 +115,27 @@ State = vname -> val
 <> : State 
 <> = λ vname -> λ y -> 0  -- so is our default initial value
 
-infixr 4 _[_->>_]
+-- state combination
+-- the state combination operator constructs a state by taking the local variables
+-- from one state and the globals from another state
 
-_[_->>_] : State -> vname -> val -> State
-_[_->>_] = {!   !} 
+<_!_> : State -> State -> State
+<_!_> s t = λ (n : vname) -> if (is-local n) then (s n) else (t n)
+
+-- now we prove some basic facts.
+
+combine-collapse : ∀ (s : State) -> < s ! s > ≡ s 
+combine-collapse s = 
+    begin
+        < s ! s >
+    ≡⟨⟩
+       -- λ (n : vname) -> (if is-local n then s else s) n   
+        < (λ n -> s n) ! (λ n -> s n) > 
+    ≡⟨ {!   !} ⟩ 
+        {!   !}
+    ∎ 
+
+piecewise : ∀ {A : Set} -> (ℕ -> A) -> (ℕ -> A) -> (ℕ -> A) -> ℕ -> A
+piecewise f g h = λ x -> if true then f x 
+                        else if true then g x 
+                        else h x 
