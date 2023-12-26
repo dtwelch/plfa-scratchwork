@@ -18,8 +18,55 @@ open import Relation.Nullary using (Dec; yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; toWitnessFalse)
 open import Relation.Nullary.Negation using (¬?)
 open import Data.Maybe
-{-
 
+{-
+    public static void doubleSwapFirst(StaticArray<Integer> a) {
+        // ensures a = #a
+        int lb = a.lowerBound();
+        Integer e = a.replace(lb, 5); // replace lower with 5
+        a.replace(lb, e); // put it back
+    }
+
+    Remember a;
+        int lb = a.lowerBound();
+        int e  = a.replace(lb, 5);
+        a.replace(lb, e);
+    Confirm a = #a;
+    ->
+        ...
+        int e = a.replace(lb, 5);
+    Confirm ( λ x : ℕ -> if x = lb then #e 
+                         else           #a(x) ) = #a       -- omitting bounds for now
+    -> 
+        ...
+    Confirm ( λ x : ℕ -> if x = lb then e 
+                         else           a(x) ) = #a 
+    ->
+        ...
+    Confirm ( λ x : ℕ -> if x = lb then a(lb) 
+                         else ( if q = lb then e else a(q) ) ) = #a 
+    -> 
+        ...
+        int lb = a.lowerBound();
+    Confirm ( λ x : ℕ -> if      x = lb then a(lb) 
+                         else if x = lb then e 
+                         else                a(x) ) = #a  
+    ->
+        ...
+        int lb = a.lowerBound();
+    Confirm ( λ x : ℕ -> if   x = lb then a(lb) 
+                         else             a(x) ) = #a   
+    ->
+    Remeber a;
+    Confirm ( λ x : ℕ -> if     x = lowerBound then a(lowerBound) 
+                         else                       a(x) ) = #a   
+    -> 
+    Confirm ( λ x : ℕ -> if     x = lowerBound then a(lowerBound) 
+                         else                       a(x) ) = a
+
+-}
+
+{-
 In Agda, a piecewise function with three alternatives can be expressed using nested 
 if-then-else constructs within a lambda expression. Ex: 
 
