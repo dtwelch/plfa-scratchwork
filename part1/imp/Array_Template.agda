@@ -108,8 +108,8 @@ f x = x + 1
 g : ℕ -> ℕ
 g x = if isYes (x ≟ 0) then 1 else f x 
 
-eq-on-all-points_ev : ∀ (x : ℕ) -> f x ≡ g x
-eq-on-all-points_ev 0 = 
+eq-on-all-points-ev : ∀ (x : ℕ) -> f x ≡ g x
+eq-on-all-points-ev 0 = 
     begin 
         f zero 
     ≡⟨⟩
@@ -120,17 +120,19 @@ eq-on-all-points_ev 0 =
        g zero
     ≡⟨⟩ 
       ( if isYes (zero ≟ 0) then 1 else f zero )
-    ≡⟨ {!   !} ⟩
-        {!   !}
-    ∎   
-eq-on-all-points_ev x = 
-    begin 
-        f x
     ≡⟨⟩
-        x + 1
+      ( if isYes (zero ≟ 0) then 1 else zero + 1 )
+    ≡⟨⟩
+      ( if isYes (zero ≟ 0) then 1 else 1 )
+    ≡⟨⟩
+       1 
+    ∎   
+eq-on-all-points-ev (suc x) = 
+    begin
+        f (suc x)
     ≡⟨ {!   !} ⟩
-        {!   !}
-    ∎ 
+        {!   !} 
+    ∎   
 
-lemma : g ≡ f
-lemma = {!   !} 
+lemma : f ≡ g 
+lemma = extensionality f g eq-on-all-points-ev 
