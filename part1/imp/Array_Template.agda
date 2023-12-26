@@ -108,10 +108,26 @@ f x = x + 1
 g : ℕ -> ℕ
 g x = if isYes (x ≟ 0) then 1 else f x 
 
-eq-on-all-points : ∀ (x : ℕ) -> f x ≡ g x
-eq-on-all-points x = 
+eq-on-all-points_ev : ∀ (x : ℕ) -> f x ≡ g x
+eq-on-all-points_ev 0 = 
+    begin 
+        f zero 
+    ≡⟨⟩
+        zero + 1
+    ≡⟨⟩
+        1
+    ≡⟨⟩ -- 1 ≡ g zero
+       g zero
+    ≡⟨⟩ 
+      ( if isYes (zero ≟ 0) then 1 else f zero )
+    ≡⟨ {!   !} ⟩
+        {!   !}
+    ∎   
+eq-on-all-points_ev x = 
     begin 
         f x
+    ≡⟨⟩
+        x + 1
     ≡⟨ {!   !} ⟩
         {!   !}
     ∎ 
