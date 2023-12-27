@@ -1,0 +1,154 @@
+\documentclass[runningheads]{llncs}
+\usepackage[margin=1.85cm, paperwidth=6.1in, paperheight=9in, bottom=2.5cm]{geometry}
+
+\usepackage{mathptmx} % times font instead of cm-modern
+\usepackage{textgreek}
+\usepackage{ucs}
+\usepackage{agda}
+\usepackage[utf8x]{inputenc}
+
+%\DeclareUnicodeCharacter{948}{\ensuremath{\delta}}
+%\DeclareUnicodeCharacter{955}{\ensuremath{\lambda}}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\pagecolor{white}
+
+\definecolor{body}{RGB}{30, 30, 30}
+\color{body}
+
+\begin{document}
+
+\title{Notes on formalizing the STLC}
+\author{D. Welch}
+\institute{}
+\maketitle
+
+\begin{abstract}
+Just some notes trying out ``\LaTeX \ literate Agda mode'' as I work through 
+this next chapter on the lambda calculus (eventually denotational semantics for
+the untyped version of the calculus).
+\end{abstract}
+
+\section{Intro to the Lambda Calculus} 
+
+The lambda calculus, first published by Alonzo Church in 1932 is a tiny language 
+with only three syntactic constructs: variables, abstraction, and (function) 
+application. 
+
+The \textit{simply typed lambda calculus} (STLC) is a variant of the lambda 
+calculus published in 1940 that adds static typing to the o.g. 1932 untyped 
+lambda calculus. It has the three types of constructions previously mentioned 
+plus additional syntax to support types and type annotations. These notes use a 
+`Programmable Computable Function' (PCF) style syntax and add operations for 
+naturals and recursive function definitions.
+
+Specifically these notes formalize the base constructs that make up the 
+simply-typed lambda calculus: its syntax, small-step semantics, and typing 
+rules. After this a number of properties the language such as progress and 
+preservation are stated and proven. The notes may extend the language with 
+additional features such as records.
+
+Note: these notes do not present a recommended approach to formalization as 
+they eschew a locally nameless representation of terms (via e.g. DeBruijn 
+indices). A later section of these notes might look into this. 
+
+\subsection{Imports}
+
+First, we'll need some imports:
+\begin{code}%
+\>[0]\AgdaKeyword{module}\AgdaSpace{}%
+\AgdaModule{stlc}\AgdaSpace{}%
+\AgdaKeyword{where}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Bool}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaDatatype{Bool}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{true}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{false}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaFunction{not}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Empty}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaDatatype{⊥}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaFunction{⊥-elim}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.List}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaDatatype{List}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaInductiveConstructor{\AgdaUnderscore{}∷\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Nat}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaDatatype{ℕ}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{zero}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{suc}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Product}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{∃-syntax}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}×\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.String}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaPostulate{String}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≟\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Unit}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaInductiveConstructor{tt}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaRecord{Dec}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{yes}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{no}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{¬\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary.Decidable}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{False}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaFunction{toWitnessFalse}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary.Negation}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{¬?}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Binary.PropositionalEquality}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaOperator{\AgdaDatatype{\AgdaUnderscore{}≡\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≢\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
+\end{code}
+
+\section{Term Syntax}
+
+Terms have seven constructs. Three are for the core lambda calculus:
+\begin{itemize}
+\item variables 
+\end{itemize}
+
+\end{document}

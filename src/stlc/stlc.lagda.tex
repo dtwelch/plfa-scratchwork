@@ -2,11 +2,18 @@
 \usepackage[margin=1.85cm, paperwidth=6.1in, paperheight=9in, bottom=2.5cm]{geometry}
 
 \usepackage{mathptmx} % times font instead of cm-modern
-\usepackage[utf8]{inputenc}
+\usepackage{textgreek}
+\usepackage{ucs}
+\usepackage{agda}
+\usepackage[utf8x]{inputenc}
+
+%\DeclareUnicodeCharacter{948}{\ensuremath{\delta}}
+%\DeclareUnicodeCharacter{955}{\ensuremath{\lambda}}
 
 \usepackage{xcolor}
 \usepackage{graphicx}
 \pagecolor{white}
+
 \definecolor{body}{RGB}{30, 30, 30}
 \color{body}
 
@@ -49,7 +56,26 @@ indices). A later section of these notes might look into this.
 \subsection{Imports}
 
 First, we'll need some imports:
+\begin{code}
+module stlc where 
+open import Data.Bool using (Bool; true; false; not)
+open import Data.Empty using (⊥; ⊥-elim)
+open import Data.List using (List; _∷_; [])
+open import Data.Nat using (ℕ; zero; suc)
+open import Data.Product using (∃-syntax; _×_)
+open import Data.String using (String; _≟_)
+open import Data.Unit using (tt)
+open import Relation.Nullary using (Dec; yes; no; ¬_)
+open import Relation.Nullary.Decidable using (False; toWitnessFalse)
+open import Relation.Nullary.Negation using (¬?)
+open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
+\end{code}
 
+\section{Term Syntax}
 
+Terms have seven constructs. Three are for the core lambda calculus:
+\begin{itemize}
+\item variables 
+\end{itemize}
 
 \end{document}
