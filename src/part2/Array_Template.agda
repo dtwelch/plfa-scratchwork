@@ -116,21 +116,24 @@ if'_then_else_ false t f = f
 -- W.F.O formulation:
 -- start with a definition of a 'conditional definition'
 alt_if_alt_otherwise : 
-    ∀ {D R : Set} -> 
-    ∀ {x : D} -> 
-    ∀ (f g : D -> R) -> 
-    ∀ (ψ : D -> Bool) -> (D -> R)
-alt_if_alt_otherwise {D} {R} {x} f g ψ with (ψ x)
+    ∀ {D R : Set}       -> 
+    ∀ {x : D}           -> 
+    ∀ (f : D -> R)      -> 
+    ∀ (ψ : D -> Bool)   -> 
+    ∀ (g : D -> R)      -> (D -> R)
+alt_if_alt_otherwise {D} {R} {x} f ψ g with (ψ x)
 ... | true = f
-... | false = g 
+... | false = g
 -- 'x' in the defn above is an arbitrary variable drawn
 -- from the domain D.
 
 f' : ℕ -> ℕ 
 f' x = x + 1
 
+
 g' : ℕ -> ℕ
-g' x = alt 1 if x ≟  
+g' x = ( alt (λ y -> 1)      if (λ y -> y ≟ 0)
+         alt (λ y -> (f' y)) otherwise ) x 
 
 
 -- ----------------
