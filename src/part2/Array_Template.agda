@@ -110,11 +110,26 @@ alt_if_altotherwise first second false = second
 infix 0 if'_then_else_
 
 if'_then_else_ : ∀ {A : Set} -> Bool -> A -> A -> A
-if'_then_else_ true  t f = t
-if'_then_else_ false t f = f
+if'_then_else_ true  t f = ? 
+if'_then_else_ false t f = ? 
 
--- example
-f : ℕ -> ℕ 
+ite'-same-bodies : 
+    ∀ {A : Set} -> 
+    ∀ (cond : Bool) -> 
+    ∀ (b1 : A) ->
+        if' cond then b1 else b1 ≡ f 
+ite'-same-bodies pred b1 b2 = ? 
+
+-- og ver:
+-- start with a definition of a 'conditional definition'
+alt_if_alt_otherwise : 
+    ∀ {D R : Set} -> 
+    ∀ (x   : D) -> 
+    ∀ (ψ   : D -> Bool) -> 
+    ∀ (f g : D -> R) 
+alt f x     if ψ x 
+alt g x     otherwise 
+                        
 f x = x + 1
 
 g : ℕ -> ℕ
