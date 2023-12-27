@@ -2,7 +2,7 @@
 \usepackage[margin=1.85cm, paperwidth=6.1in, paperheight=9in, bottom=2.5cm]{geometry}
 
 \usepackage{mathptmx} % times font instead of cm-modern
-\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 
 \usepackage{xcolor}
 \usepackage{graphicx}
@@ -30,19 +30,23 @@ with only three syntactic constructs: variables, abstraction, and (function)
 application. 
 
 The \textit{simply typed lambda calculus} (STLC) is a variant of the lambda calculus
-published in 1940 that adds types to the o.g. 1932 untyped lambda calculus. It has the
-three types of constructions previously mentioned plus additional syntax to support 
+published in 1940 that adds static typing to the o.g. 1932 untyped lambda calculus. It 
+has the three types of constructions previously mentioned plus additional syntax to support 
 types and type annotations. These notes use a `Programmable Computable Function' (PCF)
 style syntax and add operations for naturals and recursive function definitions.
 
-These notes formalize the base constructs that make up the simply-typed lambda calculus,
-its syntax, small-step semantics and typing rules
+Specifically these notes formalize the base constructs that make up the simply-typed lambda 
+calculus: its syntax, small-step semantics, and typing rules. After this a number
+of properties the language such as progress and preservation are stated and proven. The notes
+may extend the language with additional features such as records.
 
+Note: these notes do not present a recommended approach to formalization as they (initially)
+eschew a locally nameless representation of terms done for example via DeBruijn indices. A 
+later section of these notes might look into this. 
 
+\subsection{Imports}
 
-\subsection{A Subsection Sample}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
+First, we'll need some imports:
+
 
 \end{document}
