@@ -136,6 +136,9 @@ eq-on-all-points-ev (suc x) =
        g (suc x)
     ≡⟨⟩
         ( if isYes ((suc x) ≟ 0) then 1 else (suc x) + 1 ) 
+    ≡⟨⟩ 
+        ( (suc x) + 1 ) -- somhow automatically is seeing that the then is impossible given the shape
+        -- of the condition.. where is this happening/being-figured-out by agda?
     ∎   
 
 lemma : f ≡ g 

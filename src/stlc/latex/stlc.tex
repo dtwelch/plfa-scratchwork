@@ -13,6 +13,7 @@
 \newunicodechar{∷}{\ensuremath{\mathbin{::}}}
 \newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
 
+\newunicodechar{≟}{\ensuremath{\stackrel{?}{=}}}
 \newunicodechar{≡}{\ensuremath{\equiv}}
 \newunicodechar{≢}{\ensuremath{\not\equiv}}
 \newunicodechar{¬}{\ensuremath{\neg}}
@@ -56,11 +57,11 @@ application.
 The \textit{simply typed lambda calculus} (STLC) is a variant of the lambda 
 calculus published in 1940 that adds static typing to the o.g. 1932 untyped 
 lambda calculus. It has the three types of constructions previously mentioned 
-plus additional syntax to support types and type annotations. These notes use a 
+plus additional syntax to support types and type annotations. We use a 
 `Programmable Computable Function' (PCF) style syntax and add operations for 
 naturals and recursive function definitions.
 
-Specifically these notes formalize the base constructs that make up the 
+Specifically we formalize the base constructs that make up the 
 simply-typed lambda calculus: its syntax, small-step semantics, and typing 
 rules. After this a number of properties the language such as progress and 
 preservation are stated and proven. The notes may extend the language with 
@@ -111,8 +112,48 @@ First, we'll need some imports:
 \AgdaInductiveConstructor{zero}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaInductiveConstructor{suc}\AgdaSymbol{)}\<%
 \\
-%
-\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Product}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{∃-syntax}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}×\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.String}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaPostulate{String}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≟\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Unit}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaInductiveConstructor{tt}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaRecord{Dec}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{yes}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{no}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{¬\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary.Decidable}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{False}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaFunction{toWitnessFalse}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Nullary.Negation}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaFunction{¬?}\AgdaSymbol{)}\<%
+\\
 \>[0]\AgdaKeyword{open}\AgdaSpace{}%
 \AgdaKeyword{import}\AgdaSpace{}%
 \AgdaModule{Relation.Binary.PropositionalEquality}\AgdaSpace{}%
@@ -126,7 +167,22 @@ First, we'll need some imports:
 
 Terms have seven constructs. Three are for the core lambda calculus:
 \begin{itemize}
-\item variables 
+\item variables $`x$ 
+\item abstractions $λ x \ : \ T$ 
+\item applications $L \cdot M$
 \end{itemize}
+
+Three are for the naturals, $\mathbb{N}$:
+\begin{itemize}
+\item zero $`\mathit{zero}$
+\item successor $`\mathit{suc} \ M$ 
+\item case expressions $\mathit{case} \ L \ [ \mathit{zero} \Rightarrow M | ]$ 
+\end{itemize}
+
+Abstraction is also called lambda abstraction, and is the construct from which 
+the calculus takes its name.
+
+
+
 
 \end{document}

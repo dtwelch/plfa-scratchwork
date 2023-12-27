@@ -13,6 +13,7 @@
 \newunicodechar{∷}{\ensuremath{\mathbin{::}}}
 \newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
 
+\newunicodechar{≟}{\ensuremath{\stackrel{?}{=}}}
 \newunicodechar{≡}{\ensuremath{\equiv}}
 \newunicodechar{≢}{\ensuremath{\not\equiv}}
 \newunicodechar{¬}{\ensuremath{\neg}}
@@ -56,15 +57,15 @@ application.
 The \textit{simply typed lambda calculus} (STLC) is a variant of the lambda 
 calculus published in 1940 that adds static typing to the o.g. 1932 untyped 
 lambda calculus. It has the three types of constructions previously mentioned 
-plus additional syntax to support types and type annotations. These notes use a 
+plus additional syntax to support types and type annotations. We use a 
 `Programmable Computable Function' (PCF) style syntax and add operations for 
 naturals and recursive function definitions.
 
-Specifically these notes formalize the base constructs that make up the 
-simply-typed lambda calculus: its syntax, small-step semantics, and typing 
-rules. After this a number of properties the language such as progress and 
-preservation are stated and proven. The notes may extend the language with 
-additional features such as records.
+Specifically we formalize the base constructs that make up the 
+simply-typed lambda calculus: its syntax, small-step semantics, typing, and 
+context formation rules. After this a number of properties the language such 
+as progress and preservation are stated and proven. The notes may extend the 
+language with additional features such as records.
 
 Note: these notes do not present a recommended approach to formalization as 
 they eschew a locally nameless representation of terms (via e.g. DeBruijn 
@@ -92,7 +93,22 @@ open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
 
 Terms have seven constructs. Three are for the core lambda calculus:
 \begin{itemize}
-\item variables 
+\item variables $`x$ 
+\item abstractions $λ x \ : \ T$ 
+\item applications $L \cdot M$
 \end{itemize}
+
+Three are for the naturals, $\mathbb{N}$:
+\begin{itemize}
+\item zero $`\mathit{zero}$
+\item successor $`\mathit{suc} \ M$ 
+\item case expressions $\mathit{case} \ L \ [ \mathit{zero} \Rightarrow M | ]$ 
+\end{itemize}
+
+Abstraction is also called lambda abstraction, and is the construct from which 
+the calculus takes its name.
+
+
+
 
 \end{document}
