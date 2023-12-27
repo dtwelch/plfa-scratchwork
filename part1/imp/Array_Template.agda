@@ -130,8 +130,12 @@ eq-on-all-points-ev 0 =
 eq-on-all-points-ev (suc x) = 
     begin
         f (suc x)
-    ≡⟨ {!   !} ⟩
-        {!   !} 
+    ≡⟨⟩
+        (suc x) + 1
+    ≡⟨⟩
+       g (suc x)
+    ≡⟨⟩
+        ( if isYes ((suc x) ≟ 0) then 1 else (suc x) + 1 ) 
     ∎   
 
 lemma : f ≡ g 
