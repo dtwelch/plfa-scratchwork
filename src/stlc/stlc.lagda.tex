@@ -7,6 +7,7 @@
 \usepackage{ucs}
 \usepackage{agda}
 \usepackage{amssymb}
+\usepackage{amsmath}
 
 \usepackage{newunicodechar}
 \newunicodechar{⊥}{\ensuremath{\mathnormal\bot}}
@@ -20,6 +21,7 @@
 
 \newunicodechar{←}{\ensuremath{\leftarrow}}
 \newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
 
 \newunicodechar{λ}{\ensuremath{\lambda}}
 \newunicodechar{∀}{\ensuremath{\forall}}
@@ -116,9 +118,9 @@ types to terms -- where ctors correspond to intro. rules and deconstructors,
 eliminators.
 
 Here is the syntax of terms in Backus-Naur Form (BNF):
-
 \begin{align*}
-L, M, N 
+L, M, N ::= & `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
+            & `\mathit{zero} \ |
 \end{align*}
 
 
