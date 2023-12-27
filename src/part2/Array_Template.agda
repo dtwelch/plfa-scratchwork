@@ -101,20 +101,24 @@ piecewise f g h = λ x → if condition1 x then f x
                         else h x
 -} 
 
--- example
-f : ℕ -> ℕ 
-f x = x + 1
-
-g : ℕ -> ℕ
-g x = if isYes (x ≟ 0) then 1 else f x 
 
 -- defining "2-alternative"
 alt_if_altotherwise : ∀ {A : Set} -> A -> A -> Bool -> A
 alt_if_altotherwise first second true = first
 alt_if_altotherwise first second false = second 
 
--- defining "3-alternative"-
--- todo
+infix 0 if'_then_else_
+
+if'_then_else_ : ∀ {A : Set} -> Bool -> A -> A -> A
+if'_then_else_ true  t f = t
+if'_then_else_ false t f = f
+
+-- example
+f : ℕ -> ℕ 
+f x = x + 1
+
+g : ℕ -> ℕ
+g x = if' (isYes (x ≟ 0)) then 1 else f x 
 
 eq-on-all-points-ev : ∀ (x : ℕ) -> f x ≡ g x
 eq-on-all-points-ev 0 = 
@@ -127,11 +131,11 @@ eq-on-all-points-ev 0 =
     ≡⟨⟩ -- 1 ≡ g zero
        g zero
     ≡⟨⟩ 
-      ( if isYes (zero ≟ 0) then 1 else f zero )
+      ( if' isYes (zero ≟ 0) then 1 else f zero )
     ≡⟨⟩
-      ( if isYes (zero ≟ 0) then 1 else zero + 1 )
+      ( if' isYes (zero ≟ 0) then 1 else zero + 1 )
     ≡⟨⟩
-      ( if isYes (zero ≟ 0) then 1 else 1 )
+      ( if' isYes (zero ≟ 0) then 1 else 1 )
     ≡⟨⟩
        1 
     ∎   
@@ -143,7 +147,7 @@ eq-on-all-points-ev (suc x) =
     ≡⟨⟩
        g (suc x)
     ≡⟨⟩
-        ( if isYes ((suc x) ≟ 0) then 1 else (suc x) + 1 ) 
+        ( if' isYes ((suc x) ≟ 0) then 2 else (suc x) + 1 ) 
     ≡⟨⟩ 
         ( (suc x) + 1 ) -- somhow automatically is seeing that the then is impossible given the shape
         -- of the condition.. where is this happening/being-figured-out by agda?
