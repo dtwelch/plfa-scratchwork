@@ -108,6 +108,14 @@ f x = x + 1
 g : ℕ -> ℕ
 g x = if isYes (x ≟ 0) then 1 else f x 
 
+-- defining "2-alternative"
+alt_if_altotherwise : ∀ {A : Set} -> A -> A -> Bool -> A
+alt_if_altotherwise first second true = first
+alt_if_altotherwise first second false = second 
+
+-- defining "3-alternative"-
+-- todo
+
 eq-on-all-points-ev : ∀ (x : ℕ) -> f x ≡ g x
 eq-on-all-points-ev 0 = 
     begin 
