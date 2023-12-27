@@ -6,15 +6,23 @@
 \usepackage{textgreek}
 \usepackage{ucs}
 \usepackage{agda}
+\usepackage{amssymb}
 
 \usepackage{newunicodechar}
 \newunicodechar{⊥}{\ensuremath{\mathnormal\bot}}
-\newunicodechar{∷}{\ensuremath{\mathnormal\::}}
-%\newunicodechar{ℕ}{\ensuremath{\mathnormal\bN}}
-\newunicodechar{λ}{\ensuremath{\mathnormal\lambda}}
-\newunicodechar{←}{\ensuremath{\mathnormal\from}}
-\newunicodechar{→}{\ensuremath{\mathnormal\to}}
-\newunicodechar{∀}{\ensuremath{\mathnormal\forall}}
+\newunicodechar{∷}{\ensuremath{\mathbin{::}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≢}{\ensuremath{\not\equiv}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∃}{\ensuremath{\exists}}
 %\DeclareUnicodeCharacter{948}{\ensuremath{\delta}}
 %\DeclareUnicodeCharacter{955}{\ensuremath{\lambda}}
 
@@ -70,6 +78,9 @@ module stlc where
 open import Data.Bool using (Bool; true; false; T; not)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List using (List; _∷_; [])
+open import Data.Nat using (ℕ; zero; suc)
+
+open import Relation.Binary.PropositionalEquality using (_≡_; _≢_; refl)
 \end{code}
 
 \section{Term Syntax}

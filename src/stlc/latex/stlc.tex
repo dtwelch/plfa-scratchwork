@@ -6,15 +6,23 @@
 \usepackage{textgreek}
 \usepackage{ucs}
 \usepackage{agda}
+\usepackage{amssymb}
 
 \usepackage{newunicodechar}
 \newunicodechar{⊥}{\ensuremath{\mathnormal\bot}}
-\newunicodechar{∷}{\ensuremath{\mathnormal\::}}
-%\newunicodechar{ℕ}{\ensuremath{\mathnormal\bN}}
-\newunicodechar{λ}{\ensuremath{\mathnormal\lambda}}
-\newunicodechar{←}{\ensuremath{\mathnormal\from}}
-\newunicodechar{→}{\ensuremath{\mathnormal\to}}
-\newunicodechar{∀}{\ensuremath{\mathnormal\forall}}
+\newunicodechar{∷}{\ensuremath{\mathbin{::}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≢}{\ensuremath{\not\equiv}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∃}{\ensuremath{\exists}}
 %\DeclareUnicodeCharacter{948}{\ensuremath{\delta}}
 %\DeclareUnicodeCharacter{955}{\ensuremath{\lambda}}
 
@@ -35,7 +43,8 @@
 \begin{abstract}
 Just some notes trying out ``\LaTeX \ literate Agda mode'' as I work through 
 this next chapter on the lambda calculus (eventually denotational semantics for
-the untyped version of the calculus).
+the untyped version of the calculus). Some of the list chapter exercises are
+unfinished (including monoids).
 \end{abstract}
 
 \section{Intro to the Lambda Calculus} 
@@ -93,6 +102,24 @@ First, we'll need some imports:
 \AgdaSymbol{(}\AgdaDatatype{List}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaOperator{\AgdaInductiveConstructor{\AgdaUnderscore{}∷\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
+\\
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Data.Nat}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaDatatype{ℕ}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{zero}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{suc}\AgdaSymbol{)}\<%
+\\
+%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaKeyword{open}\AgdaSpace{}%
+\AgdaKeyword{import}\AgdaSpace{}%
+\AgdaModule{Relation.Binary.PropositionalEquality}\AgdaSpace{}%
+\AgdaKeyword{using}\AgdaSpace{}%
+\AgdaSymbol{(}\AgdaOperator{\AgdaDatatype{\AgdaUnderscore{}≡\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≢\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
 \end{code}
 
 \section{Term Syntax}
