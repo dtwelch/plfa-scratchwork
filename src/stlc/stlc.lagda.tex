@@ -120,7 +120,8 @@ eliminators.
 Here is the syntax of terms in Backus-Naur Form (BNF):
 \begin{align*}
 L, M, N ::= & `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
-            & `\mathit{zero} \ |
+            & `\mathit{zero} \ | \ `\mathit{suc} M \ | \ 
+            \textit{case} L [ \mathit{zero} \Rightarrow M | suc x \Rightarrow N ] 
 \end{align*}
 
 
