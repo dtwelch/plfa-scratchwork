@@ -117,12 +117,14 @@ if'_then_else_ false t f = f
 -- start with a definition of a 'conditional definition'
 alt_if_alt_otherwise : 
     ∀ {D R : Set} -> 
-    ∀ (x : D) -> 
+    ∀ {x : D} -> 
     ∀ (f g : D -> R) -> 
     ∀ (ψ : D -> Bool) -> (D -> R)
-alt_if_alt_otherwise x f g ψ with (ψ x)
+alt_if_alt_otherwise {D} {R} {x} f g ψ with (ψ x)
 ... | true = f
 ... | false = g 
+-- 'x' in the defn above is an arbitrary variable drawn
+-- from the domain D.
 
 f : ℕ -> ℕ                 
 f x = x + 1
