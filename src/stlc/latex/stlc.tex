@@ -1,12 +1,20 @@
 \documentclass[runningheads]{llncs}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx} % times font instead of cm-modern
 \usepackage[margin=1.85cm, paperwidth=6.1in, paperheight=9in, bottom=2.5cm]{geometry}
 
-\usepackage{mathptmx} % times font instead of cm-modern
 \usepackage{textgreek}
 \usepackage{ucs}
 \usepackage{agda}
-\usepackage[utf8x]{inputenc}
 
+\usepackage{newunicodechar}
+\newunicodechar{⊥}{\ensuremath{\mathnormal\bot}}
+\newunicodechar{∷}{\ensuremath{\mathnormal\::}}
+%\newunicodechar{ℕ}{\ensuremath{\mathnormal\bN}}
+\newunicodechar{λ}{\ensuremath{\mathnormal\lambda}}
+\newunicodechar{←}{\ensuremath{\mathnormal\from}}
+\newunicodechar{→}{\ensuremath{\mathnormal\to}}
+\newunicodechar{∀}{\ensuremath{\mathnormal\forall}}
 %\DeclareUnicodeCharacter{948}{\ensuremath{\delta}}
 %\DeclareUnicodeCharacter{955}{\ensuremath{\lambda}}
 
@@ -68,6 +76,7 @@ First, we'll need some imports:
 \AgdaSymbol{(}\AgdaDatatype{Bool}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaInductiveConstructor{true}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaInductiveConstructor{false}\AgdaSymbol{;}\AgdaSpace{}%
+\AgdaFunction{T}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaFunction{not}\AgdaSymbol{)}\<%
 \\
 \>[0]\AgdaKeyword{open}\AgdaSpace{}%
@@ -84,64 +93,6 @@ First, we'll need some imports:
 \AgdaSymbol{(}\AgdaDatatype{List}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaOperator{\AgdaInductiveConstructor{\AgdaUnderscore{}∷\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
 \AgdaInductiveConstructor{[]}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Data.Nat}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaDatatype{ℕ}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaInductiveConstructor{zero}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaInductiveConstructor{suc}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Data.Product}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaFunction{∃-syntax}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}×\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Data.String}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaPostulate{String}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≟\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Data.Unit}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaInductiveConstructor{tt}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Relation.Nullary}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaRecord{Dec}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaInductiveConstructor{yes}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaInductiveConstructor{no}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaOperator{\AgdaFunction{¬\AgdaUnderscore{}}}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Relation.Nullary.Decidable}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaFunction{False}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaFunction{toWitnessFalse}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Relation.Nullary.Negation}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaFunction{¬?}\AgdaSymbol{)}\<%
-\\
-\>[0]\AgdaKeyword{open}\AgdaSpace{}%
-\AgdaKeyword{import}\AgdaSpace{}%
-\AgdaModule{Relation.Binary.PropositionalEquality}\AgdaSpace{}%
-\AgdaKeyword{using}\AgdaSpace{}%
-\AgdaSymbol{(}\AgdaOperator{\AgdaDatatype{\AgdaUnderscore{}≡\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaOperator{\AgdaFunction{\AgdaUnderscore{}≢\AgdaUnderscore{}}}\AgdaSymbol{;}\AgdaSpace{}%
-\AgdaInductiveConstructor{refl}\AgdaSymbol{)}\<%
 \end{code}
 
 \section{Term Syntax}
