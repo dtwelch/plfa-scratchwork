@@ -18,7 +18,7 @@ open import Data.Bool using (Bool; true; false; if_then_else_; T; not )
 
 example : ℕ -> ℕ -> Bool
 example m n with (m ≟ n)
-... | yes p = true 
+... | yes p = true  
 ... | no ¬p = false
 
 {-
