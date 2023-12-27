@@ -107,6 +107,11 @@ Three are for the naturals, $\mathbb{N}$:
 \item case expressions $\mathit{case} \ L \ [ \mathit{zero} \Rightarrow M | ]$ 
 \end{itemize}
 
+There is also one for recursion: 
+\begin{itemize}
+\item fixpoint $\mu \ x \Rightarrow M$
+\end{itemize}
+
 Abstraction is also called lambda abstraction, and is the construct from which 
 the calculus takes its name.
 
@@ -120,8 +125,10 @@ eliminators.
 Here is the syntax of terms in Backus-Naur Form (BNF):
 \begin{align*}
 L, M, N ::= & `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
-            & `\mathit{zero} \ | \ `\mathit{suc} M \ | \ 
-            \textit{case} L [ \mathit{zero} \Rightarrow M | suc x \Rightarrow N ] 
+            & `\mathit{zero} \ | \ `\mathit{suc} \ M \ | \ 
+            \textit{case} \ L [ \mathit{zero} \Rightarrow M | \mathit{suc} \ x 
+            \Rightarrow N ] \ | \ 
+            \mu \ x \Rightarrow M 
 \end{align*}
 
 
