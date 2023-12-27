@@ -19,7 +19,8 @@
 
 \begin{abstract}
 Just some notes trying out ``\LaTeX \ literate Agda mode'' as I work through 
-this next chapter on denotational semantics.
+this next chapter on the lambda calculus (eventually denotational semantics for
+the untyped version of the calculus).
 \end{abstract}
 
 \section{Intro to the Lambda Calculus} 
@@ -29,7 +30,13 @@ with only three syntactic constructs: variables, abstraction, and (function)
 application. 
 
 The \textit{simply typed lambda calculus} (STLC) is a variant of the lambda calculus
-published in 1940 that adds types to the o.g. 1932 untyped lambda calculus.
+published in 1940 that adds types to the o.g. 1932 untyped lambda calculus. It has the
+three types of constructions previously mentioned plus additional syntax to support 
+types and type annotations. These notes use a `Programmable Computable Function' (PCF)
+style syntax and add operations for naturals and recursive function definitions.
+
+These notes formalize the base constructs that make up the simply-typed lambda calculus,
+its syntax, small-step semantics and typing rules
 
 
 
