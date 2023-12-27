@@ -115,13 +115,14 @@ if'_then_else_ false t f = f
 
 -- W.F.O formulation:
 -- start with a definition of a 'conditional definition'
-alt_if_alt_otherwise : 
+alt_if_alt_otherwise-at_ : 
     ∀ {D R : Set}       -> 
-    ∀ {x : D}           -> 
     ∀ (f : D -> R)      -> 
     ∀ (ψ : D -> Bool)   -> 
-    ∀ (g : D -> R)      -> (D -> R)
-alt_if_alt_otherwise {D} {R} {x} f ψ g with (ψ x)
+    ∀ (g : D -> R)      -> 
+    ∀ (x : D)           ->  
+    (D -> R)
+alt_if_alt_otherwise-at_ {D} {R} f ψ g x with (ψ x)
 ... | true = f
 ... | false = g
 -- 'x' in the defn above is an arbitrary variable drawn
@@ -132,9 +133,19 @@ f' x = x + 1
 
 
 g' : ℕ -> ℕ
-g' x = ( alt (λ y -> 1)      if (λ y -> y ≟ 0)
-         alt (λ y -> (f' y)) otherwise ) x 
+g' x =  (alt (λ (y : ℕ) -> 1)      if (λ (y : ℕ) -> isYes (y ≟ 0)) 
+         alt (λ (y : ℕ) -> (f' y)) otherwise-at x ) x
 
+example4 : (g' 0) ≡ 1
+example4 =
+    begin
+        (g' 0)
+    ≡⟨⟩
+        (alt (λ (y : ℕ) -> 1)      if (λ (y : ℕ) -> isYes (y ≟ 0)) 
+         alt (λ (y : ℕ) -> (f' y)) otherwise-at 0 ) 0
+    ≡⟨⟩
+        1 
+    ∎ 
 
 -- ----------------
 f : ℕ -> ℕ                 
@@ -178,4 +189,4 @@ eq-on-all-points-ev (suc x) =
 
 lemma : f ≡ g 
 lemma = extensionality f g eq-on-all-points-ev 
- 
+   
