@@ -110,26 +110,21 @@ alt_if_altotherwise first second false = second
 infix 0 if'_then_else_
 
 if'_then_else_ : ∀ {A : Set} -> Bool -> A -> A -> A
-if'_then_else_ true  t f = ? 
-if'_then_else_ false t f = ? 
+if'_then_else_ true  t f = t 
+if'_then_else_ false t f = f 
 
-ite'-same-bodies : 
-    ∀ {A : Set} -> 
-    ∀ (cond : Bool) -> 
-    ∀ (b1 : A) ->
-        if' cond then b1 else b1 ≡ f 
-ite'-same-bodies pred b1 b2 = ? 
-
--- og ver:
+-- W.F.O formulation:
 -- start with a definition of a 'conditional definition'
 alt_if_alt_otherwise : 
     ∀ {D R : Set} -> 
-    ∀ (x   : D) -> 
-    ∀ (ψ   : D -> Bool) -> 
-    ∀ (f g : D -> R) 
-alt f x     if ψ x 
-alt g x     otherwise 
-                        
+    ∀ (x : D) -> 
+    ∀ (f g : D -> R) -> 
+    ∀ (ψ : D -> Bool) -> (D -> R)
+alt_if_alt_otherwise x f g ψ with (ψ x)
+... | true = f
+... | false = g 
+
+f : ℕ -> ℕ                 
 f x = x + 1
 
 g : ℕ -> ℕ
@@ -170,3 +165,4 @@ eq-on-all-points-ev (suc x) =
 
 lemma : f ≡ g 
 lemma = extensionality f g eq-on-all-points-ev 
+ 
