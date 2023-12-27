@@ -126,6 +126,14 @@ alt_if_alt_otherwise {D} {R} {x} f g ψ with (ψ x)
 -- 'x' in the defn above is an arbitrary variable drawn
 -- from the domain D.
 
+f' : ℕ -> ℕ 
+f' x = x + 1
+
+g' : ℕ -> ℕ
+g' x = alt 1 if x ≟  
+
+
+-- ----------------
 f : ℕ -> ℕ                 
 f x = x + 1
 

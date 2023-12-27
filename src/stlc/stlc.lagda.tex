@@ -108,6 +108,18 @@ Three are for the naturals, $\mathbb{N}$:
 Abstraction is also called lambda abstraction, and is the construct from which 
 the calculus takes its name.
 
+With the exception of variables and fixpoints, each term form either constructs
+a value of a given type (abstractions yield functions, zero and successor yield 
+natural numbers) or deconstructs it (applications use functions, case 
+expressions use naturals). This will arise again when we fix rules for assigning
+types to terms -- where ctors correspond to intro. rules and deconstructors, 
+eliminators.
+
+Here is the syntax of terms in Backus-Naur Form (BNF):
+
+\begin{align*}
+L, M, N 
+\end{align*}
 
 
 
