@@ -14,6 +14,11 @@
 \newunicodechar{∷}{\ensuremath{\mathbin{::}}}
 \newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
 
+% note: will look different, latex doesn't have a readily available matching 
+% glyph for the lambda symbol used in this chapter.
+\newunicodechar{ƛ}{\ensuremath{\bar{\lambda}}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+
 \newunicodechar{≟}{\ensuremath{\stackrel{?}{=}}}
 \newunicodechar{≡}{\ensuremath{\equiv}}
 \newunicodechar{≢}{\ensuremath{\not\equiv}}
@@ -65,7 +70,7 @@ naturals and recursive function definitions.
 
 Specifically we formalize the base constructs that make up the 
 simply-typed lambda calculus: its syntax, small-step semantics, typing, and 
-context formation rules. After this a number of properties the language such 
+context formation rules. After this a number of properties of the language such 
 as progress and preservation are stated and proven. The notes may extend the 
 language with additional features such as records.
 
@@ -104,7 +109,8 @@ Three are for the naturals, $\mathbb{N}$:
 \begin{itemize}
 \item zero $`\mathit{zero}$
 \item successor $`\mathit{suc} \ M$ 
-\item case expressions $\mathit{case} \ L \ [ \mathit{zero} \Rightarrow M | ]$ 
+\item case expressions $\mathit{case} \ L \ 
+[ \mathit{zero} \Rightarrow M \ | \ \mathit{suc} \ x \Rightarrow N ]$ 
 \end{itemize}
 
 There is also one for recursion: 
@@ -124,13 +130,29 @@ eliminators.
 
 Here is the syntax of terms in Backus-Naur Form (BNF):
 \begin{align*}
-L, M, N ::= & `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
+L, \ M, \ N ::= & \ `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
             & `\mathit{zero} \ | \ `\mathit{suc} \ M \ | \ 
             \textit{case} \ L [ \mathit{zero} \Rightarrow M | \mathit{suc} \ x 
             \Rightarrow N ] \ | \ 
             \mu \ x \Rightarrow M 
 \end{align*}
 
+And here it is formalized in Agda:
+% note: ƛ can be entered by typing \Gl-
+\begin{code}
+Id : Set
+Id = String
+
+infix 5 ƛ_⇒_
+-- infix 5 μ_⇒_
+
+infix 9 `_
+
+data Term : Set where 
+    `_              : Id → Term
+    ƛ_⇒_            : Id → Term → Term 
+
+\end{code}
 
 
 \end{document}

@@ -14,6 +14,11 @@
 \newunicodechar{∷}{\ensuremath{\mathbin{::}}}
 \newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
 
+% note: will look different, latex doesn't have a readily available matching 
+% glyph for the lambda symbol used in this chapter.
+\newunicodechar{ƛ}{\ensuremath{\bar{\lambda}}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+
 \newunicodechar{≟}{\ensuremath{\stackrel{?}{=}}}
 \newunicodechar{≡}{\ensuremath{\equiv}}
 \newunicodechar{≢}{\ensuremath{\not\equiv}}
@@ -65,7 +70,7 @@ naturals and recursive function definitions.
 
 Specifically we formalize the base constructs that make up the 
 simply-typed lambda calculus: its syntax, small-step semantics, typing, and 
-context formation rules. After this a number of properties the language such 
+context formation rules. After this a number of properties of the language such 
 as progress and preservation are stated and proven. The notes may extend the 
 language with additional features such as records.
 
@@ -178,7 +183,8 @@ Three are for the naturals, $\mathbb{N}$:
 \begin{itemize}
 \item zero $`\mathit{zero}$
 \item successor $`\mathit{suc} \ M$ 
-\item case expressions $\mathit{case} \ L \ [ \mathit{zero} \Rightarrow M | ]$ 
+\item case expressions $\mathit{case} \ L \ 
+[ \mathit{zero} \Rightarrow M \ | \ \mathit{suc} \ x \Rightarrow N ]$ 
 \end{itemize}
 
 There is also one for recursion: 
@@ -198,13 +204,64 @@ eliminators.
 
 Here is the syntax of terms in Backus-Naur Form (BNF):
 \begin{align*}
-L, M, N ::= & `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
+L, \ M, \ N ::= & \ `x \ | \ `\lambda x \Rightarrow N \ | \ L \cdot M \ | \\ 
             & `\mathit{zero} \ | \ `\mathit{suc} \ M \ | \ 
             \textit{case} \ L [ \mathit{zero} \Rightarrow M | \mathit{suc} \ x 
             \Rightarrow N ] \ | \ 
             \mu \ x \Rightarrow M 
 \end{align*}
 
+And here it is formalized in Agda:
+% note: ƛ can be entered by typing \Gl-
+\begin{code}%
+\>[0]\AgdaFunction{Id}\AgdaSpace{}%
+\AgdaSymbol{:}\AgdaSpace{}%
+\AgdaPrimitive{Set}\<%
+\\
+\>[0]\AgdaFunction{Id}\AgdaSpace{}%
+\AgdaSymbol{=}\AgdaSpace{}%
+\AgdaPostulate{String}\<%
+\\
+%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaKeyword{infix}\AgdaSpace{}%
+\AgdaNumber{5}\AgdaSpace{}%
+\AgdaOperator{\AgdaInductiveConstructor{ƛ\AgdaUnderscore{}⇒\AgdaUnderscore{}}}\<%
+\\
+\>[0]\AgdaComment{--\ infix\ 5\ μ\AgdaUnderscore{}⇒\AgdaUnderscore{}}\<%
+\\
+%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaKeyword{infix}\AgdaSpace{}%
+\AgdaNumber{9}\AgdaSpace{}%
+\AgdaOperator{\AgdaInductiveConstructor{`\AgdaUnderscore{}}}\<%
+\\
+%
+\\[\AgdaEmptyExtraSkip]%
+\>[0]\AgdaKeyword{data}\AgdaSpace{}%
+\AgdaDatatype{Term}\AgdaSpace{}%
+\AgdaSymbol{:}\AgdaSpace{}%
+\AgdaPrimitive{Set}\AgdaSpace{}%
+\AgdaKeyword{where}\<%
+\\
+\>[0][@{}l@{\AgdaIndent{0}}]%
+\>[4]\AgdaOperator{\AgdaInductiveConstructor{`\AgdaUnderscore{}}}%
+\>[20]\AgdaSymbol{:}\AgdaSpace{}%
+\AgdaFunction{Id}\AgdaSpace{}%
+\AgdaSymbol{→}\AgdaSpace{}%
+\AgdaDatatype{Term}\<%
+\\
+%
+\>[4]\AgdaOperator{\AgdaInductiveConstructor{ƛ\AgdaUnderscore{}⇒\AgdaUnderscore{}}}%
+\>[20]\AgdaSymbol{:}\AgdaSpace{}%
+\AgdaFunction{Id}\AgdaSpace{}%
+\AgdaSymbol{→}\AgdaSpace{}%
+\AgdaDatatype{Term}\AgdaSpace{}%
+\AgdaSymbol{→}\AgdaSpace{}%
+\AgdaDatatype{Term}\<%
+\\
+\>[0]\<%
+\end{code}
 
 
 \end{document}
