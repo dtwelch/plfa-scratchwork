@@ -143,15 +143,19 @@ And here it is formalized in Agda:
 Id : Set
 Id = String
 
-infix 5 ƛ_⇒_
--- infix 5 μ_⇒_
-
-infix 9 `_
+infix  5 ƛ_⇒_
+infix  5 μ_⇒_
+infixl 7 _·_
+infix  8 `suc
+infix  9 `_
 
 data Term : Set where 
-    `_              : Id → Term
-    ƛ_⇒_            : Id → Term → Term 
-
+    `_                      : Id → Term
+    ƛ_⇒_                    : Id → Term → Term 
+    _·_                     : Term → Term → Term 
+    `zero                   : Term → Term 
+    case_[zero⇒_|suc_⇒_]    : Term → Term → Id → Term → Term 
+    μ_⇒_                    : Id → Term → Term
 \end{code}
 
 
