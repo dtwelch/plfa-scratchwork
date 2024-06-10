@@ -77,9 +77,18 @@ scd-03 k 0 =
 scd-03 k (suc n) = 
     begin
         scd (iterated (ss k) (suc n) (cen k))
-    ≡⟨ {!   !} ⟩
-        {!   !}
+    ≡⟨⟩ -- by ind. case of iterated fn
+        scd ( (ss k) (iterated (ss k) n (cen k)) )
+    ≡⟨⟩ -- by ind. hypothesis on second defining eq. of scd
+        (scd (iterated (ss k) n (cen k))) + 1
+    ≡⟨⟩ 
+        suc (scd (iterated (ss k) n (cen k)))
+    ≡⟨ ? ⟩
+        ?
     ∎
--- scd (iterated (ss k) (suc n) (cen k)) ≡ suc n
+
+--scd (iterated (ss k) n (cen k)) + 1
+
+-- ?1 : scd (ss k (iterated (ss k) n (cen k))) ≡ suc n
 
 
