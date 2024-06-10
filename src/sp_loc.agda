@@ -35,6 +35,10 @@ toℕ²  1 {()}
 toℕ² (suc (suc zero))       = two
 toℕ² (suc (suc (suc n)))    = succ (toℕ² (suc (suc n))) 
 
+to-nat : ℕ² -> ℕ
+to-nat two = 2
+to-nat (succ k) = 1 + to-nat k
+
 --data Sp_Loc : Nat -> Set where
 
 data SpLoc (A : Set) : ℕ² -> Set where
@@ -56,26 +60,26 @@ postulate
 -}
 
 -- spiral center dist.
-scd : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> ℕ
-scd k (cen k) = 0
-scd k (ss k p)  = (scd k p) + 1
-scd k (rs k p)  = (scd k p) + {!   !} -- how many sploc's skipped in general?
+scd : ∀ {A : Set} -> ∀ {k : ℕ²} -> (SpLoc A k) -> ℕ
+scd {A} {k} (cen k)   = 0
+scd {A} {k} (ss k p)  = (scd p) + 1
+scd {A} {k} (rs k p)  = (to-nat k) * (scd p) + 1  -- how many sploc's skipped in general?
 
--- radial predecessor
-rp : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> (SpLoc A k)
-
--- spiral offset dist.
-sod : ∀ {A : Set} -> ∀ (k : ℕ²) -> (SpLoc A k) -> ℕ 
-
--- now defining equations can reference both the rp and sod operators above 
-rp k (cen k) = cen k
-rp k (ss k p) = {!   !}
-rp k (rs k p) =  {!   !} 
-
-sod k (cen k) = 0
-sod k (ss k p) = {!   !}
-sod k (rs k p) =  {!   !} 
--- will need for computing properties
--- Corollary 3: ∀ k: N≥2, ∀ p: Sp_Loc(k), RP(k)(p) = SS(k)(SCD(k)(p)∸1)÷k (Cen(k));
+scd-03 : ∀ {A : Set} -> ∀ (k : ℕ²) -> ∀ (n : ℕ) -> scd ( iterated (ss k) n (cen k) ) ≡ n 
+scd-03 k 0 =
+    begin
+        scd (iterated (ss k) zero (cen k))
+    ≡⟨⟩ -- by base case of iterated fn (it's a defining equation)
+        scd (cen k)
+    ≡⟨⟩
+        0 
+    ∎ 
+scd-03 k (suc n) = 
+    begin
+        scd (iterated (ss k) (suc n) (cen k))
+    ≡⟨ {!   !} ⟩
+        {!   !}
+    ∎
+-- scd (iterated (ss k) (suc n) (cen k)) ≡ suc n
 
 
