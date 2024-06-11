@@ -89,4 +89,3 @@ scd-03 k (suc n) =
         suc n  
     ∎ 
 
-
