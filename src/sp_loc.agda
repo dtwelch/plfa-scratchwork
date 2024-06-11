@@ -41,14 +41,14 @@ to-nat (succ k) = 1 + to-nat k
 
 --data Sp_Loc : Nat -> Set where
 
-data SpLoc (A : Set) : ℕ² -> Set where
-    cen : (k : ℕ²) -> (SpLoc A k)               -- center loc
-    ss  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- spiral successor
-    rs  : (k : ℕ²) -> (SpLoc A k) -> SpLoc A k  -- radial successor
+data SpLoc : ℕ² -> Set where
+    cen : (k : ℕ²) -> (SpLoc k)               -- center loc
+    ss  : (k : ℕ²) -> (SpLoc k) -> SpLoc k  -- spiral successor
+    rs  : (k : ℕ²) -> (SpLoc k) -> SpLoc k  -- radial successor
 
-iterated : ∀ {A : Set}  -> (f : A -> A) -> ℕ -> A -> A
-iterated f zero x = x
-iterated f (suc n) x = f (iterated f n x)
+iterated : ∀ (A : Set) (f : A -> A) -> ℕ -> A -> A
+iterated A f zero x = x
+iterated A f (suc n) x = f (iterated A f n x)
 -- postulates
 {-
 postulate        
@@ -60,15 +60,15 @@ postulate
 -}
 
 -- spiral center dist.
-scd : ∀ {A : Set} (k : ℕ²) (p : SpLoc A k) -> ℕ
-scd {A} k (cen k)   = 0
-scd {A} k (ss k p)  = 1 + (scd k p) 
-scd {A} k (rs k p)  = (to-nat k) * (scd k p) + 1  -- how many sploc's skipped in general?
+scd : ∀ (k : ℕ²) (p : SpLoc k) -> ℕ
+scd k (cen k)   = 0
+scd k (ss k p)  = 1 + (scd k p) 
+scd k (rs k p)  = (to-nat k) * (scd k p) + 1  -- how many sploc's skipped in general?
 
-scd-03 : ∀ {A : Set} (k : ℕ²) (n : ℕ) -> scd k ( iterated (ss k) n (cen k) ) ≡ n 
+scd-03 : ∀ (k : ℕ²) (n : ℕ) -> scd k ( iterated (SpLoc k) (ss k) n (cen k) ) ≡ n 
 scd-03 k 0 =
     begin
-        scd k (iterated (ss k) zero (cen k))
+        scd k (iterated (SpLoc k) (ss k) zero (cen k))
     ≡⟨⟩ -- by base case of iterated fn 
         scd k (cen k)
     ≡⟨⟩
@@ -76,13 +76,13 @@ scd-03 k 0 =
     ∎ 
 scd-03 k (suc n) = 
     begin
-        scd k (iterated (ss k) (suc n) (cen k))
+        scd k (iterated (SpLoc k) (ss k) (suc n) (cen k))
     ≡⟨⟩ -- by ind. case of iterated fn
-        scd k ( (ss k) (iterated (ss k) n (cen k)) )
+        scd k ( (ss k) (iterated (SpLoc k) (ss k) n (cen k)) )
     ≡⟨⟩ 
-        1 + scd k (iterated (ss k) n (cen k)) 
+        1 + scd k (iterated (SpLoc k) (ss k) n (cen k)) 
     ≡⟨⟩ 
-        suc ( scd k (iterated (ss k) n (cen k)) ) 
+        suc ( scd k (iterated (SpLoc k) (ss k) n (cen k)) ) 
     ≡⟨ cong (suc) (scd-03 k n)  ⟩
         suc n  
     ∎ 
