@@ -7,7 +7,9 @@ A programming language foundations course has been formalized in the dependently
 This repository is just scratchwork as I work through the chapters. Not many additional exercises are attempted. Mostly just (explicit) variations of the various propositions presented in the main text of each chapter (there are some stretch exercises attempted).
 
 Note:
-generating literate agda docs run (in dir w/ .lagda.tex file):
-> agda --latex stlc.lagda.tex
-then 
-> pdflatex latex/stlc.tex 
+```
+pandoc naturals-01.lagda.md -o chapter1.pdf --pdf-engine=xelatex \
+  -V mainfont="STIX Two Text" \
+  -V mathfont="STIX Two Math" \
+  -V monofont="Arial Unicode MS"
+```
