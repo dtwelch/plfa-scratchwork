@@ -1,7 +1,6 @@
 ## P101: Natural numbers
 
-Natural numbers are an inductive data type named 
-ℕ where 0, 1, 2 ... are inhabitants of ℕ
+Natural numbers are an inductive data type named ℕ where 0, 1, 2 ... are inhabitants of ℕ
 
 ```agda
 --------
@@ -22,4 +21,8 @@ data ℕ : Set where
 
 The constructor offers two "constructors" that produce a ℕ. These are:
 -  `zero` which allows us to construct the value `zero` of the natural numbers
-- and another `suc n` that takes one ℕ and maps it to its immediate successor.
+- and another `suc n` that takes one ℕ and maps it to its immediate successor (also something of type ℕ).
+
+```agda
+seven = ?
+```
