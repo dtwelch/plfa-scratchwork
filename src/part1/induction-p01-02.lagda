@@ -5,7 +5,7 @@
 \usepackage{mathptmx}  
 \usepackage{xcolor}
 \usepackage{newtxtext}
-\definecolor{customgray}{gray}{0.08}  
+\definecolor{customgray}{gray}{0.099}  
 \color{customgray}     
 
 \usepackage{amsmath}
@@ -13,13 +13,23 @@
 \usepackage{amssymb} \usepackage{stmaryrd} \usepackage{csquotes}
 \usepackage{unicode-math}
 \usepackage{newunicodechar}
+\usepackage{listings}
 \usepackage{mathptmx}
 \usepackage[colorlinks = true,
             linkcolor = black,
             urlcolor  = blue,
             citecolor = black
             anchorcolor = black]{hyperref}
+
+\lstset{
+basicstyle=\ttfamily,
+columns=fullflexible,
+keepspaces=true,
+breaklines=true,
+mathescape=true
+}
 \usepackage[links]{agda}
+\usepackage{mathpartir} %inf rules
 
 %\setmathfont{XITS Math}
 \newunicodechar{α}{\ensuremath{\mathnormal\alpha}}
@@ -96,14 +106,53 @@ open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _^_)
 \section{Induction}
 
 To prove a property of natural numbers by induction, we need to prove two cases.
-First is the base case, where we show the property holds for `zero`.
+First is the base case, where we show the property holds for `zero'.
 
 Second is the inductive case, where we assume the property holds for an arbitrary
 natural number \texttt{m} (we call this the inductive hypothesis), and then show the 
 property must also hold for \texttt{(suc m)}.
 
 There are two inference rules for natural numbers (these are given by the inductive
-type definition):
+type definition): s
 
+\begin{lstlisting}
+---------
+P zero
+
+P m
+---------
+P (suc m)
+\end{lstlisting}
+
+\subsubsection*{First proof: associativity}
+
+To prove associativity, take \texttt{P m} to be the property:
+\begin{lstlisting}
+(m + n) + p $\equiv$ m + (n + p)
+\end{lstlisting}
+
+If we can demonstrate that both the base case and inductive case hold, then 
+associativity of addition follows by induction.
+% _+_ : ℕ -> ℕ ­-> ℕ
+% _+_ zero n    = n 
+% _+_ (suc m) n = suc (m + n)
+Here is the proposition's statement and proof:
+\begin{code}
++-assoc : ∀ (m n p : ℕ) -> (m + n) + p ≡ m + (n + p)
++-assoc zero n p = 
+    begin 
+        (zero + n) + p
+    ≡⟨⟩ 
+        n + p
+    ∎
++-assoc (suc m) n p = 
+    begin 
+        ((suc m) + n) + p
+    ≡⟨⟩
+        suc (m + n) + p
+    ≡⟨ cong (suc) (+-assoc m n p) ⟩ 
+        suc m + (n + p)
+    ∎
+\end{code}
 
 \end{document}
