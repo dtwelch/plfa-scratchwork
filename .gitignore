@@ -3,6 +3,7 @@
 MAlonzo/**
 .DS_Store
 .DS_Store?
+/latex
 *.out
 *.aux
 *.gz
